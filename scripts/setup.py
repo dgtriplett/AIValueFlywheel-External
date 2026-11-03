@@ -29,8 +29,26 @@ import os
 import sys
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parent.parent
+try:
+    ROOT = Path(__file__).resolve().parent.parent
+except NameError:
+    # Serverless job compute runs the file without __file__; the bundle passes the
+    # deployed file path explicitly.
+    ROOT = Path(next((a.split("=", 1)[1] for a in sys.argv if a.startswith("--repo-root=")),
+                     os.getcwd()))
 sys.path.insert(0, str(ROOT))
+
+
+def run_async(coro):
+    """asyncio.run, also on job compute where an event loop is already running
+    (serverless Python tasks): then the coroutine runs on its own thread and loop."""
+    try:
+        asyncio.get_running_loop()
+    except RuntimeError:
+        return asyncio.run(coro)
+    import concurrent.futures
+    with concurrent.futures.ThreadPoolExecutor(max_workers=1) as pool:
+        return pool.submit(asyncio.run, coro).result()
 
 
 def log(msg: str) -> None:
@@ -62,6 +80,7 @@ def parse_args(argv=None) -> argparse.Namespace:
                     help="apply pending migrations even if an applied file changed "
                          "(see OPERATIONS.md: schema drift)")
     ap.add_argument("--profile", default="", help="CLI profile when run from a laptop")
+    ap.add_argument("--repo-root", default="", help="(set by the bundle) deployed source root")
     ap.add_argument("--local", action="store_true",
                     help="local development: use the PG*/DELTA_* settings already in the "
                          "environment; skip storage provisioning and grants")
@@ -175,7 +194,7 @@ def grant_uc(w, args, sp: str) -> list[str]:
         ]
     for catalog, schema in ((args.discovery_catalog, args.discovery_schema),
                             (args.genie_catalog, args.genie_schema)):
-        if catalog and schema:
+        if catalog and schema and catalog.lower() != "none":
             statements += [
                 f"CREATE SCHEMA IF NOT EXISTS `{catalog}`.`{schema}`",
                 f"GRANT USE CATALOG ON CATALOG `{catalog}` TO `{sp}`",
@@ -194,7 +213,7 @@ def main(argv=None) -> int:
     args = parse_args(argv)
     if args.local:
         os.environ["STORAGE_BACKEND"] = args.storage_backend
-        asyncio.run(migrate_and_seed(args))
+        run_async(migrate_and_seed(args))
         log("done (local: no provisioning or grants)")
         return 0
     w = workspace(args.profile)
@@ -202,13 +221,13 @@ def main(argv=None) -> int:
         configure_lakebase(w, args)
     else:
         configure_delta(w, args)
-    asyncio.run(migrate_and_seed(args))
+    run_async(migrate_and_seed(args))
 
     sp = app_service_principal(w, args.app_name)
     failed: list[str] = []
     if sp:
         if args.storage_backend == "lakebase":
-            asyncio.run(grant_lakebase(args, sp))
+            run_async(grant_lakebase(args, sp))
         failed = grant_uc(w, args, sp)
     if failed:
         log("Some grants need a catalog owner or metastore admin. Ask one to run:")
@@ -222,4 +241,7 @@ def main(argv=None) -> int:
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    # Exit only on failure: job compute reports even SystemExit(0) as an error.
+    rc = main()
+    if rc:
+        sys.exit(rc)

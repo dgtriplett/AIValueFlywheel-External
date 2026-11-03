@@ -336,14 +336,14 @@ class TestRefusesToOverwrite(unittest.TestCase):
         import asyncio
 
         async def run():
-            original = gp.GENIE_SPACE_ID
-            gp.GENIE_SPACE_ID = ""
+            original = gp.GENIE_SPACE_ID, gp.GENIE_MIRROR_CATALOG
+            gp.GENIE_SPACE_ID, gp.GENIE_MIRROR_CATALOG = "", "main"
             try:
                 with self.assertRaises(gp.GenieProvisionError) as caught:
                     await gp.provision(title="t", description="d", warehouse_id="")
                 self.assertIn("warehouse", str(caught.exception).lower())
             finally:
-                gp.GENIE_SPACE_ID = original
+                gp.GENIE_SPACE_ID, gp.GENIE_MIRROR_CATALOG = original
 
         asyncio.run(run())
 

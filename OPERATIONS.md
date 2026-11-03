@@ -103,13 +103,14 @@ fix (or GRANT statement) for the first failure.
 
 | Symptom | Likely cause | Fix |
 |---|---|---|
+| App URL says "App has not been deployed yet" | The app was re-created after a failed first deploy | `databricks bundle run ai_value_flywheel -t <target>` deploys and starts the code. |
 | App shows no use cases | Setup job didn't run or failed | `databricks bundle run setup -t <target>` and read its output. |
 | "Not configured" / no storage (lakebase) | App's `lakebase` resource missing | Redeploy with `-t lakebase`. Check **Compute → Apps → \<app\> → Resources**. |
 | Permission errors reading app tables (delta) | Grants not applied | The setup job prints any GRANT it couldn't run. A catalog owner runs them. |
 | Pages slow (delta) | Warehouse cold start, or a small warehouse | Expect a few seconds on the first request after auto-stop. Use Serverless and raise the auto-stop timeout during workshops. |
 | AI buttons return "AI unavailable" | Endpoint missing, or the app lacks `CAN_QUERY` | Check `serving_endpoint`. **Admin → Setup** probes it. |
 | 429 Too Many Requests | Per-user rate limits | Expected under bursts. Set `RATE_LIMITS=off` in `databricks.yml` for a demo. |
-| Discovery tab says "not configured" | `discovery_catalog` empty | Set it and redeploy. Then follow the Setup grants. |
+| Discovery tab says "not configured" | `discovery_catalog` is `none` | Set it and redeploy. Then follow the Setup grants. |
 
 Logs: **Compute → Apps → \<app\> → Logs**. Set `LOG_LEVEL=DEBUG` in `databricks.yml`
 for more detail; on Delta this also logs every translated SQL statement.

@@ -22,7 +22,15 @@ SERVING_ENDPOINT = os.environ.get("SERVING_ENDPOINT", "databricks-claude-sonnet-
 AI_QUERY_ENDPOINT = os.environ.get("AI_QUERY_ENDPOINT", "databricks-claude-sonnet-4-5")
 
 # Genie space over the portfolio mirror (set after creating the space).
-GENIE_SPACE_ID = os.environ.get("GENIE_SPACE_ID", "")
+
+def optional_setting(name: str, default: str = "") -> str:
+    """An optional setting; empty or `none` means "not configured". The Apps API
+    rejects empty environment values, so the bundle passes `none` for unset ones."""
+    value = (os.environ.get(name) or "").strip()
+    return default if value.lower() in ("", "none", "-") else value
+
+
+GENIE_SPACE_ID = optional_setting("GENIE_SPACE_ID")
 
 # SQL warehouse used for system-table / live-integration queries (customer picks).
 # Bound as an app resource; the resource injects this env var.
@@ -35,16 +43,16 @@ APP_ADMINS = frozenset(
     e.strip().lower() for e in os.environ.get("APP_ADMINS", "").split(",") if e.strip())
 
 # Unity Catalog target for the Genie mirror (customer's own catalog/schema).
-GENIE_MIRROR_CATALOG = os.environ.get("GENIE_MIRROR_CATALOG", "main")
-GENIE_MIRROR_SCHEMA = os.environ.get("GENIE_MIRROR_SCHEMA", "grid_compass")
+GENIE_MIRROR_CATALOG = optional_setting("GENIE_MIRROR_CATALOG")
+GENIE_MIRROR_SCHEMA = optional_setting("GENIE_MIRROR_SCHEMA", "ai_value_flywheel_genie")
 
 # --- Discovery layer (Unity Catalog) ---------------------------------------
 # Where the ingestion pipeline writes workspace-metadata inventory and the
 # ai_query() enrichment staging table. Distinct from the Genie mirror (which is
 # a read-only projection of the portfolio for NL Q&A): this is working storage
 # for discovery, and the app SP needs CREATE TABLE / MODIFY / SELECT on it.
-ATLAS_CATALOG = os.environ.get("ATLAS_CATALOG", "")
-ATLAS_SCHEMA = os.environ.get("ATLAS_SCHEMA", "grid_compass_discovery")
+ATLAS_CATALOG = optional_setting("ATLAS_CATALOG")
+ATLAS_SCHEMA = optional_setting("ATLAS_SCHEMA", "ai_value_flywheel_discovery")
 
 
 def discovery_configured() -> bool:

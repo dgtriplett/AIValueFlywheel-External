@@ -61,22 +61,22 @@ variables:
   discovery_catalog:
     description: >-
       Catalog for the workspace-discovery inventory (Operate > Discovery). Leave
-      empty to skip; the feature then shows setup instructions.
-    default: ""
+      `none` to skip; the feature then shows setup instructions.
+    default: "none"
   discovery_schema:
     description: Schema for the discovery inventory.
     default: ai_value_flywheel_discovery
   genie_mirror_catalog:
-    description: Catalog for the Genie mirror of the portfolio (optional; empty to skip).
-    default: ""
+    description: Catalog for the Genie mirror of the portfolio (optional; `none` to skip).
+    default: "none"
   genie_mirror_schema:
     description: Schema for the Genie mirror tables.
     default: ai_value_flywheel_genie
   genie_space_id:
     description: >-
-      Genie space for "Ask" over the portfolio. Leave empty, deploy, create the space
+      Genie space for "Ask" over the portfolio. Leave `none`, deploy, create the space
       from Admin > Setup, then set this to the id it prints and redeploy.
-    default: ""
+    default: "none"
   refresh_catalog:
     description: >-
       "true" to overwrite reference catalog rows with this release's version on the
@@ -151,6 +151,7 @@ resources:
           spark_python_task:
             python_file: ./scripts/setup.py
             parameters:
+              - --repo-root=${workspace.file_path}
               - --storage-backend={{job.parameters.storage_backend}}
               - --app-name=${var.app_name}
               - --warehouse-id=${var.warehouse_id}

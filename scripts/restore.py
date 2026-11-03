@@ -16,7 +16,6 @@ the schema). Rows are keyed on their primary keys, so re-running is safe; pass
 from __future__ import annotations
 
 import argparse
-import asyncio
 import json
 import sys
 from pathlib import Path
@@ -60,7 +59,7 @@ def main() -> int:
         await db.close()
         return counts
 
-    counts = asyncio.run(run())
+    counts = setup_job.run_async(run())
     print(f"[restore] restored {sum(counts.values())} rows into {len(counts)} tables "
           f"({args.storage_backend}); backup taken {data.get('created_at')} "
           f"from {data.get('storage_backend')} app {data.get('app_version')}")
