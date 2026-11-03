@@ -1,0 +1,822 @@
+[
+  {
+    "source_category": "ERP",
+    "module": "Plant Maintenance / EAM",
+    "source_id": "ds_work_management"
+  },
+  {
+    "source_category": "ERP",
+    "module": "Materials Management",
+    "source_id": "ds_erp_financial"
+  },
+  {
+    "source_category": "ERP",
+    "module": "Finance & Controlling",
+    "source_id": "ds_erp_financial"
+  },
+  {
+    "source_category": "ERP",
+    "module": "Asset Accounting",
+    "source_id": "ds_erp_financial"
+  },
+  {
+    "source_category": "ERP",
+    "module": "Project System",
+    "source_id": "ds_capital_projects"
+  },
+  {
+    "source_category": "ERP",
+    "module": "Human Capital Management",
+    "source_id": "ds_hr_workforce"
+  },
+  {
+    "source_category": "ERP",
+    "module": "Procurement / Sourcing",
+    "source_id": "ds_procurement"
+  },
+  {
+    "source_category": "ERP",
+    "module": "Quality Management",
+    "source_id": "ds_erp_financial"
+  },
+  {
+    "source_category": "ERP",
+    "module": "Inventory / Warehouse",
+    "source_id": "ds_erp_financial"
+  },
+  {
+    "source_category": "ERP",
+    "module": "Environment, Health & Safety",
+    "source_id": "ds_safety_incidents"
+  },
+  {
+    "source_category": "ERP",
+    "module": "Work Clearance Management",
+    "source_id": "ds_work_management"
+  },
+  {
+    "source_category": "EAM/APM",
+    "module": "Asset Registry & Hierarchy",
+    "source_id": "ds_transformer_records"
+  },
+  {
+    "source_category": "EAM/APM",
+    "module": "Work Order Management",
+    "source_id": "ds_work_management"
+  },
+  {
+    "source_category": "EAM/APM",
+    "module": "Preventive Maintenance Scheduling",
+    "source_id": "ds_work_management"
+  },
+  {
+    "source_category": "EAM/APM",
+    "module": "Condition Monitoring / PdM",
+    "source_id": "ds_work_management"
+  },
+  {
+    "source_category": "EAM/APM",
+    "module": "Reliability / RCM",
+    "source_id": "ds_work_management"
+  },
+  {
+    "source_category": "EAM/APM",
+    "module": "Asset Performance & Health Scoring",
+    "source_id": "ds_transformer_records"
+  },
+  {
+    "source_category": "EAM/APM",
+    "module": "Reliability Library / Failure Modes",
+    "source_id": "ds_work_management"
+  },
+  {
+    "source_category": "EAM/APM",
+    "module": "Spare Parts / Inventory",
+    "source_id": "ds_work_management"
+  },
+  {
+    "source_category": "EAM/APM",
+    "module": "Mobile Workforce Management",
+    "source_id": "ds_mobile_workforce"
+  },
+  {
+    "source_category": "EAM/APM",
+    "module": "Inspection / Rounds",
+    "source_id": "ds_work_management"
+  },
+  {
+    "source_category": "EAM/APM",
+    "module": "Failure Analysis / RCA",
+    "source_id": "ds_work_management"
+  },
+  {
+    "source_category": "EAM/APM",
+    "module": "Vibration / Condition Routes",
+    "source_id": "ds_work_management"
+  },
+  {
+    "source_category": "EAM/APM",
+    "module": "Scheduling & Crew Optimization",
+    "source_id": "ds_mobile_workforce"
+  },
+  {
+    "source_category": "EAM/APM",
+    "module": "Calibration Management",
+    "source_id": "ds_work_management"
+  },
+  {
+    "source_category": "Data Historian",
+    "module": "Steam Turbine",
+    "source_id": "ds_pi_historian"
+  },
+  {
+    "source_category": "Data Historian",
+    "module": "Generator / Excitation",
+    "source_id": "ds_pi_historian"
+  },
+  {
+    "source_category": "Data Historian",
+    "module": "Boiler / HRSG",
+    "source_id": "ds_pi_historian"
+  },
+  {
+    "source_category": "Data Historian",
+    "module": "Feedwater / Condensate",
+    "source_id": "ds_pi_historian"
+  },
+  {
+    "source_category": "Data Historian",
+    "module": "Combustion / Burner Management",
+    "source_id": "ds_pi_historian"
+  },
+  {
+    "source_category": "Data Historian",
+    "module": "Balance of Plant",
+    "source_id": "ds_pi_historian"
+  },
+  {
+    "source_category": "Data Historian",
+    "module": "Emissions Process Tags",
+    "source_id": "ds_pi_historian"
+  },
+  {
+    "source_category": "Data Historian",
+    "module": "Vibration / Condition Monitoring",
+    "source_id": "ds_pi_historian"
+  },
+  {
+    "source_category": "Data Historian",
+    "module": "Wind Turbine",
+    "source_id": "ds_pi_historian"
+  },
+  {
+    "source_category": "Data Historian",
+    "module": "Solar Inverter / PV",
+    "source_id": "ds_pi_historian"
+  },
+  {
+    "source_category": "Data Historian",
+    "module": "Hydro Unit",
+    "source_id": "ds_pi_historian"
+  },
+  {
+    "source_category": "Data Historian",
+    "module": "Reactor Coolant System",
+    "source_id": "ds_pi_historian"
+  },
+  {
+    "source_category": "Data Historian",
+    "module": "Reactor Core / Neutronics",
+    "source_id": "ds_pi_historian"
+  },
+  {
+    "source_category": "Data Historian",
+    "module": "Steam Generator / Secondary",
+    "source_id": "ds_pi_historian"
+  },
+  {
+    "source_category": "Data Historian",
+    "module": "Pressurizer",
+    "source_id": "ds_pi_historian"
+  },
+  {
+    "source_category": "Data Historian",
+    "module": "Containment",
+    "source_id": "ds_pi_historian"
+  },
+  {
+    "source_category": "Data Historian",
+    "module": "Safety Systems (ECCS/RHR)",
+    "source_id": "ds_pi_historian"
+  },
+  {
+    "source_category": "EMS (Transmission)",
+    "module": "T-SCADA",
+    "source_id": "ds_trans_scada"
+  },
+  {
+    "source_category": "EMS (Transmission)",
+    "module": "Network Topology Processor",
+    "source_id": "ds_trans_scada"
+  },
+  {
+    "source_category": "EMS (Transmission)",
+    "module": "State Estimation",
+    "source_id": "ds_trans_scada"
+  },
+  {
+    "source_category": "EMS (Transmission)",
+    "module": "Real-Time Contingency Analysis",
+    "source_id": "ds_trans_scada"
+  },
+  {
+    "source_category": "EMS (Transmission)",
+    "module": "AGC / LFC",
+    "source_id": "ds_trans_scada"
+  },
+  {
+    "source_category": "EMS (Transmission)",
+    "module": "Economic Dispatch",
+    "source_id": "ds_trans_scada"
+  },
+  {
+    "source_category": "EMS (Transmission)",
+    "module": "Unit Commitment",
+    "source_id": "ds_trans_scada"
+  },
+  {
+    "source_category": "EMS (Transmission)",
+    "module": "Optimal Power Flow",
+    "source_id": "ds_trans_scada"
+  },
+  {
+    "source_category": "EMS (Transmission)",
+    "module": "Voltage / VAR Scheduling",
+    "source_id": "ds_trans_scada"
+  },
+  {
+    "source_category": "EMS (Transmission)",
+    "module": "Load Forecasting",
+    "source_id": "ds_trans_scada"
+  },
+  {
+    "source_category": "EMS (Transmission)",
+    "module": "Interchange Scheduling",
+    "source_id": "ds_trans_scada"
+  },
+  {
+    "source_category": "EMS (Transmission)",
+    "module": "Network Model / CIM",
+    "source_id": "ds_trans_scada"
+  },
+  {
+    "source_category": "EMS (Transmission)",
+    "module": "Disturbance / SOE Analysis",
+    "source_id": "ds_trans_scada"
+  },
+  {
+    "source_category": "ADMS (Distribution)",
+    "module": "D-SCADA",
+    "source_id": "ds_distribution_scada"
+  },
+  {
+    "source_category": "ADMS (Distribution)",
+    "module": "OMS (Outage Management)",
+    "source_id": "ds_outage_management"
+  },
+  {
+    "source_category": "ADMS (Distribution)",
+    "module": "DMS (Distribution Management)",
+    "source_id": "ds_dms_adms"
+  },
+  {
+    "source_category": "ADMS (Distribution)",
+    "module": "Distribution Power Flow",
+    "source_id": "ds_dms_adms"
+  },
+  {
+    "source_category": "ADMS (Distribution)",
+    "module": "FLISR",
+    "source_id": "ds_dms_adms"
+  },
+  {
+    "source_category": "ADMS (Distribution)",
+    "module": "VVO / CVR",
+    "source_id": "ds_dms_adms"
+  },
+  {
+    "source_category": "ADMS (Distribution)",
+    "module": "Fault Location Analysis",
+    "source_id": "ds_dms_adms"
+  },
+  {
+    "source_category": "ADMS (Distribution)",
+    "module": "Distribution State Estimation",
+    "source_id": "ds_dms_adms"
+  },
+  {
+    "source_category": "ADMS (Distribution)",
+    "module": "Distribution Load Forecasting",
+    "source_id": "ds_dms_adms"
+  },
+  {
+    "source_category": "ADMS (Distribution)",
+    "module": "Switching Sequence Management",
+    "source_id": "ds_dms_adms"
+  },
+  {
+    "source_category": "ADMS (Distribution)",
+    "module": "Storm / Damage Assessment",
+    "source_id": "ds_outage_management"
+  },
+  {
+    "source_category": "Standalone SCADA",
+    "module": "Real-Time Telemetry & Control",
+    "source_id": "ds_distribution_scada"
+  },
+  {
+    "source_category": "Standalone OMS",
+    "module": "Outage Events & Restoration",
+    "source_id": "ds_outage_management"
+  },
+  {
+    "source_category": "DERMS",
+    "module": "DER Registration & Modeling",
+    "source_id": "ds_program_enrollment"
+  },
+  {
+    "source_category": "DERMS",
+    "module": "DER Dispatch & Control",
+    "source_id": "ds_program_enrollment"
+  },
+  {
+    "source_category": "DERMS",
+    "module": "EV Charging Management",
+    "source_id": "ds_program_enrollment"
+  },
+  {
+    "source_category": "DERMS",
+    "module": "Demand Response / Load Control",
+    "source_id": "ds_program_enrollment"
+  },
+  {
+    "source_category": "DERMS",
+    "module": "Virtual Power Plant Orchestration",
+    "source_id": "ds_program_enrollment"
+  },
+  {
+    "source_category": "GIS",
+    "module": "Electric Network Model / Connectivity",
+    "source_id": "ds_dist_assets_gis"
+  },
+  {
+    "source_category": "GIS",
+    "module": "Utility Network (ArcGIS)",
+    "source_id": "ds_dist_assets_gis"
+  },
+  {
+    "source_category": "GIS",
+    "module": "Asset Inventory (Spatial)",
+    "source_id": "ds_dist_assets_gis"
+  },
+  {
+    "source_category": "GIS",
+    "module": "Staking / Design",
+    "source_id": "ds_dist_assets_gis"
+  },
+  {
+    "source_category": "GIS",
+    "module": "Vegetation Management",
+    "source_id": "ds_geospatial"
+  },
+  {
+    "source_category": "GIS",
+    "module": "Mobile GIS / Field Maps",
+    "source_id": "ds_dist_assets_gis"
+  },
+  {
+    "source_category": "Meter/AMI/MDM",
+    "module": "Head-End System",
+    "source_id": "ds_ami_meter"
+  },
+  {
+    "source_category": "Meter/AMI/MDM",
+    "module": "Interval Usage Collection",
+    "source_id": "ds_ami_meter"
+  },
+  {
+    "source_category": "Meter/AMI/MDM",
+    "module": "Meter Events / Alarms",
+    "source_id": "ds_ami_meter"
+  },
+  {
+    "source_category": "Meter/AMI/MDM",
+    "module": "Voltage / VAR Telemetry",
+    "source_id": "ds_ami_meter"
+  },
+  {
+    "source_category": "Meter/AMI/MDM",
+    "module": "MDM Repository",
+    "source_id": "ds_ami_meter"
+  },
+  {
+    "source_category": "Meter/AMI/MDM",
+    "module": "VEE (Validation/Estimation/Editing)",
+    "source_id": "ds_ami_meter"
+  },
+  {
+    "source_category": "Meter/AMI/MDM",
+    "module": "Load Profiles",
+    "source_id": "ds_ami_meter"
+  },
+  {
+    "source_category": "Meter/AMI/MDM",
+    "module": "Remote Disconnect / Reconnect",
+    "source_id": "ds_ami_meter"
+  },
+  {
+    "source_category": "CIS/Billing",
+    "module": "Customer Accounts",
+    "source_id": "ds_meter_billing"
+  },
+  {
+    "source_category": "CIS/Billing",
+    "module": "Billing Engine / Determinants",
+    "source_id": "ds_meter_billing"
+  },
+  {
+    "source_category": "CIS/Billing",
+    "module": "Rate Schedules / Tariffs",
+    "source_id": "ds_meter_billing"
+  },
+  {
+    "source_category": "CIS/Billing",
+    "module": "Payments / Collections",
+    "source_id": "ds_meter_billing"
+  },
+  {
+    "source_category": "CIS/Billing",
+    "module": "CRM / Contact Center",
+    "source_id": "ds_call_center"
+  },
+  {
+    "source_category": "CIS/Billing",
+    "module": "Service Orders / Field Service",
+    "source_id": "ds_meter_billing"
+  },
+  {
+    "source_category": "CIS/Billing",
+    "module": "Revenue Protection / Theft",
+    "source_id": "ds_meter_billing"
+  },
+  {
+    "source_category": "CIS/Billing",
+    "module": "Programs / DSM Enrollment",
+    "source_id": "ds_program_enrollment"
+  },
+  {
+    "source_category": "Market/ISO Feed",
+    "module": "Day-Ahead LMP",
+    "source_id": "ds_iso_market"
+  },
+  {
+    "source_category": "Market/ISO Feed",
+    "module": "Real-Time LMP",
+    "source_id": "ds_iso_market"
+  },
+  {
+    "source_category": "Market/ISO Feed",
+    "module": "LMP Components (Energy/Congestion/Loss)",
+    "source_id": "ds_iso_market"
+  },
+  {
+    "source_category": "Market/ISO Feed",
+    "module": "Bids & Offers",
+    "source_id": "ds_iso_market"
+  },
+  {
+    "source_category": "Market/ISO Feed",
+    "module": "Virtual Bids (INC/DEC)",
+    "source_id": "ds_iso_market"
+  },
+  {
+    "source_category": "Market/ISO Feed",
+    "module": "Ancillary Services",
+    "source_id": "ds_iso_market"
+  },
+  {
+    "source_category": "Market/ISO Feed",
+    "module": "Capacity Market",
+    "source_id": "ds_iso_market"
+  },
+  {
+    "source_category": "Market/ISO Feed",
+    "module": "Settlements / Invoicing",
+    "source_id": "ds_iso_market"
+  },
+  {
+    "source_category": "Market/ISO Feed",
+    "module": "FTR / CRR",
+    "source_id": "ds_iso_market"
+  },
+  {
+    "source_category": "Market/ISO Feed",
+    "module": "Congestion / Constraints",
+    "source_id": "ds_iso_market"
+  },
+  {
+    "source_category": "Market/ISO Feed",
+    "module": "Interchange / Tie Schedules",
+    "source_id": "ds_iso_market"
+  },
+  {
+    "source_category": "Market/ISO Feed",
+    "module": "ISO Load & Gen Forecast",
+    "source_id": "ds_iso_market"
+  },
+  {
+    "source_category": "PMU/Synchrophasor",
+    "module": "Phasor Measurement",
+    "source_id": "ds_pmu"
+  },
+  {
+    "source_category": "PMU/Synchrophasor",
+    "module": "Phasor Data Concentrator",
+    "source_id": "ds_pmu"
+  },
+  {
+    "source_category": "PMU/Synchrophasor",
+    "module": "Oscillation Detection",
+    "source_id": "ds_pmu"
+  },
+  {
+    "source_category": "PMU/Synchrophasor",
+    "module": "Linear State Measurement",
+    "source_id": "ds_pmu"
+  },
+  {
+    "source_category": "PMU/Synchrophasor",
+    "module": "Islanding / Angle Separation",
+    "source_id": "ds_pmu"
+  },
+  {
+    "source_category": "CEMS",
+    "module": "Gas Analyzers (NOx/SO2/CO2/O2)",
+    "source_id": "ds_emissions_cems"
+  },
+  {
+    "source_category": "CEMS",
+    "module": "Opacity / Particulate",
+    "source_id": "ds_emissions_cems"
+  },
+  {
+    "source_category": "CEMS",
+    "module": "Stack Flow",
+    "source_id": "ds_emissions_cems"
+  },
+  {
+    "source_category": "CEMS",
+    "module": "DAHS (Data Acquisition)",
+    "source_id": "ds_emissions_cems"
+  },
+  {
+    "source_category": "CEMS",
+    "module": "Part 75 Reporting / EDR",
+    "source_id": "ds_emissions_cems"
+  },
+  {
+    "source_category": "CEMS",
+    "module": "QA/QC (RATA/Calibration)",
+    "source_id": "ds_emissions_cems"
+  },
+  {
+    "source_category": "LIMS",
+    "module": "Sample Management",
+    "source_id": "ds_pi_historian"
+  },
+  {
+    "source_category": "LIMS",
+    "module": "Water / Fuel Chemistry",
+    "source_id": "ds_pi_historian"
+  },
+  {
+    "source_category": "LIMS",
+    "module": "Results Management",
+    "source_id": "ds_pi_historian"
+  },
+  {
+    "source_category": "LIMS",
+    "module": "QA/QC / Control Charts",
+    "source_id": "ds_pi_historian"
+  },
+  {
+    "source_category": "Radiation/Dosimetry",
+    "module": "Personnel Dosimetry",
+    "source_id": "ds_safety_incidents"
+  },
+  {
+    "source_category": "Radiation/Dosimetry",
+    "module": "RWP / Access Control",
+    "source_id": "ds_safety_incidents"
+  },
+  {
+    "source_category": "Radiation/Dosimetry",
+    "module": "Area Radiation Monitors",
+    "source_id": "ds_safety_incidents"
+  },
+  {
+    "source_category": "Radiation/Dosimetry",
+    "module": "Effluent Monitoring",
+    "source_id": "ds_safety_incidents"
+  },
+  {
+    "source_category": "Radiation/Dosimetry",
+    "module": "Contamination / Survey",
+    "source_id": "ds_safety_incidents"
+  },
+  {
+    "source_category": "Radiation/Dosimetry",
+    "module": "ALARA Planning",
+    "source_id": "ds_safety_incidents"
+  },
+  {
+    "source_category": "Document/Content Mgmt",
+    "module": "Procedures Management",
+    "source_id": "ds_regulatory_filings"
+  },
+  {
+    "source_category": "Document/Content Mgmt",
+    "module": "Engineering Drawings / CAD",
+    "source_id": "ds_regulatory_filings"
+  },
+  {
+    "source_category": "Document/Content Mgmt",
+    "module": "Regulatory Document Mgmt",
+    "source_id": "ds_regulatory_filings"
+  },
+  {
+    "source_category": "Document/Content Mgmt",
+    "module": "Records Management / Retention",
+    "source_id": "ds_regulatory_filings"
+  },
+  {
+    "source_category": "Document/Content Mgmt",
+    "module": "Commitment Tracking",
+    "source_id": "ds_regulatory_filings"
+  },
+  {
+    "source_category": "Fuel Management",
+    "module": "Fossil Fuel Inventory",
+    "source_id": "ds_fuel_mgmt"
+  },
+  {
+    "source_category": "Fuel Management",
+    "module": "Fuel Contracts / Procurement",
+    "source_id": "ds_fuel_mgmt"
+  },
+  {
+    "source_category": "Fuel Management",
+    "module": "Gas Nominations",
+    "source_id": "ds_fuel_mgmt"
+  },
+  {
+    "source_category": "Fuel Management",
+    "module": "Fuel Quality / Blending",
+    "source_id": "ds_fuel_mgmt"
+  },
+  {
+    "source_category": "Fuel Management",
+    "module": "Nuclear Fuel Cycle",
+    "source_id": "ds_fuel_mgmt"
+  },
+  {
+    "source_category": "Fuel Management",
+    "module": "Core Design / Reload",
+    "source_id": "ds_fuel_mgmt"
+  },
+  {
+    "source_category": "Fuel Management",
+    "module": "Spent Fuel Management",
+    "source_id": "ds_fuel_mgmt"
+  },
+  {
+    "source_category": "Weather",
+    "module": "NWP Forecasts",
+    "source_id": "ds_weather"
+  },
+  {
+    "source_category": "Weather",
+    "module": "Site-Specific Forecasts",
+    "source_id": "ds_weather"
+  },
+  {
+    "source_category": "Weather",
+    "module": "Lightning Detection",
+    "source_id": "ds_weather"
+  },
+  {
+    "source_category": "Weather",
+    "module": "Storm / Severe Weather Tracking",
+    "source_id": "ds_weather"
+  },
+  {
+    "source_category": "Weather",
+    "module": "Renewable Generation Forecasting",
+    "source_id": "ds_weather"
+  },
+  {
+    "source_category": "Weather",
+    "module": "Icing / Wind Loading",
+    "source_id": "ds_weather"
+  },
+  {
+    "source_category": "IT Observability",
+    "module": "Infrastructure & Host Logs",
+    "source_id": "ds_it_observability"
+  },
+  {
+    "source_category": "IT Observability",
+    "module": "Application & Service Logs",
+    "source_id": "ds_it_observability"
+  },
+  {
+    "source_category": "IT Observability",
+    "module": "Network Flow Telemetry",
+    "source_id": "ds_it_observability"
+  },
+  {
+    "source_category": "OT Security",
+    "module": "ICS/SCADA Security Events",
+    "source_id": "ds_ot_security"
+  },
+  {
+    "source_category": "OT Security",
+    "module": "NERC CIP Audit Logs",
+    "source_id": "ds_ot_security"
+  },
+  {
+    "source_category": "OT Security",
+    "module": "OT Network Intrusion Monitoring",
+    "source_id": "ds_ot_security"
+  },
+  {
+    "source_category": "Identity & Access",
+    "module": "Workforce Identity / SSO",
+    "source_id": "ds_identity_iam"
+  },
+  {
+    "source_category": "Identity & Access",
+    "module": "Customer Identity",
+    "source_id": "ds_identity_iam"
+  },
+  {
+    "source_category": "Identity & Access",
+    "module": "Entitlements / RBAC",
+    "source_id": "ds_identity_iam"
+  },
+  {
+    "source_category": "DCS / Unit Controls",
+    "module": "Control Setpoints & Alarms",
+    "source_id": "ds_dcs_controls"
+  },
+  {
+    "source_category": "DCS / Unit Controls",
+    "module": "Sequence-of-Events (SOE)",
+    "source_id": "ds_dcs_controls"
+  },
+  {
+    "source_category": "DCS / Unit Controls",
+    "module": "Control Loop / Regulatory Data",
+    "source_id": "ds_dcs_controls"
+  },
+  {
+    "source_category": "Customer Outage Comms",
+    "module": "Outage Alerts & Notifications",
+    "source_id": "ds_outage_notifications"
+  },
+  {
+    "source_category": "Customer Outage Comms",
+    "module": "Restoration ETA Feed",
+    "source_id": "ds_outage_notifications"
+  },
+  {
+    "source_category": "Customer Outage Comms",
+    "module": "Customer Acknowledgements",
+    "source_id": "ds_outage_notifications"
+  },
+  {
+    "source_category": "Outage & Maintenance Planning",
+    "module": "Planned Outage Schedules",
+    "source_id": "ds_outage_planning"
+  },
+  {
+    "source_category": "Outage & Maintenance Planning",
+    "module": "Unit / Asset Availability",
+    "source_id": "ds_outage_planning"
+  },
+  {
+    "source_category": "Outage & Maintenance Planning",
+    "module": "Clearance & Switching Plans",
+    "source_id": "ds_outage_planning"
+  }
+]

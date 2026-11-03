@@ -1,0 +1,658 @@
+{
+  "ADMS (Distribution)||D-SCADA": {
+    "tier": "raw",
+    "curate_effort": null
+  },
+  "ADMS (Distribution)||DMS (Distribution Management)": {
+    "tier": "raw",
+    "curate_effort": null
+  },
+  "ADMS (Distribution)||Distribution Load Forecasting": {
+    "tier": "product",
+    "curate_effort": "M"
+  },
+  "ADMS (Distribution)||Distribution Power Flow": {
+    "tier": "product",
+    "curate_effort": "L"
+  },
+  "ADMS (Distribution)||Distribution State Estimation": {
+    "tier": "product",
+    "curate_effort": "L"
+  },
+  "ADMS (Distribution)||FLISR": {
+    "tier": "product",
+    "curate_effort": "L"
+  },
+  "ADMS (Distribution)||Fault Location Analysis": {
+    "tier": "product",
+    "curate_effort": "M"
+  },
+  "ADMS (Distribution)||OMS (Outage Management)": {
+    "tier": "raw",
+    "curate_effort": null
+  },
+  "ADMS (Distribution)||Storm / Damage Assessment": {
+    "tier": "product",
+    "curate_effort": "M"
+  },
+  "ADMS (Distribution)||Switching Sequence Management": {
+    "tier": "raw",
+    "curate_effort": null
+  },
+  "ADMS (Distribution)||VVO / CVR": {
+    "tier": "product",
+    "curate_effort": "M"
+  },
+  "CEMS||DAHS (Data Acquisition)": {
+    "tier": "raw",
+    "curate_effort": null
+  },
+  "CEMS||Gas Analyzers (NOx/SO2/CO2/O2)": {
+    "tier": "raw",
+    "curate_effort": null
+  },
+  "CEMS||Opacity / Particulate": {
+    "tier": "raw",
+    "curate_effort": null
+  },
+  "CEMS||Part 75 Reporting / EDR": {
+    "tier": "product",
+    "curate_effort": "L"
+  },
+  "CEMS||QA/QC (RATA/Calibration)": {
+    "tier": "raw",
+    "curate_effort": null
+  },
+  "CEMS||Stack Flow": {
+    "tier": "raw",
+    "curate_effort": null
+  },
+  "CIS/Billing||Billing Engine / Determinants": {
+    "tier": "raw",
+    "curate_effort": null
+  },
+  "CIS/Billing||CRM / Contact Center": {
+    "tier": "raw",
+    "curate_effort": null
+  },
+  "CIS/Billing||Customer Accounts": {
+    "tier": "raw",
+    "curate_effort": null
+  },
+  "CIS/Billing||Payments / Collections": {
+    "tier": "raw",
+    "curate_effort": null
+  },
+  "CIS/Billing||Programs / DSM Enrollment": {
+    "tier": "raw",
+    "curate_effort": null
+  },
+  "CIS/Billing||Rate Schedules / Tariffs": {
+    "tier": "raw",
+    "curate_effort": null
+  },
+  "CIS/Billing||Revenue Protection / Theft": {
+    "tier": "raw",
+    "curate_effort": null
+  },
+  "CIS/Billing||Service Orders / Field Service": {
+    "tier": "raw",
+    "curate_effort": null
+  },
+  "Customer Outage Comms||Customer Acknowledgements": {
+    "tier": "raw",
+    "curate_effort": null
+  },
+  "Customer Outage Comms||Outage Alerts & Notifications": {
+    "tier": "raw",
+    "curate_effort": null
+  },
+  "Customer Outage Comms||Restoration ETA Feed": {
+    "tier": "product",
+    "curate_effort": "M"
+  },
+  "DCS / Unit Controls||Control Loop / Regulatory Data": {
+    "tier": "raw",
+    "curate_effort": null
+  },
+  "DCS / Unit Controls||Control Setpoints & Alarms": {
+    "tier": "raw",
+    "curate_effort": null
+  },
+  "DCS / Unit Controls||Sequence-of-Events (SOE)": {
+    "tier": "raw",
+    "curate_effort": null
+  },
+  "DERMS||DER Dispatch & Control": {
+    "tier": "raw",
+    "curate_effort": null
+  },
+  "DERMS||DER Registration & Modeling": {
+    "tier": "raw",
+    "curate_effort": null
+  },
+  "DERMS||Demand Response / Load Control": {
+    "tier": "raw",
+    "curate_effort": null
+  },
+  "DERMS||EV Charging Management": {
+    "tier": "raw",
+    "curate_effort": null
+  },
+  "DERMS||Virtual Power Plant Orchestration": {
+    "tier": "product",
+    "curate_effort": "L"
+  },
+  "Data Historian||Balance of Plant": {
+    "tier": "raw",
+    "curate_effort": null
+  },
+  "Data Historian||Boiler / HRSG": {
+    "tier": "raw",
+    "curate_effort": null
+  },
+  "Data Historian||Combustion / Burner Management": {
+    "tier": "raw",
+    "curate_effort": null
+  },
+  "Data Historian||Containment": {
+    "tier": "raw",
+    "curate_effort": null
+  },
+  "Data Historian||Emissions Process Tags": {
+    "tier": "raw",
+    "curate_effort": null
+  },
+  "Data Historian||Feedwater / Condensate": {
+    "tier": "raw",
+    "curate_effort": null
+  },
+  "Data Historian||Generator / Excitation": {
+    "tier": "raw",
+    "curate_effort": null
+  },
+  "Data Historian||Hydro Unit": {
+    "tier": "raw",
+    "curate_effort": null
+  },
+  "Data Historian||Pressurizer": {
+    "tier": "raw",
+    "curate_effort": null
+  },
+  "Data Historian||Reactor Coolant System": {
+    "tier": "raw",
+    "curate_effort": null
+  },
+  "Data Historian||Reactor Core / Neutronics": {
+    "tier": "raw",
+    "curate_effort": null
+  },
+  "Data Historian||Safety Systems (ECCS/RHR)": {
+    "tier": "raw",
+    "curate_effort": null
+  },
+  "Data Historian||Solar Inverter / PV": {
+    "tier": "raw",
+    "curate_effort": null
+  },
+  "Data Historian||Steam Generator / Secondary": {
+    "tier": "raw",
+    "curate_effort": null
+  },
+  "Data Historian||Steam Turbine": {
+    "tier": "raw",
+    "curate_effort": null
+  },
+  "Data Historian||Vibration / Condition Monitoring": {
+    "tier": "raw",
+    "curate_effort": null
+  },
+  "Data Historian||Wind Turbine": {
+    "tier": "raw",
+    "curate_effort": null
+  },
+  "Document/Content Mgmt||Commitment Tracking": {
+    "tier": "raw",
+    "curate_effort": null
+  },
+  "Document/Content Mgmt||Engineering Drawings / CAD": {
+    "tier": "raw",
+    "curate_effort": null
+  },
+  "Document/Content Mgmt||Procedures Management": {
+    "tier": "raw",
+    "curate_effort": null
+  },
+  "Document/Content Mgmt||Records Management / Retention": {
+    "tier": "raw",
+    "curate_effort": null
+  },
+  "Document/Content Mgmt||Regulatory Document Mgmt": {
+    "tier": "raw",
+    "curate_effort": null
+  },
+  "EAM/APM||Asset Performance & Health Scoring": {
+    "tier": "product",
+    "curate_effort": "L"
+  },
+  "EAM/APM||Asset Registry & Hierarchy": {
+    "tier": "raw",
+    "curate_effort": null
+  },
+  "EAM/APM||Calibration Management": {
+    "tier": "raw",
+    "curate_effort": null
+  },
+  "EAM/APM||Condition Monitoring / PdM": {
+    "tier": "raw",
+    "curate_effort": null
+  },
+  "EAM/APM||Failure Analysis / RCA": {
+    "tier": "product",
+    "curate_effort": "M"
+  },
+  "EAM/APM||Inspection / Rounds": {
+    "tier": "raw",
+    "curate_effort": null
+  },
+  "EAM/APM||Mobile Workforce Management": {
+    "tier": "raw",
+    "curate_effort": null
+  },
+  "EAM/APM||Preventive Maintenance Scheduling": {
+    "tier": "raw",
+    "curate_effort": null
+  },
+  "EAM/APM||Reliability / RCM": {
+    "tier": "product",
+    "curate_effort": "L"
+  },
+  "EAM/APM||Reliability Library / Failure Modes": {
+    "tier": "raw",
+    "curate_effort": null
+  },
+  "EAM/APM||Scheduling & Crew Optimization": {
+    "tier": "product",
+    "curate_effort": "M"
+  },
+  "EAM/APM||Spare Parts / Inventory": {
+    "tier": "raw",
+    "curate_effort": null
+  },
+  "EAM/APM||Vibration / Condition Routes": {
+    "tier": "raw",
+    "curate_effort": null
+  },
+  "EAM/APM||Work Order Management": {
+    "tier": "raw",
+    "curate_effort": null
+  },
+  "EMS (Transmission)||AGC / LFC": {
+    "tier": "raw",
+    "curate_effort": null
+  },
+  "EMS (Transmission)||Disturbance / SOE Analysis": {
+    "tier": "raw",
+    "curate_effort": null
+  },
+  "EMS (Transmission)||Economic Dispatch": {
+    "tier": "product",
+    "curate_effort": "M"
+  },
+  "EMS (Transmission)||Interchange Scheduling": {
+    "tier": "raw",
+    "curate_effort": null
+  },
+  "EMS (Transmission)||Load Forecasting": {
+    "tier": "product",
+    "curate_effort": "M"
+  },
+  "EMS (Transmission)||Network Model / CIM": {
+    "tier": "raw",
+    "curate_effort": null
+  },
+  "EMS (Transmission)||Network Topology Processor": {
+    "tier": "product",
+    "curate_effort": "M"
+  },
+  "EMS (Transmission)||Optimal Power Flow": {
+    "tier": "product",
+    "curate_effort": "L"
+  },
+  "EMS (Transmission)||Real-Time Contingency Analysis": {
+    "tier": "product",
+    "curate_effort": "L"
+  },
+  "EMS (Transmission)||State Estimation": {
+    "tier": "product",
+    "curate_effort": "L"
+  },
+  "EMS (Transmission)||T-SCADA": {
+    "tier": "raw",
+    "curate_effort": null
+  },
+  "EMS (Transmission)||Unit Commitment": {
+    "tier": "product",
+    "curate_effort": "L"
+  },
+  "EMS (Transmission)||Voltage / VAR Scheduling": {
+    "tier": "product",
+    "curate_effort": "M"
+  },
+  "ERP||Asset Accounting": {
+    "tier": "raw",
+    "curate_effort": null
+  },
+  "ERP||Environment, Health & Safety": {
+    "tier": "raw",
+    "curate_effort": null
+  },
+  "ERP||Finance & Controlling": {
+    "tier": "raw",
+    "curate_effort": null
+  },
+  "ERP||Human Capital Management": {
+    "tier": "raw",
+    "curate_effort": null
+  },
+  "ERP||Inventory / Warehouse": {
+    "tier": "raw",
+    "curate_effort": null
+  },
+  "ERP||Materials Management": {
+    "tier": "raw",
+    "curate_effort": null
+  },
+  "ERP||Plant Maintenance / EAM": {
+    "tier": "raw",
+    "curate_effort": null
+  },
+  "ERP||Procurement / Sourcing": {
+    "tier": "raw",
+    "curate_effort": null
+  },
+  "ERP||Project System": {
+    "tier": "raw",
+    "curate_effort": null
+  },
+  "ERP||Quality Management": {
+    "tier": "raw",
+    "curate_effort": null
+  },
+  "ERP||Work Clearance Management": {
+    "tier": "raw",
+    "curate_effort": null
+  },
+  "Fuel Management||Core Design / Reload": {
+    "tier": "raw",
+    "curate_effort": null
+  },
+  "Fuel Management||Fossil Fuel Inventory": {
+    "tier": "raw",
+    "curate_effort": null
+  },
+  "Fuel Management||Fuel Contracts / Procurement": {
+    "tier": "raw",
+    "curate_effort": null
+  },
+  "Fuel Management||Fuel Quality / Blending": {
+    "tier": "raw",
+    "curate_effort": null
+  },
+  "Fuel Management||Gas Nominations": {
+    "tier": "raw",
+    "curate_effort": null
+  },
+  "Fuel Management||Nuclear Fuel Cycle": {
+    "tier": "raw",
+    "curate_effort": null
+  },
+  "Fuel Management||Spent Fuel Management": {
+    "tier": "raw",
+    "curate_effort": null
+  },
+  "GIS||Asset Inventory (Spatial)": {
+    "tier": "raw",
+    "curate_effort": null
+  },
+  "GIS||Electric Network Model / Connectivity": {
+    "tier": "raw",
+    "curate_effort": null
+  },
+  "GIS||Mobile GIS / Field Maps": {
+    "tier": "raw",
+    "curate_effort": null
+  },
+  "GIS||Staking / Design": {
+    "tier": "raw",
+    "curate_effort": null
+  },
+  "GIS||Utility Network (ArcGIS)": {
+    "tier": "raw",
+    "curate_effort": null
+  },
+  "GIS||Vegetation Management": {
+    "tier": "raw",
+    "curate_effort": null
+  },
+  "IT Observability||Application & Service Logs": {
+    "tier": "raw",
+    "curate_effort": null
+  },
+  "IT Observability||Infrastructure & Host Logs": {
+    "tier": "raw",
+    "curate_effort": null
+  },
+  "IT Observability||Network Flow Telemetry": {
+    "tier": "raw",
+    "curate_effort": null
+  },
+  "Identity & Access||Customer Identity": {
+    "tier": "raw",
+    "curate_effort": null
+  },
+  "Identity & Access||Entitlements / RBAC": {
+    "tier": "raw",
+    "curate_effort": null
+  },
+  "Identity & Access||Workforce Identity / SSO": {
+    "tier": "raw",
+    "curate_effort": null
+  },
+  "LIMS||QA/QC / Control Charts": {
+    "tier": "product",
+    "curate_effort": "M"
+  },
+  "LIMS||Results Management": {
+    "tier": "raw",
+    "curate_effort": null
+  },
+  "LIMS||Sample Management": {
+    "tier": "raw",
+    "curate_effort": null
+  },
+  "LIMS||Water / Fuel Chemistry": {
+    "tier": "raw",
+    "curate_effort": null
+  },
+  "Market/ISO Feed||Ancillary Services": {
+    "tier": "raw",
+    "curate_effort": null
+  },
+  "Market/ISO Feed||Bids & Offers": {
+    "tier": "raw",
+    "curate_effort": null
+  },
+  "Market/ISO Feed||Capacity Market": {
+    "tier": "raw",
+    "curate_effort": null
+  },
+  "Market/ISO Feed||Congestion / Constraints": {
+    "tier": "raw",
+    "curate_effort": null
+  },
+  "Market/ISO Feed||Day-Ahead LMP": {
+    "tier": "raw",
+    "curate_effort": null
+  },
+  "Market/ISO Feed||FTR / CRR": {
+    "tier": "raw",
+    "curate_effort": null
+  },
+  "Market/ISO Feed||ISO Load & Gen Forecast": {
+    "tier": "raw",
+    "curate_effort": null
+  },
+  "Market/ISO Feed||Interchange / Tie Schedules": {
+    "tier": "raw",
+    "curate_effort": null
+  },
+  "Market/ISO Feed||LMP Components (Energy/Congestion/Loss)": {
+    "tier": "raw",
+    "curate_effort": null
+  },
+  "Market/ISO Feed||Real-Time LMP": {
+    "tier": "raw",
+    "curate_effort": null
+  },
+  "Market/ISO Feed||Settlements / Invoicing": {
+    "tier": "product",
+    "curate_effort": "XL"
+  },
+  "Market/ISO Feed||Virtual Bids (INC/DEC)": {
+    "tier": "raw",
+    "curate_effort": null
+  },
+  "Meter/AMI/MDM||Head-End System": {
+    "tier": "raw",
+    "curate_effort": null
+  },
+  "Meter/AMI/MDM||Interval Usage Collection": {
+    "tier": "raw",
+    "curate_effort": null
+  },
+  "Meter/AMI/MDM||Load Profiles": {
+    "tier": "product",
+    "curate_effort": "M"
+  },
+  "Meter/AMI/MDM||MDM Repository": {
+    "tier": "raw",
+    "curate_effort": null
+  },
+  "Meter/AMI/MDM||Meter Events / Alarms": {
+    "tier": "raw",
+    "curate_effort": null
+  },
+  "Meter/AMI/MDM||Remote Disconnect / Reconnect": {
+    "tier": "raw",
+    "curate_effort": null
+  },
+  "Meter/AMI/MDM||VEE (Validation/Estimation/Editing)": {
+    "tier": "product",
+    "curate_effort": "L"
+  },
+  "Meter/AMI/MDM||Voltage / VAR Telemetry": {
+    "tier": "raw",
+    "curate_effort": null
+  },
+  "OT Security||ICS/SCADA Security Events": {
+    "tier": "raw",
+    "curate_effort": null
+  },
+  "OT Security||NERC CIP Audit Logs": {
+    "tier": "raw",
+    "curate_effort": null
+  },
+  "OT Security||OT Network Intrusion Monitoring": {
+    "tier": "raw",
+    "curate_effort": null
+  },
+  "Outage & Maintenance Planning||Clearance & Switching Plans": {
+    "tier": "raw",
+    "curate_effort": null
+  },
+  "Outage & Maintenance Planning||Planned Outage Schedules": {
+    "tier": "raw",
+    "curate_effort": null
+  },
+  "Outage & Maintenance Planning||Unit / Asset Availability": {
+    "tier": "product",
+    "curate_effort": "M"
+  },
+  "PMU/Synchrophasor||Islanding / Angle Separation": {
+    "tier": "product",
+    "curate_effort": "M"
+  },
+  "PMU/Synchrophasor||Linear State Measurement": {
+    "tier": "product",
+    "curate_effort": "L"
+  },
+  "PMU/Synchrophasor||Oscillation Detection": {
+    "tier": "product",
+    "curate_effort": "M"
+  },
+  "PMU/Synchrophasor||Phasor Data Concentrator": {
+    "tier": "raw",
+    "curate_effort": null
+  },
+  "PMU/Synchrophasor||Phasor Measurement": {
+    "tier": "raw",
+    "curate_effort": null
+  },
+  "Radiation/Dosimetry||ALARA Planning": {
+    "tier": "product",
+    "curate_effort": "M"
+  },
+  "Radiation/Dosimetry||Area Radiation Monitors": {
+    "tier": "raw",
+    "curate_effort": null
+  },
+  "Radiation/Dosimetry||Contamination / Survey": {
+    "tier": "raw",
+    "curate_effort": null
+  },
+  "Radiation/Dosimetry||Effluent Monitoring": {
+    "tier": "raw",
+    "curate_effort": null
+  },
+  "Radiation/Dosimetry||Personnel Dosimetry": {
+    "tier": "raw",
+    "curate_effort": null
+  },
+  "Radiation/Dosimetry||RWP / Access Control": {
+    "tier": "raw",
+    "curate_effort": null
+  },
+  "Standalone OMS||Outage Events & Restoration": {
+    "tier": "raw",
+    "curate_effort": null
+  },
+  "Standalone SCADA||Real-Time Telemetry & Control": {
+    "tier": "raw",
+    "curate_effort": null
+  },
+  "Weather||Icing / Wind Loading": {
+    "tier": "product",
+    "curate_effort": "M"
+  },
+  "Weather||Lightning Detection": {
+    "tier": "raw",
+    "curate_effort": null
+  },
+  "Weather||NWP Forecasts": {
+    "tier": "raw",
+    "curate_effort": null
+  },
+  "Weather||Renewable Generation Forecasting": {
+    "tier": "product",
+    "curate_effort": "L"
+  },
+  "Weather||Site-Specific Forecasts": {
+    "tier": "product",
+    "curate_effort": "M"
+  },
+  "Weather||Storm / Severe Weather Tracking": {
+    "tier": "raw",
+    "curate_effort": null
+  }
+}

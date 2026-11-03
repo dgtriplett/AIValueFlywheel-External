@@ -1,0 +1,298 @@
+[
+  {
+    "wizard_id": "ds_scada",
+    "wizard_name": "SCADA / Historian",
+    "wizard_category": "Operational",
+    "source_id": "ds_distribution_scada",
+    "confidence": "medium",
+    "notes": "Generic SCADA; splits into dist vs trans in canonical \u2014 defaulting to distribution."
+  },
+  {
+    "wizard_id": "ds_ami",
+    "wizard_name": "AMI Smart Meter Data",
+    "wizard_category": "Operational",
+    "source_id": "ds_ami_meter",
+    "confidence": "exact",
+    "notes": ""
+  },
+  {
+    "wizard_id": "ds_amr",
+    "wizard_name": "AMR Meter Reads",
+    "wizard_category": "Operational",
+    "source_id": "ds_ami_meter",
+    "confidence": "high",
+    "notes": "Legacy AMR folds into the AMI/metering coarse source."
+  },
+  {
+    "wizard_id": "ds_oms",
+    "wizard_name": "OMS (Outage Management)",
+    "wizard_category": "Operational",
+    "source_id": "ds_outage_management",
+    "confidence": "exact",
+    "notes": ""
+  },
+  {
+    "wizard_id": "ds_dms",
+    "wizard_name": "DMS / ADMS",
+    "wizard_category": "Operational",
+    "source_id": "ds_dms_adms",
+    "confidence": "exact",
+    "notes": ""
+  },
+  {
+    "wizard_id": "ds_ems",
+    "wizard_name": "EMS (Energy Management)",
+    "wizard_category": "Operational",
+    "source_id": "ds_trans_scada",
+    "confidence": "high",
+    "notes": "EMS = transmission SCADA+EMS coarse source."
+  },
+  {
+    "wizard_id": "ds_gis",
+    "wizard_name": "GIS Network Model",
+    "wizard_category": "Operational",
+    "source_id": "ds_dist_assets_gis",
+    "confidence": "high",
+    "notes": ""
+  },
+  {
+    "wizard_id": "ds_field_mobile",
+    "wizard_name": "Mobile Field / Crew Data",
+    "wizard_category": "Operational",
+    "source_id": "ds_mobile_workforce",
+    "confidence": "high",
+    "notes": ""
+  },
+  {
+    "wizard_id": "ds_lidar",
+    "wizard_name": "LiDAR Point Clouds",
+    "wizard_category": "Operational",
+    "source_id": "ds_geospatial",
+    "confidence": "high",
+    "notes": ""
+  },
+  {
+    "wizard_id": "ds_drone",
+    "wizard_name": "Drone / Aerial Imagery",
+    "wizard_category": "Operational",
+    "source_id": "ds_geospatial",
+    "confidence": "high",
+    "notes": ""
+  },
+  {
+    "wizard_id": "ds_satellite",
+    "wizard_name": "Satellite Imagery",
+    "wizard_category": "Operational",
+    "source_id": "ds_geospatial",
+    "confidence": "high",
+    "notes": ""
+  },
+  {
+    "wizard_id": "ds_dcs_plant",
+    "wizard_name": "Generation Plant DCS / Historian",
+    "wizard_category": "Operational",
+    "source_id": "ds_dcs_controls",
+    "confidence": "high",
+    "notes": "Plant DCS/historian; pairs with ds_pi_historian at module grain."
+  },
+  {
+    "wizard_id": "ds_cp",
+    "wizard_name": "Cathodic Protection Telemetry",
+    "wizard_category": "Operational",
+    "source_id": null,
+    "confidence": "flag",
+    "notes": "Gas cathodic-protection telemetry \u2014 gas-integrity data not represented in the 31 (or in grid-atlas's 146). Add a gas-integrity coarse source if the gas motion needs it."
+  },
+  {
+    "wizard_id": "ds_ili",
+    "wizard_name": "Pipeline ILI / Smart Pig",
+    "wizard_category": "Operational",
+    "source_id": null,
+    "confidence": "flag",
+    "notes": "Pipeline ILI / smart-pig \u2014 gas-integrity gap (see ds_cp)."
+  },
+  {
+    "wizard_id": "ds_methane",
+    "wizard_name": "Methane / Leak Survey",
+    "wizard_category": "Operational",
+    "source_id": null,
+    "confidence": "flag",
+    "notes": "Methane/leak survey \u2014 gas-integrity gap (see ds_cp)."
+  },
+  {
+    "wizard_id": "ds_compressor",
+    "wizard_name": "Compressor Station Telemetry",
+    "wizard_category": "Operational",
+    "source_id": null,
+    "confidence": "flag",
+    "notes": "Compressor-station telemetry \u2014 gas-integrity gap (see ds_cp)."
+  },
+  {
+    "wizard_id": "ds_storage_meter",
+    "wizard_name": "Gas Storage / LNG Telemetry",
+    "wizard_category": "Operational",
+    "source_id": null,
+    "confidence": "flag",
+    "notes": "Gas storage / LNG telemetry \u2014 gas-integrity gap (see ds_cp)."
+  },
+  {
+    "wizard_id": "ds_cis",
+    "wizard_name": "CIS (Customer Information System)",
+    "wizard_category": "Customer",
+    "source_id": "ds_meter_billing",
+    "confidence": "high",
+    "notes": ""
+  },
+  {
+    "wizard_id": "ds_crm",
+    "wizard_name": "CRM (Salesforce / Dynamics)",
+    "wizard_category": "Customer",
+    "source_id": "ds_meter_billing",
+    "confidence": "medium",
+    "notes": "CRM customer master rolls into CIS/billing coarse source."
+  },
+  {
+    "wizard_id": "ds_billing",
+    "wizard_name": "Billing System",
+    "wizard_category": "Customer",
+    "source_id": "ds_meter_billing",
+    "confidence": "exact",
+    "notes": ""
+  },
+  {
+    "wizard_id": "ds_web_portal",
+    "wizard_name": "Web / Mobile Portal Telemetry",
+    "wizard_category": "Customer",
+    "source_id": "ds_call_center",
+    "confidence": "medium",
+    "notes": "Digital self-service channel folds into the customer-interaction coarse source."
+  },
+  {
+    "wizard_id": "ds_call_center",
+    "wizard_name": "Call Center / IVR Logs + Transcripts",
+    "wizard_category": "Customer",
+    "source_id": "ds_call_center",
+    "confidence": "exact",
+    "notes": ""
+  },
+  {
+    "wizard_id": "ds_dsm",
+    "wizard_name": "DSM / Energy Efficiency Program Data",
+    "wizard_category": "Customer",
+    "source_id": "ds_program_enrollment",
+    "confidence": "high",
+    "notes": ""
+  },
+  {
+    "wizard_id": "ds_eam",
+    "wizard_name": "EAM / Asset Registry",
+    "wizard_category": "Asset",
+    "source_id": "ds_work_management",
+    "confidence": "high",
+    "notes": "EAM asset registry+WO; asset-master attributes also feed ds_transformer_records."
+  },
+  {
+    "wizard_id": "ds_workorders",
+    "wizard_name": "Work Orders & Maintenance History",
+    "wizard_category": "Asset",
+    "source_id": "ds_work_management",
+    "confidence": "exact",
+    "notes": ""
+  },
+  {
+    "wizard_id": "ds_iot_equipment",
+    "wizard_name": "Equipment IoT Sensors",
+    "wizard_category": "Asset",
+    "source_id": "ds_transformer_records",
+    "confidence": "medium",
+    "notes": "Equipment IoT/condition telemetry attaches to the asset-records coarse source."
+  },
+  {
+    "wizard_id": "ds_inspections",
+    "wizard_name": "Inspection Reports",
+    "wizard_category": "Asset",
+    "source_id": "ds_work_management",
+    "confidence": "medium",
+    "notes": "Inspections/rounds live under work management at coarse grain."
+  },
+  {
+    "wizard_id": "ds_erp",
+    "wizard_name": "ERP (SAP / Oracle / Workday)",
+    "wizard_category": "Financial & Regulatory",
+    "source_id": "ds_erp_financial",
+    "confidence": "exact",
+    "notes": ""
+  },
+  {
+    "wizard_id": "ds_capital",
+    "wizard_name": "Capital Project Planning",
+    "wizard_category": "Financial & Regulatory",
+    "source_id": "ds_capital_projects",
+    "confidence": "exact",
+    "notes": ""
+  },
+  {
+    "wizard_id": "ds_regulatory",
+    "wizard_name": "Regulatory Filings & Commitments",
+    "wizard_category": "Financial & Regulatory",
+    "source_id": "ds_regulatory_filings",
+    "confidence": "exact",
+    "notes": ""
+  },
+  {
+    "wizard_id": "ds_iso_market",
+    "wizard_name": "ISO / RTO Market Data",
+    "wizard_category": "Financial & Regulatory",
+    "source_id": "ds_iso_market",
+    "confidence": "exact",
+    "notes": ""
+  },
+  {
+    "wizard_id": "ds_gas_market",
+    "wizard_name": "Gas Market & NYMEX Pricing",
+    "wizard_category": "Financial & Regulatory",
+    "source_id": "ds_fuel_mgmt",
+    "confidence": "medium",
+    "notes": "Gas/NYMEX pricing folds into fuel management (contracts/hedges/nominations)."
+  },
+  {
+    "wizard_id": "ds_weather",
+    "wizard_name": "Weather Data",
+    "wizard_category": "External",
+    "source_id": "ds_weather",
+    "confidence": "exact",
+    "notes": ""
+  },
+  {
+    "wizard_id": "ds_demographics",
+    "wizard_name": "Demographics / Census",
+    "wizard_category": "External",
+    "source_id": null,
+    "confidence": "flag",
+    "notes": "External demographics/census \u2014 no coarse home in the 31. Decide: add a canonical external-analytics source, or drop."
+  },
+  {
+    "wizard_id": "ds_emissions",
+    "wizard_name": "Carbon / GHG Emissions",
+    "wizard_category": "External",
+    "source_id": "ds_emissions_cems",
+    "confidence": "medium",
+    "notes": "External carbon/GHG folds into the emissions coarse source (stack CEMS is the module-grain sibling)."
+  },
+  {
+    "wizard_id": "ds_social",
+    "wizard_name": "Social Media / Sentiment",
+    "wizard_category": "External",
+    "source_id": null,
+    "confidence": "flag",
+    "notes": "Social/sentiment \u2014 no coarse home in the 31. Same decision as demographics."
+  },
+  {
+    "wizard_id": "ds_third_party_veg",
+    "wizard_name": "Third-Party Vegetation / Tree Data",
+    "wizard_category": "External",
+    "source_id": "ds_geospatial",
+    "confidence": "medium",
+    "notes": "Third-party vegetation data folds into geospatial/imagery."
+  }
+]

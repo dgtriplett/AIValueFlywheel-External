@@ -1,0 +1,162 @@
+{
+  "ADMS (Distribution)||Distribution Load Forecasting": [
+    "D-SCADA",
+    "DMS (Distribution Management)"
+  ],
+  "ADMS (Distribution)||Distribution Power Flow": [
+    "D-SCADA",
+    "DMS (Distribution Management)"
+  ],
+  "ADMS (Distribution)||Distribution State Estimation": [
+    "D-SCADA",
+    "DMS (Distribution Management)"
+  ],
+  "ADMS (Distribution)||FLISR": [
+    "D-SCADA",
+    "DMS (Distribution Management)",
+    "OMS (Outage Management)"
+  ],
+  "ADMS (Distribution)||Fault Location Analysis": [
+    "D-SCADA",
+    "DMS (Distribution Management)"
+  ],
+  "ADMS (Distribution)||Storm / Damage Assessment": [
+    "OMS (Outage Management)",
+    "D-SCADA",
+    "DMS (Distribution Management)"
+  ],
+  "ADMS (Distribution)||VVO / CVR": [
+    "D-SCADA",
+    "DMS (Distribution Management)"
+  ],
+  "CEMS||Part 75 Reporting / EDR": [
+    "DAHS (Data Acquisition)",
+    "Gas Analyzers (NOx/SO2/CO2/O2)",
+    "Opacity / Particulate",
+    "Stack Flow",
+    "QA/QC (RATA/Calibration)"
+  ],
+  "Customer Outage Comms||Restoration ETA Feed": [
+    "Outage Alerts & Notifications"
+  ],
+  "DERMS||Virtual Power Plant Orchestration": [
+    "DER Dispatch & Control",
+    "DER Registration & Modeling",
+    "Demand Response / Load Control",
+    "EV Charging Management"
+  ],
+  "EAM/APM||Asset Performance & Health Scoring": [
+    "Condition Monitoring / PdM",
+    "Vibration / Condition Routes",
+    "Inspection / Rounds",
+    "Work Order Management",
+    "Asset Registry & Hierarchy"
+  ],
+  "EAM/APM||Failure Analysis / RCA": [
+    "Work Order Management",
+    "Reliability Library / Failure Modes",
+    "Condition Monitoring / PdM",
+    "Inspection / Rounds"
+  ],
+  "EAM/APM||Reliability / RCM": [
+    "Reliability Library / Failure Modes",
+    "Asset Registry & Hierarchy",
+    "Work Order Management",
+    "Condition Monitoring / PdM"
+  ],
+  "EAM/APM||Scheduling & Crew Optimization": [
+    "Work Order Management",
+    "Mobile Workforce Management",
+    "Preventive Maintenance Scheduling",
+    "Spare Parts / Inventory"
+  ],
+  "EMS (Transmission)||Economic Dispatch": [
+    "State Estimation",
+    "Network Model / CIM",
+    "T-SCADA"
+  ],
+  "EMS (Transmission)||Load Forecasting": [
+    "T-SCADA"
+  ],
+  "EMS (Transmission)||Network Topology Processor": [
+    "T-SCADA",
+    "Network Model / CIM"
+  ],
+  "EMS (Transmission)||Optimal Power Flow": [
+    "State Estimation",
+    "Network Model / CIM",
+    "T-SCADA"
+  ],
+  "EMS (Transmission)||Real-Time Contingency Analysis": [
+    "State Estimation",
+    "Network Model / CIM",
+    "T-SCADA"
+  ],
+  "EMS (Transmission)||State Estimation": [
+    "T-SCADA",
+    "Network Model / CIM"
+  ],
+  "EMS (Transmission)||Unit Commitment": [
+    "Load Forecasting",
+    "Network Model / CIM"
+  ],
+  "EMS (Transmission)||Voltage / VAR Scheduling": [
+    "State Estimation",
+    "Network Model / CIM",
+    "T-SCADA"
+  ],
+  "LIMS||QA/QC / Control Charts": [
+    "Results Management",
+    "Sample Management"
+  ],
+  "Market/ISO Feed||Settlements / Invoicing": [
+    "Ancillary Services",
+    "Bids & Offers",
+    "Capacity Market",
+    "Congestion / Constraints",
+    "Day-Ahead LMP",
+    "FTR / CRR",
+    "Interchange / Tie Schedules",
+    "LMP Components (Energy/Congestion/Loss)",
+    "Real-Time LMP",
+    "Virtual Bids (INC/DEC)"
+  ],
+  "Meter/AMI/MDM||Load Profiles": [
+    "Interval Usage Collection"
+  ],
+  "Meter/AMI/MDM||VEE (Validation/Estimation/Editing)": [
+    "Interval Usage Collection"
+  ],
+  "Outage & Maintenance Planning||Unit / Asset Availability": [
+    "Planned Outage Schedules",
+    "Clearance & Switching Plans"
+  ],
+  "PMU/Synchrophasor||Islanding / Angle Separation": [
+    "Phasor Measurement",
+    "Phasor Data Concentrator"
+  ],
+  "PMU/Synchrophasor||Linear State Measurement": [
+    "Phasor Measurement",
+    "Phasor Data Concentrator"
+  ],
+  "PMU/Synchrophasor||Oscillation Detection": [
+    "Phasor Measurement",
+    "Phasor Data Concentrator"
+  ],
+  "Radiation/Dosimetry||ALARA Planning": [
+    "Personnel Dosimetry",
+    "Area Radiation Monitors",
+    "RWP / Access Control",
+    "Contamination / Survey"
+  ],
+  "Weather||Icing / Wind Loading": [
+    "NWP Forecasts",
+    "Storm / Severe Weather Tracking"
+  ],
+  "Weather||Renewable Generation Forecasting": [
+    "NWP Forecasts"
+  ],
+  "Weather||Site-Specific Forecasts": [
+    "NWP Forecasts"
+  ]
+}

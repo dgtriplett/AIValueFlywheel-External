@@ -1,0 +1,27 @@
+Copyright (2026) Databricks, Inc.
+
+This Software includes software developed at Databricks (https://www.databricks.com/)
+and its use is subject to the included LICENSE file.
+
+AI Value Flywheel is provided as an open, unsupported reference application. It is
+not a Databricks product and is not covered by Databricks support. See SUPPORT.md.
+
+The reference catalog (reference/catalog.json) — use cases, data-asset and
+data-source definitions, dependency mappings, and default value assumptions — is
+directional guidance. Value estimates must be validated against your own data and
+assumptions before use in any financial or investment decision.
+
+This Software depends on the following open source projects, which are installed
+from their own distributions at build or deploy time and are licensed under their
+own terms:
+
+Python (requirements.txt)
+  FastAPI (MIT), Uvicorn (BSD-3-Clause), asyncpg (Apache-2.0), aiohttp (Apache-2.0),
+  OpenAI Python (Apache-2.0), Databricks SDK for Python (Apache-2.0),
+  Databricks SQL Connector for Python (Apache-2.0), sqlglot (MIT), Pydantic (MIT),
+  python-multipart (Apache-2.0), openpyxl (MIT), python-docx (MIT), python-pptx (MIT)
+
+JavaScript (frontend/package.json; compiled into frontend/dist)
+  React and React DOM (MIT), React Flow (MIT), Recharts (MIT), lucide-react (ISC),
+  clsx (MIT); build tooling: Vite (MIT), TypeScript (Apache-2.0), Tailwind CSS (MIT),
+  PostCSS (MIT), Autoprefixer (MIT)

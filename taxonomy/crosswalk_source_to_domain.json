@@ -1,0 +1,410 @@
+{
+  "source_to_domains": {
+    "ds_ami_meter": [
+      "interval_meter_usage",
+      "load_forecast",
+      "meter_events",
+      "power_quality",
+      "remote_service_control",
+      "revenue_protection"
+    ],
+    "ds_call_center": [
+      "customer_accounts",
+      "customer_interactions"
+    ],
+    "ds_capital_projects": [
+      "capital_projects",
+      "network_design_plans"
+    ],
+    "ds_dcs_controls": [
+      "plant_alarms_events",
+      "process_historian_timeseries"
+    ],
+    "ds_dist_assets_gis": [
+      "asset_registry",
+      "network_connectivity_model",
+      "network_design_plans",
+      "spatial_asset_location"
+    ],
+    "ds_distribution_scada": [
+      "realtime_grid_telemetry"
+    ],
+    "ds_dms_adms": [
+      "fault_events",
+      "grid_state_estimate",
+      "load_forecast",
+      "power_quality",
+      "switching_operations"
+    ],
+    "ds_emissions_cems": [
+      "calibration_records",
+      "emissions_monitoring",
+      "regulatory_filings"
+    ],
+    "ds_erp_financial": [
+      "asset_accounting",
+      "financial_actuals",
+      "inspection_records",
+      "procurement_spend",
+      "spare_parts_inventory"
+    ],
+    "ds_fuel_mgmt": [
+      "fuel_supply",
+      "water_fuel_chemistry"
+    ],
+    "ds_geospatial": [
+      "vegetation_encroachment"
+    ],
+    "ds_hr_workforce": [
+      "timesheet_labor",
+      "workforce_records"
+    ],
+    "ds_identity_iam": [
+      "identity_access"
+    ],
+    "ds_iso_market": [
+      "ancillary_services",
+      "interchange_schedules",
+      "load_forecast",
+      "market_bids_offers",
+      "market_prices",
+      "settlements_invoices",
+      "transmission_rights"
+    ],
+    "ds_it_observability": [
+      "it_observability"
+    ],
+    "ds_meter_billing": [
+      "billing_transactions",
+      "customer_accounts",
+      "rate_tariff_structures",
+      "remote_service_control",
+      "revenue_protection",
+      "service_orders"
+    ],
+    "ds_mobile_workforce": [
+      "crew_scheduling",
+      "work_order_history"
+    ],
+    "ds_ot_security": [
+      "ot_security"
+    ],
+    "ds_outage_management": [
+      "crew_scheduling",
+      "outage_records",
+      "reliability_metrics"
+    ],
+    "ds_outage_notifications": [
+      "customer_interactions",
+      "outage_records"
+    ],
+    "ds_outage_planning": [
+      "generation_output",
+      "maintenance_schedule",
+      "switching_operations"
+    ],
+    "ds_pi_historian": [
+      "emissions_monitoring",
+      "generation_output",
+      "nuclear_reactor_data",
+      "plant_alarms_events",
+      "process_historian_timeseries",
+      "renewable_resource_data",
+      "thermal_performance",
+      "vibration_condition_monitoring",
+      "water_fuel_chemistry"
+    ],
+    "ds_pmu": [
+      "synchrophasor_measurements"
+    ],
+    "ds_procurement": [
+      "procurement_spend"
+    ],
+    "ds_program_enrollment": [
+      "demand_response_events",
+      "der_registry_telemetry"
+    ],
+    "ds_regulatory_filings": [
+      "compliance_documents",
+      "regulatory_filings"
+    ],
+    "ds_safety_incidents": [
+      "radiation_dosimetry",
+      "safety_incidents"
+    ],
+    "ds_trans_scada": [
+      "ancillary_services",
+      "contingency_analysis_results",
+      "fault_events",
+      "generation_output",
+      "grid_state_estimate",
+      "interchange_schedules",
+      "load_forecast",
+      "network_connectivity_model",
+      "plant_alarms_events",
+      "power_quality",
+      "realtime_grid_telemetry",
+      "switching_operations"
+    ],
+    "ds_transformer_records": [
+      "asset_health_condition",
+      "asset_registry"
+    ],
+    "ds_weather": [
+      "renewable_resource_data",
+      "weather_forecast",
+      "weather_observed"
+    ],
+    "ds_work_management": [
+      "asset_health_condition",
+      "asset_registry",
+      "calibration_records",
+      "failure_history",
+      "inspection_records",
+      "maintenance_schedule",
+      "spare_parts_inventory",
+      "vibration_condition_monitoring",
+      "work_clearance_permits",
+      "work_order_history"
+    ]
+  },
+  "domain_to_sources": {
+    "ancillary_services": [
+      "ds_iso_market",
+      "ds_trans_scada"
+    ],
+    "asset_accounting": [
+      "ds_erp_financial"
+    ],
+    "asset_health_condition": [
+      "ds_transformer_records",
+      "ds_work_management"
+    ],
+    "asset_registry": [
+      "ds_dist_assets_gis",
+      "ds_transformer_records",
+      "ds_work_management"
+    ],
+    "billing_transactions": [
+      "ds_meter_billing"
+    ],
+    "calibration_records": [
+      "ds_emissions_cems",
+      "ds_work_management"
+    ],
+    "capital_projects": [
+      "ds_capital_projects"
+    ],
+    "compliance_documents": [
+      "ds_regulatory_filings"
+    ],
+    "contingency_analysis_results": [
+      "ds_trans_scada"
+    ],
+    "crew_scheduling": [
+      "ds_mobile_workforce",
+      "ds_outage_management"
+    ],
+    "customer_accounts": [
+      "ds_call_center",
+      "ds_meter_billing"
+    ],
+    "customer_interactions": [
+      "ds_call_center",
+      "ds_outage_notifications"
+    ],
+    "demand_response_events": [
+      "ds_program_enrollment"
+    ],
+    "der_registry_telemetry": [
+      "ds_program_enrollment"
+    ],
+    "emissions_monitoring": [
+      "ds_emissions_cems",
+      "ds_pi_historian"
+    ],
+    "failure_history": [
+      "ds_work_management"
+    ],
+    "fault_events": [
+      "ds_dms_adms",
+      "ds_trans_scada"
+    ],
+    "financial_actuals": [
+      "ds_erp_financial"
+    ],
+    "fuel_supply": [
+      "ds_fuel_mgmt"
+    ],
+    "generation_output": [
+      "ds_outage_planning",
+      "ds_pi_historian",
+      "ds_trans_scada"
+    ],
+    "grid_state_estimate": [
+      "ds_dms_adms",
+      "ds_trans_scada"
+    ],
+    "identity_access": [
+      "ds_identity_iam"
+    ],
+    "inspection_records": [
+      "ds_erp_financial",
+      "ds_work_management"
+    ],
+    "interchange_schedules": [
+      "ds_iso_market",
+      "ds_trans_scada"
+    ],
+    "interval_meter_usage": [
+      "ds_ami_meter"
+    ],
+    "it_observability": [
+      "ds_it_observability"
+    ],
+    "load_forecast": [
+      "ds_ami_meter",
+      "ds_dms_adms",
+      "ds_iso_market",
+      "ds_trans_scada"
+    ],
+    "maintenance_schedule": [
+      "ds_outage_planning",
+      "ds_work_management"
+    ],
+    "market_bids_offers": [
+      "ds_iso_market"
+    ],
+    "market_prices": [
+      "ds_iso_market"
+    ],
+    "meter_events": [
+      "ds_ami_meter"
+    ],
+    "network_connectivity_model": [
+      "ds_dist_assets_gis",
+      "ds_trans_scada"
+    ],
+    "network_design_plans": [
+      "ds_capital_projects",
+      "ds_dist_assets_gis"
+    ],
+    "nuclear_reactor_data": [
+      "ds_pi_historian"
+    ],
+    "ot_security": [
+      "ds_ot_security"
+    ],
+    "outage_records": [
+      "ds_outage_management",
+      "ds_outage_notifications"
+    ],
+    "plant_alarms_events": [
+      "ds_dcs_controls",
+      "ds_pi_historian",
+      "ds_trans_scada"
+    ],
+    "power_quality": [
+      "ds_ami_meter",
+      "ds_dms_adms",
+      "ds_trans_scada"
+    ],
+    "process_historian_timeseries": [
+      "ds_dcs_controls",
+      "ds_pi_historian"
+    ],
+    "procurement_spend": [
+      "ds_erp_financial",
+      "ds_procurement"
+    ],
+    "radiation_dosimetry": [
+      "ds_safety_incidents"
+    ],
+    "rate_tariff_structures": [
+      "ds_meter_billing"
+    ],
+    "realtime_grid_telemetry": [
+      "ds_distribution_scada",
+      "ds_trans_scada"
+    ],
+    "regulatory_filings": [
+      "ds_emissions_cems",
+      "ds_regulatory_filings"
+    ],
+    "reliability_metrics": [
+      "ds_outage_management"
+    ],
+    "remote_service_control": [
+      "ds_ami_meter",
+      "ds_meter_billing"
+    ],
+    "renewable_resource_data": [
+      "ds_pi_historian",
+      "ds_weather"
+    ],
+    "revenue_protection": [
+      "ds_ami_meter",
+      "ds_meter_billing"
+    ],
+    "safety_incidents": [
+      "ds_safety_incidents"
+    ],
+    "service_orders": [
+      "ds_meter_billing"
+    ],
+    "settlements_invoices": [
+      "ds_iso_market"
+    ],
+    "spare_parts_inventory": [
+      "ds_erp_financial",
+      "ds_work_management"
+    ],
+    "spatial_asset_location": [
+      "ds_dist_assets_gis"
+    ],
+    "switching_operations": [
+      "ds_dms_adms",
+      "ds_outage_planning",
+      "ds_trans_scada"
+    ],
+    "synchrophasor_measurements": [
+      "ds_pmu"
+    ],
+    "thermal_performance": [
+      "ds_pi_historian"
+    ],
+    "timesheet_labor": [
+      "ds_hr_workforce"
+    ],
+    "transmission_rights": [
+      "ds_iso_market"
+    ],
+    "vegetation_encroachment": [
+      "ds_geospatial"
+    ],
+    "vibration_condition_monitoring": [
+      "ds_pi_historian",
+      "ds_work_management"
+    ],
+    "water_fuel_chemistry": [
+      "ds_fuel_mgmt",
+      "ds_pi_historian"
+    ],
+    "weather_forecast": [
+      "ds_weather"
+    ],
+    "weather_observed": [
+      "ds_weather"
+    ],
+    "work_clearance_permits": [
+      "ds_work_management"
+    ],
+    "work_order_history": [
+      "ds_mobile_workforce",
+      "ds_work_management"
+    ],
+    "workforce_records": [
+      "ds_hr_workforce"
+    ]
+  }
+}

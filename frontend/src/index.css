@@ -1,0 +1,226 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── Theme variables: navy scale as RGB triples so Tailwind opacity works ──
+   Default = dark. [data-theme="light"] swaps the role values (bg gets light,
+   text gets dark). Set on <html> by an inline script in index.html + the
+   AccountBar toggle. */
+:root, :root[data-theme="dark"] {
+  --navy-900: 11 32 38;    --navy-800: 27 49 57;   --navy-700: 20 61 74;
+  --navy-600: 42 74 86;    --navy-500: 97 135 148; --navy-400: 144 165 177;
+  --navy-300: 196 204 214; --heading: 255 255 255;
+  color-scheme: dark;
+}
+:root[data-theme="light"] {
+  --navy-900: 249 247 244; --navy-800: 255 255 255; --navy-700: 241 243 245;
+  --navy-600: 208 213 221; --navy-500: 152 162 179; --navy-400: 71 84 103;
+  --navy-300: 29 41 57;    --heading: 16 24 40;
+  color-scheme: light;
+}
+
+/* ── Playbook "yellow brick road" palette (ported from the reference roadmap app).
+   Used via inline styles in the Playbook graph/nodes/detail panel. Dark values are
+   the default; the light block overrides for the light theme. --card/--muted mirror
+   the navy scale so ported color-mix() against them lands on our surfaces. */
+:root, :root[data-theme="dark"] {
+  --card: rgb(27 49 57);        --muted: rgb(20 61 74);
+  --muted-foreground: rgb(97 135 148);
+  --st-live: oklch(0.72 0.15 155);  --st-ready: oklch(0.82 0.15 85);
+  --st-data: oklch(0.72 0.14 295);  --st-blocked: oklch(0.5 0.01 260);
+  --st-likely: oklch(0.72 0.11 235);--st-gap: oklch(0.7 0.17 27);
+  --brick: oklch(0.84 0.15 88);     --brick-deep: oklch(0.7 0.14 72);
+  --emerald: oklch(0.72 0.15 160);
+  --dom-platform: oklch(0.7 0.02 260); --dom-metering: oklch(0.72 0.12 235);
+  --dom-grid: oklch(0.74 0.15 50);     --dom-assets: oklch(0.72 0.1 180);
+  --dom-customer: oklch(0.72 0.15 330);--dom-gas: oklch(0.78 0.13 115);
+  --dom-safety: oklch(0.7 0.17 27);    --dom-reg: oklch(0.72 0.13 290);
+}
+:root[data-theme="light"] {
+  --card: rgb(255 255 255);     --muted: rgb(241 243 245);
+  --muted-foreground: rgb(152 162 179);
+  --st-live: oklch(0.6 0.15 155);   --st-ready: oklch(0.72 0.16 75);
+  --st-data: oklch(0.58 0.17 295);  --st-blocked: oklch(0.7 0.01 260);
+  --st-likely: oklch(0.62 0.12 235);--st-gap: oklch(0.6 0.19 27);
+  --brick: oklch(0.8 0.15 85);      --brick-deep: oklch(0.66 0.15 70);
+  --emerald: oklch(0.58 0.14 160);
+  --dom-platform: oklch(0.55 0.02 260); --dom-metering: oklch(0.6 0.14 235);
+  --dom-grid: oklch(0.62 0.17 45);      --dom-assets: oklch(0.55 0.1 180);
+  --dom-customer: oklch(0.6 0.17 330);  --dom-gas: oklch(0.66 0.14 110);
+  --dom-safety: oklch(0.6 0.19 27);     --dom-reg: oklch(0.55 0.15 290);
+}
+@keyframes brick-glow {
+  0%, 100% { box-shadow: 0 0 0 1px var(--brick), 0 0 10px -2px var(--brick); }
+  50%      { box-shadow: 0 0 0 2px var(--brick), 0 0 22px 0 var(--brick); }
+}
+.brick-glow { animation: brick-glow 2.4s ease-in-out infinite; }
+
+
+@layer base {
+  html {
+    font-family: 'DM Sans', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    font-weight: 400;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  body {
+    @apply bg-navy-900 text-navy-300 font-sans antialiased;
+  }
+  h1, h2, h3, h4, h5, h6 { font-weight: 500; color: rgb(var(--heading)); }
+  button { font-family: inherit; }
+}
+
+@layer components {
+  .card {
+    background-color: rgb(var(--navy-800)); /* Navy 800 */
+    border: 1px solid rgb(var(--navy-600));
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+  }
+  .card-interactive {
+    @apply card transition-all duration-200;
+  }
+  .card-interactive:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+    border-color: rgb(var(--navy-500));
+  }
+  .btn-primary {
+    background-color: #FF3621; /* Lava 600 */
+    color: rgb(var(--heading));
+    font-weight: 500;
+    padding: 8px 16px;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .btn-primary:hover:not(:disabled) { background-color: #BD2B26; }
+  .btn-primary:disabled { background-color: rgb(var(--navy-600)); color: rgb(var(--navy-500)); cursor: not-allowed; }
+  .btn-secondary {
+    background-color: transparent;
+    color: rgb(var(--navy-300));
+    border: 1px solid rgb(var(--navy-600));
+    font-weight: 500;
+    padding: 8px 16px;
+    border-radius: 4px;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .btn-secondary:hover:not(:disabled) { background-color: rgb(var(--navy-700)); color: rgb(var(--heading)); border-color: rgb(var(--navy-500)); }
+  .btn-secondary:disabled { color: rgb(var(--navy-500)); cursor: not-allowed; }
+  .input-field {
+    background-color: rgb(var(--navy-800));
+    border: 1px solid rgb(var(--navy-600));
+    border-radius: 4px;
+    padding: 8px 12px;
+    color: rgb(var(--heading));
+    font-family: inherit;
+    font-size: 14px;
+    width: 100%;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  .input-field:focus {
+    outline: none;
+    border-color: #2272B4;
+    box-shadow: 0 0 0 2px rgba(34, 114, 180, 0.25);
+  }
+  .input-field::placeholder { color: rgb(var(--navy-500)); }
+
+  /* Table styling for admin views */
+  .dtable {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+  .dtable thead th {
+    background-color: rgb(var(--navy-900));
+    color: rgb(var(--heading));
+    text-align: left;
+    padding: 10px 12px;
+    font-weight: 500;
+    border-bottom: 1px solid rgb(var(--navy-600));
+  }
+  .dtable tbody td {
+    padding: 10px 12px;
+    border-bottom: 1px solid rgb(var(--navy-600));
+    color: rgb(var(--navy-300));
+  }
+  .dtable tbody tr:nth-child(even) { background-color: rgb(var(--navy-800)); }
+  .dtable tbody tr:nth-child(odd)  { background-color: rgb(var(--navy-700)); }
+  .dtable tbody tr:hover td { background-color: rgba(255, 54, 33, 0.08); }
+}
+
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background-color: rgb(var(--navy-900)); }
+::-webkit-scrollbar-thumb { background-color: rgb(var(--navy-600)); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background-color: rgb(var(--navy-500)); }
+
+::selection { background-color: rgba(255, 54, 33, 0.3); }
+
+@keyframes slideInRight {
+  from { transform: translateX(100%); opacity: 0; }
+  to   { transform: translateX(0);    opacity: 1; }
+}
+
+html { scroll-behavior: smooth; }
+
+/* Print / Save-as-PDF styling for the admin "Print / PDF" button.
+   The visible app is dark-mode; print a readable light-mode version. */
+@media print {
+  @page { size: Letter; margin: 0.5in; }
+  html, body {
+    background-color: #FFFFFF !important;
+    color: #1B3139 !important;
+  }
+  .no-print { display: none !important; }
+
+  /* Lift the modal content out of fixed/scrolled containers so it flows
+     as the printable document. */
+  .fixed.inset-0 {
+    position: static !important;
+    background: transparent !important;
+    overflow: visible !important;
+  }
+  .printable-area {
+    position: static !important;
+    max-width: 100% !important;
+    max-height: none !important;
+    overflow: visible !important;
+    box-shadow: none !important;
+    border: none !important;
+    background: #FFFFFF !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  .print-root, .print-root * {
+    color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+  /* Cards re-rendered for paper */
+  .print-root .card {
+    background-color: #FFFFFF !important;
+    border: 1px solid #DCE0E2 !important;
+    color: #1B3139 !important;
+    box-shadow: none !important;
+    page-break-inside: avoid;
+  }
+  .print-root h1, .print-root h2, .print-root h3, .print-root h4,
+  .print-root h5, .print-root h6 {
+    color: #1B3139 !important;
+  }
+  .print-root .text-white { color: #1B3139 !important; }
+  .print-root .text-navy-300, .print-root .text-navy-400, .print-root .text-navy-500 {
+    color: #5A6F77 !important;
+  }
+  .print-root .border-navy-600, .print-root .border-navy-500 {
+    border-color: #DCE0E2 !important;
+  }
+  .print-root .bg-navy-900, .print-root .bg-navy-800, .print-root .bg-navy-700 {
+    background: #F9F7F4 !important;
+  }
+}

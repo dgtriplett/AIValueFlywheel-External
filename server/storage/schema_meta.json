@@ -1,0 +1,4789 @@
+{
+ "tables": {
+  "account_assessments": {
+   "columns": [
+    {
+     "name": "id",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "account_id",
+     "type": "BIGINT",
+     "pg_type": "integer",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "status",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": false,
+     "default": "'draft'"
+    },
+    {
+     "name": "label",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "answers_json",
+     "type": "STRING",
+     "pg_type": "jsonb",
+     "nullable": false,
+     "default": "'{}'"
+    },
+    {
+     "name": "results_json",
+     "type": "STRING",
+     "pg_type": "jsonb",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "overall_score",
+     "type": "BIGINT",
+     "pg_type": "integer",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "current_phase",
+     "type": "BIGINT",
+     "pg_type": "integer",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "created_by",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "created_at",
+     "type": "TIMESTAMP",
+     "pg_type": "timestamp with time zone",
+     "nullable": false,
+     "default": "current_timestamp()"
+    },
+    {
+     "name": "updated_at",
+     "type": "TIMESTAMP",
+     "pg_type": "timestamp with time zone",
+     "nullable": false,
+     "default": "current_timestamp()"
+    },
+    {
+     "name": "submitted_at",
+     "type": "TIMESTAMP",
+     "pg_type": "timestamp with time zone",
+     "nullable": true,
+     "default": null
+    }
+   ],
+   "primary_key": [
+    "id"
+   ],
+   "unique": [],
+   "serial": null,
+   "foreign_keys": [
+    {
+     "column": "account_id",
+     "ref_table": "accounts",
+     "ref_column": "id",
+     "on_delete": "cascade"
+    }
+   ]
+  },
+  "account_asset_status": {
+   "columns": [
+    {
+     "name": "account_id",
+     "type": "BIGINT",
+     "pg_type": "integer",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "data_asset_id",
+     "type": "BIGINT",
+     "pg_type": "integer",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "ingestion_status",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": false,
+     "default": "'not_started'"
+    },
+    {
+     "name": "local_name",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "owning_lob_id",
+     "type": "BIGINT",
+     "pg_type": "integer",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "ingest_cost_low",
+     "type": "DECIMAL(38,10)",
+     "pg_type": "numeric",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "ingest_cost_high",
+     "type": "DECIMAL(38,10)",
+     "pg_type": "numeric",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "notes",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "is_user_edited",
+     "type": "BOOLEAN",
+     "pg_type": "boolean",
+     "nullable": false,
+     "default": "false"
+    },
+    {
+     "name": "updated_by",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "updated_at",
+     "type": "TIMESTAMP",
+     "pg_type": "timestamp with time zone",
+     "nullable": false,
+     "default": "current_timestamp()"
+    },
+    {
+     "name": "source",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": false,
+     "default": "'manual'"
+    }
+   ],
+   "primary_key": [
+    "account_id",
+    "data_asset_id"
+   ],
+   "unique": [],
+   "serial": null,
+   "foreign_keys": [
+    {
+     "column": "account_id",
+     "ref_table": "accounts",
+     "ref_column": "id",
+     "on_delete": "cascade"
+    },
+    {
+     "column": "data_asset_id",
+     "ref_table": "data_assets",
+     "ref_column": "id",
+     "on_delete": "cascade"
+    },
+    {
+     "column": "owning_lob_id",
+     "ref_table": "lobs",
+     "ref_column": "id",
+     "on_delete": "set_null"
+    }
+   ]
+  },
+  "account_members": {
+   "columns": [
+    {
+     "name": "account_id",
+     "type": "BIGINT",
+     "pg_type": "integer",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "user_email",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "role",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": false,
+     "default": "'owner'"
+    },
+    {
+     "name": "added_at",
+     "type": "TIMESTAMP",
+     "pg_type": "timestamp with time zone",
+     "nullable": false,
+     "default": "current_timestamp()"
+    },
+    {
+     "name": "added_by",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    }
+   ],
+   "primary_key": [
+    "account_id",
+    "user_email"
+   ],
+   "unique": [],
+   "serial": null,
+   "foreign_keys": [
+    {
+     "column": "account_id",
+     "ref_table": "accounts",
+     "ref_column": "id",
+     "on_delete": "cascade"
+    }
+   ]
+  },
+  "account_portfolio_use_cases": {
+   "columns": [
+    {
+     "name": "account_id",
+     "type": "BIGINT",
+     "pg_type": "integer",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "use_case_id",
+     "type": "BIGINT",
+     "pg_type": "integer",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "source",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": false,
+     "default": "'manual'"
+    },
+    {
+     "name": "created_by",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "created_at",
+     "type": "TIMESTAMP",
+     "pg_type": "timestamp with time zone",
+     "nullable": false,
+     "default": "current_timestamp()"
+    }
+   ],
+   "primary_key": [
+    "account_id",
+    "use_case_id"
+   ],
+   "unique": [],
+   "serial": null,
+   "foreign_keys": [
+    {
+     "column": "account_id",
+     "ref_table": "accounts",
+     "ref_column": "id",
+     "on_delete": "cascade"
+    },
+    {
+     "column": "use_case_id",
+     "ref_table": "use_cases",
+     "ref_column": "id",
+     "on_delete": "cascade"
+    }
+   ]
+  },
+  "account_promotions": {
+   "columns": [
+    {
+     "name": "id",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "account_id",
+     "type": "BIGINT",
+     "pg_type": "integer",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "assessment_id",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "summary_json",
+     "type": "STRING",
+     "pg_type": "jsonb",
+     "nullable": false,
+     "default": "'{}'"
+    },
+    {
+     "name": "created_by",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "created_at",
+     "type": "TIMESTAMP",
+     "pg_type": "timestamp with time zone",
+     "nullable": false,
+     "default": "current_timestamp()"
+    }
+   ],
+   "primary_key": [
+    "id"
+   ],
+   "unique": [],
+   "serial": null,
+   "foreign_keys": [
+    {
+     "column": "account_id",
+     "ref_table": "accounts",
+     "ref_column": "id",
+     "on_delete": "cascade"
+    },
+    {
+     "column": "assessment_id",
+     "ref_table": "account_assessments",
+     "ref_column": "id",
+     "on_delete": "set_null"
+    }
+   ]
+  },
+  "account_source_status": {
+   "columns": [
+    {
+     "name": "account_id",
+     "type": "BIGINT",
+     "pg_type": "integer",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "data_source_id",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "available",
+     "type": "BOOLEAN",
+     "pg_type": "boolean",
+     "nullable": false,
+     "default": "false"
+    },
+    {
+     "name": "source",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": false,
+     "default": "'survey'"
+    },
+    {
+     "name": "updated_at",
+     "type": "TIMESTAMP",
+     "pg_type": "timestamp with time zone",
+     "nullable": false,
+     "default": "current_timestamp()"
+    },
+    {
+     "name": "updated_by",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    }
+   ],
+   "primary_key": [
+    "account_id",
+    "data_source_id"
+   ],
+   "unique": [],
+   "serial": null,
+   "foreign_keys": [
+    {
+     "column": "account_id",
+     "ref_table": "accounts",
+     "ref_column": "id",
+     "on_delete": "cascade"
+    },
+    {
+     "column": "data_source_id",
+     "ref_table": "data_sources",
+     "ref_column": "id",
+     "on_delete": "cascade"
+    }
+   ]
+  },
+  "accounts": {
+   "columns": [
+    {
+     "name": "id",
+     "type": "BIGINT",
+     "pg_type": "integer",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "slug",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "name",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "utility_type",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "is_active",
+     "type": "BOOLEAN",
+     "pg_type": "boolean",
+     "nullable": false,
+     "default": "true"
+    },
+    {
+     "name": "is_default",
+     "type": "BOOLEAN",
+     "pg_type": "boolean",
+     "nullable": false,
+     "default": "false"
+    },
+    {
+     "name": "notes",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "created_by",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "created_at",
+     "type": "TIMESTAMP",
+     "pg_type": "timestamp with time zone",
+     "nullable": false,
+     "default": "current_timestamp()"
+    },
+    {
+     "name": "updated_at",
+     "type": "TIMESTAMP",
+     "pg_type": "timestamp with time zone",
+     "nullable": false,
+     "default": "current_timestamp()"
+    },
+    {
+     "name": "geography",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "territory_size",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "strategic_priorities",
+     "type": "ARRAY<STRING>",
+     "pg_type": "_text",
+     "nullable": false,
+     "default": "array()"
+    },
+    {
+     "name": "profile_complete",
+     "type": "BOOLEAN",
+     "pg_type": "boolean",
+     "nullable": false,
+     "default": "false"
+    }
+   ],
+   "primary_key": [
+    "id"
+   ],
+   "unique": [
+    [
+     "slug"
+    ],
+    [
+     "is_default"
+    ]
+   ],
+   "serial": "id",
+   "foreign_keys": []
+  },
+  "admins": {
+   "columns": [
+    {
+     "name": "user_email",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "added_at",
+     "type": "TIMESTAMP",
+     "pg_type": "timestamp with time zone",
+     "nullable": false,
+     "default": "current_timestamp()"
+    },
+    {
+     "name": "added_by",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    }
+   ],
+   "primary_key": [
+    "user_email"
+   ],
+   "unique": [],
+   "serial": null,
+   "foreign_keys": []
+  },
+  "artifacts": {
+   "columns": [
+    {
+     "name": "id",
+     "type": "BIGINT",
+     "pg_type": "integer",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "artifact_type",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "workspace_id",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "artifact_id",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "name",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "owner",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "description",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "ai_description",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "uc_catalog",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "uc_schema",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "last_modified",
+     "type": "TIMESTAMP",
+     "pg_type": "timestamp with time zone",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "last_run",
+     "type": "TIMESTAMP",
+     "pg_type": "timestamp with time zone",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "run_count_30d",
+     "type": "BIGINT",
+     "pg_type": "integer",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "status",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "use_case_id",
+     "type": "BIGINT",
+     "pg_type": "integer",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "lob_id",
+     "type": "BIGINT",
+     "pg_type": "integer",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "mapped_by",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "is_user_edited",
+     "type": "BOOLEAN",
+     "pg_type": "boolean",
+     "nullable": false,
+     "default": "false"
+    },
+    {
+     "name": "is_present",
+     "type": "BOOLEAN",
+     "pg_type": "boolean",
+     "nullable": false,
+     "default": "true"
+    },
+    {
+     "name": "first_seen_at",
+     "type": "TIMESTAMP",
+     "pg_type": "timestamp with time zone",
+     "nullable": false,
+     "default": "current_timestamp()"
+    },
+    {
+     "name": "last_seen_at",
+     "type": "TIMESTAMP",
+     "pg_type": "timestamp with time zone",
+     "nullable": false,
+     "default": "current_timestamp()"
+    }
+   ],
+   "primary_key": [
+    "id"
+   ],
+   "unique": [
+    [
+     "artifact_type",
+     "workspace_id",
+     "artifact_id"
+    ]
+   ],
+   "serial": "id",
+   "foreign_keys": [
+    {
+     "column": "use_case_id",
+     "ref_table": "use_cases",
+     "ref_column": "id",
+     "on_delete": "set_null"
+    },
+    {
+     "column": "lob_id",
+     "ref_table": "lobs",
+     "ref_column": "id",
+     "on_delete": "set_null"
+    }
+   ]
+  },
+  "asset_feeds": {
+   "columns": [
+    {
+     "name": "product_asset_id",
+     "type": "BIGINT",
+     "pg_type": "integer",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "raw_asset_id",
+     "type": "BIGINT",
+     "pg_type": "integer",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "mapped_by",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": false,
+     "default": "'catalog'"
+    },
+    {
+     "name": "created_at",
+     "type": "TIMESTAMP",
+     "pg_type": "timestamp with time zone",
+     "nullable": false,
+     "default": "current_timestamp()"
+    }
+   ],
+   "primary_key": [
+    "product_asset_id",
+    "raw_asset_id"
+   ],
+   "unique": [],
+   "serial": null,
+   "foreign_keys": [
+    {
+     "column": "product_asset_id",
+     "ref_table": "data_assets",
+     "ref_column": "id",
+     "on_delete": "cascade"
+    },
+    {
+     "column": "raw_asset_id",
+     "ref_table": "data_assets",
+     "ref_column": "id",
+     "on_delete": "cascade"
+    }
+   ]
+  },
+  "asset_serves_domain": {
+   "columns": [
+    {
+     "name": "data_asset_id",
+     "type": "BIGINT",
+     "pg_type": "integer",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "domain_id",
+     "type": "BIGINT",
+     "pg_type": "integer",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "confidence",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": false,
+     "default": "'high'"
+    },
+    {
+     "name": "mapped_by",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": false,
+     "default": "'catalog'"
+    },
+    {
+     "name": "notes",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "is_user_edited",
+     "type": "BOOLEAN",
+     "pg_type": "boolean",
+     "nullable": false,
+     "default": "false"
+    },
+    {
+     "name": "mapped_at",
+     "type": "TIMESTAMP",
+     "pg_type": "timestamp with time zone",
+     "nullable": false,
+     "default": "current_timestamp()"
+    }
+   ],
+   "primary_key": [
+    "data_asset_id",
+    "domain_id"
+   ],
+   "unique": [],
+   "serial": null,
+   "foreign_keys": [
+    {
+     "column": "data_asset_id",
+     "ref_table": "data_assets",
+     "ref_column": "id",
+     "on_delete": "cascade"
+    },
+    {
+     "column": "domain_id",
+     "ref_table": "data_domains",
+     "ref_column": "id",
+     "on_delete": "cascade"
+    }
+   ]
+  },
+  "asset_taxonomy": {
+   "columns": [
+    {
+     "name": "id",
+     "type": "BIGINT",
+     "pg_type": "integer",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "data_asset_id",
+     "type": "BIGINT",
+     "pg_type": "integer",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "dimension",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "value",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "source",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": false,
+     "default": "'ai'"
+    },
+    {
+     "name": "confidence",
+     "type": "DECIMAL(38,10)",
+     "pg_type": "numeric",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "ai_reasoning",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "effective_from",
+     "type": "TIMESTAMP",
+     "pg_type": "timestamp with time zone",
+     "nullable": false,
+     "default": "current_timestamp()"
+    },
+    {
+     "name": "effective_to",
+     "type": "TIMESTAMP",
+     "pg_type": "timestamp with time zone",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "created_by",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    }
+   ],
+   "primary_key": [
+    "id"
+   ],
+   "unique": [],
+   "serial": "id",
+   "foreign_keys": [
+    {
+     "column": "data_asset_id",
+     "ref_table": "data_assets",
+     "ref_column": "id",
+     "on_delete": "cascade"
+    }
+   ]
+  },
+  "assumption_research": {
+   "columns": [
+    {
+     "name": "id",
+     "type": "BIGINT",
+     "pg_type": "integer",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "key",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "value_before",
+     "type": "DECIMAL(38,10)",
+     "pg_type": "numeric",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "value_proposed",
+     "type": "DECIMAL(38,10)",
+     "pg_type": "numeric",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "confidence",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "rationale",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "basis",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "applied",
+     "type": "BOOLEAN",
+     "pg_type": "boolean",
+     "nullable": false,
+     "default": "false"
+    },
+    {
+     "name": "applied_at",
+     "type": "TIMESTAMP",
+     "pg_type": "timestamp with time zone",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "research_run",
+     "type": "BIGINT",
+     "pg_type": "integer",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "created_at",
+     "type": "TIMESTAMP",
+     "pg_type": "timestamp with time zone",
+     "nullable": false,
+     "default": "current_timestamp()"
+    },
+    {
+     "name": "account_id",
+     "type": "BIGINT",
+     "pg_type": "integer",
+     "nullable": false,
+     "default": null
+    }
+   ],
+   "primary_key": [
+    "id"
+   ],
+   "unique": [],
+   "serial": "id",
+   "foreign_keys": [
+    {
+     "column": "account_id",
+     "ref_table": "accounts",
+     "ref_column": "id",
+     "on_delete": "cascade"
+    }
+   ]
+  },
+  "audit_log": {
+   "columns": [
+    {
+     "name": "id",
+     "type": "BIGINT",
+     "pg_type": "integer",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "entity_type",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "entity_id",
+     "type": "BIGINT",
+     "pg_type": "integer",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "action",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "actor",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "diff_json",
+     "type": "STRING",
+     "pg_type": "jsonb",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "created_at",
+     "type": "TIMESTAMP",
+     "pg_type": "timestamp with time zone",
+     "nullable": false,
+     "default": "current_timestamp()"
+    }
+   ],
+   "primary_key": [
+    "id"
+   ],
+   "unique": [],
+   "serial": "id",
+   "foreign_keys": []
+  },
+  "benchmark_library": {
+   "columns": [
+    {
+     "name": "id",
+     "type": "BIGINT",
+     "pg_type": "integer",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "use_case_pattern",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "sub_vertical",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "metric_type",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "low",
+     "type": "DECIMAL(38,10)",
+     "pg_type": "numeric",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "mid",
+     "type": "DECIMAL(38,10)",
+     "pg_type": "numeric",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "high",
+     "type": "DECIMAL(38,10)",
+     "pg_type": "numeric",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "unit",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "notes",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    }
+   ],
+   "primary_key": [
+    "id"
+   ],
+   "unique": [],
+   "serial": "id",
+   "foreign_keys": []
+  },
+  "branding": {
+   "columns": [
+    {
+     "name": "id",
+     "type": "BIGINT",
+     "pg_type": "integer",
+     "nullable": false,
+     "default": "1"
+    },
+    {
+     "name": "display_name",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "subtitle",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "accent_color",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "logo_bytes",
+     "type": "BINARY",
+     "pg_type": "bytea",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "logo_mime",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "logo_filename",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "updated_by",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "updated_at",
+     "type": "TIMESTAMP",
+     "pg_type": "timestamp with time zone",
+     "nullable": false,
+     "default": "current_timestamp()"
+    },
+    {
+     "name": "account_id",
+     "type": "BIGINT",
+     "pg_type": "integer",
+     "nullable": true,
+     "default": null
+    }
+   ],
+   "primary_key": [
+    "id"
+   ],
+   "unique": [
+    [
+     "account_id"
+    ]
+   ],
+   "serial": null,
+   "foreign_keys": [
+    {
+     "column": "account_id",
+     "ref_table": "accounts",
+     "ref_column": "id",
+     "on_delete": "cascade"
+    }
+   ]
+  },
+  "chat_conversations": {
+   "columns": [
+    {
+     "name": "id",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "title",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "actor",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "created_at",
+     "type": "TIMESTAMP",
+     "pg_type": "timestamp with time zone",
+     "nullable": false,
+     "default": "current_timestamp()"
+    },
+    {
+     "name": "updated_at",
+     "type": "TIMESTAMP",
+     "pg_type": "timestamp with time zone",
+     "nullable": false,
+     "default": "current_timestamp()"
+    },
+    {
+     "name": "account_id",
+     "type": "BIGINT",
+     "pg_type": "integer",
+     "nullable": false,
+     "default": null
+    }
+   ],
+   "primary_key": [
+    "id"
+   ],
+   "unique": [],
+   "serial": null,
+   "foreign_keys": [
+    {
+     "column": "account_id",
+     "ref_table": "accounts",
+     "ref_column": "id",
+     "on_delete": "cascade"
+    }
+   ]
+  },
+  "chat_messages": {
+   "columns": [
+    {
+     "name": "id",
+     "type": "BIGINT",
+     "pg_type": "integer",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "conversation_id",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "role",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "content",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "tool_name",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "tool_args_json",
+     "type": "STRING",
+     "pg_type": "jsonb",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "tool_result_json",
+     "type": "STRING",
+     "pg_type": "jsonb",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "confirm_token",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "created_at",
+     "type": "TIMESTAMP",
+     "pg_type": "timestamp with time zone",
+     "nullable": false,
+     "default": "current_timestamp()"
+    }
+   ],
+   "primary_key": [
+    "id"
+   ],
+   "unique": [],
+   "serial": "id",
+   "foreign_keys": [
+    {
+     "column": "conversation_id",
+     "ref_table": "chat_conversations",
+     "ref_column": "id",
+     "on_delete": "cascade"
+    }
+   ]
+  },
+  "classification_rules": {
+   "columns": [
+    {
+     "name": "id",
+     "type": "BIGINT",
+     "pg_type": "integer",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "dimension",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "field",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "match_type",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "pattern",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "case_sensitive",
+     "type": "BOOLEAN",
+     "pg_type": "boolean",
+     "nullable": false,
+     "default": "false"
+    },
+    {
+     "name": "value",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "priority",
+     "type": "BIGINT",
+     "pg_type": "integer",
+     "nullable": false,
+     "default": "100"
+    },
+    {
+     "name": "is_active",
+     "type": "BOOLEAN",
+     "pg_type": "boolean",
+     "nullable": false,
+     "default": "true"
+    },
+    {
+     "name": "notes",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "origin",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": false,
+     "default": "'manual'"
+    },
+    {
+     "name": "created_by",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "created_at",
+     "type": "TIMESTAMP",
+     "pg_type": "timestamp with time zone",
+     "nullable": false,
+     "default": "current_timestamp()"
+    },
+    {
+     "name": "updated_at",
+     "type": "TIMESTAMP",
+     "pg_type": "timestamp with time zone",
+     "nullable": false,
+     "default": "current_timestamp()"
+    }
+   ],
+   "primary_key": [
+    "id"
+   ],
+   "unique": [],
+   "serial": "id",
+   "foreign_keys": []
+  },
+  "comments": {
+   "columns": [
+    {
+     "name": "id",
+     "type": "BIGINT",
+     "pg_type": "integer",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "entity_type",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "entity_id",
+     "type": "BIGINT",
+     "pg_type": "integer",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "body",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "author",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "mentions",
+     "type": "ARRAY<STRING>",
+     "pg_type": "_text",
+     "nullable": true,
+     "default": "array()"
+    },
+    {
+     "name": "created_at",
+     "type": "TIMESTAMP",
+     "pg_type": "timestamp with time zone",
+     "nullable": false,
+     "default": "current_timestamp()"
+    },
+    {
+     "name": "account_id",
+     "type": "BIGINT",
+     "pg_type": "integer",
+     "nullable": false,
+     "default": null
+    }
+   ],
+   "primary_key": [
+    "id"
+   ],
+   "unique": [],
+   "serial": "id",
+   "foreign_keys": [
+    {
+     "column": "account_id",
+     "ref_table": "accounts",
+     "ref_column": "id",
+     "on_delete": "cascade"
+    }
+   ]
+  },
+  "company_profile": {
+   "columns": [
+    {
+     "name": "id",
+     "type": "BIGINT",
+     "pg_type": "integer",
+     "nullable": false,
+     "default": "1"
+    },
+    {
+     "name": "company_name",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "utility_type",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "segments",
+     "type": "ARRAY<STRING>",
+     "pg_type": "_text",
+     "nullable": true,
+     "default": "array()"
+    },
+    {
+     "name": "service_territory",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "regulator",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "iso_rto",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "description",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "research_notes",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "researched_at",
+     "type": "TIMESTAMP",
+     "pg_type": "timestamp with time zone",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "researched_by",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "model",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "created_at",
+     "type": "TIMESTAMP",
+     "pg_type": "timestamp with time zone",
+     "nullable": false,
+     "default": "current_timestamp()"
+    },
+    {
+     "name": "updated_at",
+     "type": "TIMESTAMP",
+     "pg_type": "timestamp with time zone",
+     "nullable": false,
+     "default": "current_timestamp()"
+    },
+    {
+     "name": "account_id",
+     "type": "BIGINT",
+     "pg_type": "integer",
+     "nullable": true,
+     "default": null
+    }
+   ],
+   "primary_key": [
+    "id"
+   ],
+   "unique": [
+    [
+     "account_id"
+    ]
+   ],
+   "serial": null,
+   "foreign_keys": [
+    {
+     "column": "account_id",
+     "ref_table": "accounts",
+     "ref_column": "id",
+     "on_delete": "cascade"
+    }
+   ]
+  },
+  "confirm_tokens": {
+   "columns": [
+    {
+     "name": "token",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "intent",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "payload_json",
+     "type": "STRING",
+     "pg_type": "jsonb",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "before_json",
+     "type": "STRING",
+     "pg_type": "jsonb",
+     "nullable": false,
+     "default": "'{}'"
+    },
+    {
+     "name": "after_json",
+     "type": "STRING",
+     "pg_type": "jsonb",
+     "nullable": false,
+     "default": "'{}'"
+    },
+    {
+     "name": "summary",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "actor",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "created_at",
+     "type": "TIMESTAMP",
+     "pg_type": "timestamp with time zone",
+     "nullable": false,
+     "default": "current_timestamp()"
+    },
+    {
+     "name": "expires_at",
+     "type": "TIMESTAMP",
+     "pg_type": "timestamp with time zone",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "consumed_at",
+     "type": "TIMESTAMP",
+     "pg_type": "timestamp with time zone",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "consumed_by",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    }
+   ],
+   "primary_key": [
+    "token"
+   ],
+   "unique": [],
+   "serial": null,
+   "foreign_keys": []
+  },
+  "data_asset_aliases": {
+   "columns": [
+    {
+     "name": "id",
+     "type": "BIGINT",
+     "pg_type": "integer",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "raw",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "raw_normalized",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "canonical",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "mapped_by",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "confidence",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "notes",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "is_user_edited",
+     "type": "BOOLEAN",
+     "pg_type": "boolean",
+     "nullable": false,
+     "default": "false"
+    },
+    {
+     "name": "mapped_at",
+     "type": "TIMESTAMP",
+     "pg_type": "timestamp with time zone",
+     "nullable": false,
+     "default": "current_timestamp()"
+    },
+    {
+     "name": "updated_at",
+     "type": "TIMESTAMP",
+     "pg_type": "timestamp with time zone",
+     "nullable": false,
+     "default": "current_timestamp()"
+    }
+   ],
+   "primary_key": [
+    "id"
+   ],
+   "unique": [
+    [
+     "raw"
+    ]
+   ],
+   "serial": "id",
+   "foreign_keys": []
+  },
+  "data_asset_lobs": {
+   "columns": [
+    {
+     "name": "data_asset_id",
+     "type": "BIGINT",
+     "pg_type": "integer",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "lob_id",
+     "type": "BIGINT",
+     "pg_type": "integer",
+     "nullable": false,
+     "default": null
+    }
+   ],
+   "primary_key": [
+    "data_asset_id",
+    "lob_id"
+   ],
+   "unique": [],
+   "serial": null,
+   "foreign_keys": [
+    {
+     "column": "data_asset_id",
+     "ref_table": "data_assets",
+     "ref_column": "id",
+     "on_delete": "cascade"
+    },
+    {
+     "column": "lob_id",
+     "ref_table": "lobs",
+     "ref_column": "id",
+     "on_delete": "cascade"
+    }
+   ]
+  },
+  "data_assets": {
+   "columns": [
+    {
+     "name": "id",
+     "type": "BIGINT",
+     "pg_type": "integer",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "source_category",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "vendor",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "source_system",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "module",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "description",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "sub_vertical",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "ingestion_status",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": false,
+     "default": "'not_started'"
+    },
+    {
+     "name": "ingest_effort",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "ingest_cost_low",
+     "type": "DECIMAL(38,10)",
+     "pg_type": "numeric",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "ingest_cost_high",
+     "type": "DECIMAL(38,10)",
+     "pg_type": "numeric",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "uc_catalog",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "uc_schema",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "owning_lob_id",
+     "type": "BIGINT",
+     "pg_type": "integer",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "origin",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": false,
+     "default": "'custom'"
+    },
+    {
+     "name": "auto_captured",
+     "type": "BOOLEAN",
+     "pg_type": "boolean",
+     "nullable": false,
+     "default": "false"
+    },
+    {
+     "name": "auto_note",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "created_by",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "created_at",
+     "type": "TIMESTAMP",
+     "pg_type": "timestamp with time zone",
+     "nullable": false,
+     "default": "current_timestamp()"
+    },
+    {
+     "name": "updated_at",
+     "type": "TIMESTAMP",
+     "pg_type": "timestamp with time zone",
+     "nullable": false,
+     "default": "current_timestamp()"
+    },
+    {
+     "name": "discovered_table_count",
+     "type": "BIGINT",
+     "pg_type": "integer",
+     "nullable": false,
+     "default": "0"
+    },
+    {
+     "name": "discovery_confidence",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "last_discovered_at",
+     "type": "TIMESTAMP",
+     "pg_type": "timestamp with time zone",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "tier",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": false,
+     "default": "'raw'"
+    },
+    {
+     "name": "curate_effort",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    }
+   ],
+   "primary_key": [
+    "id"
+   ],
+   "unique": [],
+   "serial": "id",
+   "foreign_keys": [
+    {
+     "column": "owning_lob_id",
+     "ref_table": "lobs",
+     "ref_column": "id",
+     "on_delete": "set_null"
+    }
+   ]
+  },
+  "data_domains": {
+   "columns": [
+    {
+     "name": "id",
+     "type": "BIGINT",
+     "pg_type": "integer",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "name",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "label",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "description",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "category",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "example_attributes",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "is_active",
+     "type": "BOOLEAN",
+     "pg_type": "boolean",
+     "nullable": false,
+     "default": "true"
+    },
+    {
+     "name": "origin",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": false,
+     "default": "'custom'"
+    },
+    {
+     "name": "is_user_edited",
+     "type": "BOOLEAN",
+     "pg_type": "boolean",
+     "nullable": false,
+     "default": "false"
+    },
+    {
+     "name": "created_at",
+     "type": "TIMESTAMP",
+     "pg_type": "timestamp with time zone",
+     "nullable": false,
+     "default": "current_timestamp()"
+    },
+    {
+     "name": "updated_at",
+     "type": "TIMESTAMP",
+     "pg_type": "timestamp with time zone",
+     "nullable": false,
+     "default": "current_timestamp()"
+    }
+   ],
+   "primary_key": [
+    "id"
+   ],
+   "unique": [
+    [
+     "name"
+    ]
+   ],
+   "serial": "id",
+   "foreign_keys": []
+  },
+  "data_source_domains": {
+   "columns": [
+    {
+     "name": "data_source_id",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "domain_id",
+     "type": "BIGINT",
+     "pg_type": "integer",
+     "nullable": false,
+     "default": null
+    }
+   ],
+   "primary_key": [
+    "data_source_id",
+    "domain_id"
+   ],
+   "unique": [],
+   "serial": null,
+   "foreign_keys": [
+    {
+     "column": "data_source_id",
+     "ref_table": "data_sources",
+     "ref_column": "id",
+     "on_delete": "cascade"
+    },
+    {
+     "column": "domain_id",
+     "ref_table": "data_domains",
+     "ref_column": "id",
+     "on_delete": "cascade"
+    }
+   ]
+  },
+  "data_source_rollup": {
+   "columns": [
+    {
+     "name": "data_asset_id",
+     "type": "BIGINT",
+     "pg_type": "integer",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "data_source_id",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "mapped_by",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": false,
+     "default": "'catalog'"
+    }
+   ],
+   "primary_key": [
+    "data_asset_id"
+   ],
+   "unique": [],
+   "serial": null,
+   "foreign_keys": [
+    {
+     "column": "data_asset_id",
+     "ref_table": "data_assets",
+     "ref_column": "id",
+     "on_delete": "cascade"
+    },
+    {
+     "column": "data_source_id",
+     "ref_table": "data_sources",
+     "ref_column": "id",
+     "on_delete": "cascade"
+    }
+   ]
+  },
+  "data_sources": {
+   "columns": [
+    {
+     "name": "id",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "name",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "category",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "description",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "utility_types",
+     "type": "ARRAY<STRING>",
+     "pg_type": "_text",
+     "nullable": false,
+     "default": "array()"
+    },
+    {
+     "name": "match_terms",
+     "type": "ARRAY<STRING>",
+     "pg_type": "_text",
+     "nullable": false,
+     "default": "array()"
+    },
+    {
+     "name": "sort_order",
+     "type": "BIGINT",
+     "pg_type": "integer",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "is_active",
+     "type": "BOOLEAN",
+     "pg_type": "boolean",
+     "nullable": false,
+     "default": "true"
+    },
+    {
+     "name": "origin",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": false,
+     "default": "'catalog'"
+    }
+   ],
+   "primary_key": [
+    "id"
+   ],
+   "unique": [],
+   "serial": null,
+   "foreign_keys": []
+  },
+  "discovered_schemas": {
+   "columns": [
+    {
+     "name": "id",
+     "type": "BIGINT",
+     "pg_type": "integer",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "workspace_id",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "workspace_url",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "catalog_name",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "schema_name",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "owner",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "comment",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "table_count",
+     "type": "BIGINT",
+     "pg_type": "integer",
+     "nullable": false,
+     "default": "0"
+    },
+    {
+     "name": "source_created_at",
+     "type": "TIMESTAMP",
+     "pg_type": "timestamp with time zone",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "source_altered_at",
+     "type": "TIMESTAMP",
+     "pg_type": "timestamp with time zone",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "business_name",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "ai_definition",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "ai_confidence",
+     "type": "DECIMAL(38,10)",
+     "pg_type": "numeric",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "is_user_edited",
+     "type": "BOOLEAN",
+     "pg_type": "boolean",
+     "nullable": false,
+     "default": "false"
+    },
+    {
+     "name": "is_present",
+     "type": "BOOLEAN",
+     "pg_type": "boolean",
+     "nullable": false,
+     "default": "true"
+    },
+    {
+     "name": "first_seen_at",
+     "type": "TIMESTAMP",
+     "pg_type": "timestamp with time zone",
+     "nullable": false,
+     "default": "current_timestamp()"
+    },
+    {
+     "name": "last_seen_at",
+     "type": "TIMESTAMP",
+     "pg_type": "timestamp with time zone",
+     "nullable": false,
+     "default": "current_timestamp()"
+    }
+   ],
+   "primary_key": [
+    "id"
+   ],
+   "unique": [
+    [
+     "workspace_id",
+     "catalog_name",
+     "schema_name"
+    ]
+   ],
+   "serial": "id",
+   "foreign_keys": []
+  },
+  "discovered_tables": {
+   "columns": [
+    {
+     "name": "id",
+     "type": "BIGINT",
+     "pg_type": "integer",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "workspace_id",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "catalog_name",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "schema_name",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "table_name",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "table_type",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "data_format",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "owner",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "comment",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "column_summary",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "column_count",
+     "type": "BIGINT",
+     "pg_type": "integer",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "source_created_at",
+     "type": "TIMESTAMP",
+     "pg_type": "timestamp with time zone",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "source_altered_at",
+     "type": "TIMESTAMP",
+     "pg_type": "timestamp with time zone",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "business_name",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "ai_definition",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "source_system_raw",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "source_system_canonical",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "canonical_confidence",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "data_asset_id",
+     "type": "BIGINT",
+     "pg_type": "integer",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "mapped_by",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "is_user_edited",
+     "type": "BOOLEAN",
+     "pg_type": "boolean",
+     "nullable": false,
+     "default": "false"
+    },
+    {
+     "name": "is_present",
+     "type": "BOOLEAN",
+     "pg_type": "boolean",
+     "nullable": false,
+     "default": "true"
+    },
+    {
+     "name": "first_seen_at",
+     "type": "TIMESTAMP",
+     "pg_type": "timestamp with time zone",
+     "nullable": false,
+     "default": "current_timestamp()"
+    },
+    {
+     "name": "last_seen_at",
+     "type": "TIMESTAMP",
+     "pg_type": "timestamp with time zone",
+     "nullable": false,
+     "default": "current_timestamp()"
+    }
+   ],
+   "primary_key": [
+    "id"
+   ],
+   "unique": [
+    [
+     "workspace_id",
+     "catalog_name",
+     "schema_name",
+     "table_name"
+    ]
+   ],
+   "serial": "id",
+   "foreign_keys": [
+    {
+     "column": "data_asset_id",
+     "ref_table": "data_assets",
+     "ref_column": "id",
+     "on_delete": "set_null"
+    }
+   ]
+  },
+  "external_object_map": {
+   "columns": [
+    {
+     "name": "account_id",
+     "type": "BIGINT",
+     "pg_type": "integer",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "source_app",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "source_object_type",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "source_object_id",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "local_object_type",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "local_object_id",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "source_hash",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "imported_at",
+     "type": "TIMESTAMP",
+     "pg_type": "timestamp with time zone",
+     "nullable": false,
+     "default": "current_timestamp()"
+    },
+    {
+     "name": "imported_by",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    }
+   ],
+   "primary_key": [
+    "account_id",
+    "source_app",
+    "source_object_type",
+    "source_object_id",
+    "local_object_type"
+   ],
+   "unique": [],
+   "serial": null,
+   "foreign_keys": [
+    {
+     "column": "account_id",
+     "ref_table": "accounts",
+     "ref_column": "id",
+     "on_delete": "cascade"
+    }
+   ]
+  },
+  "feature_flags": {
+   "columns": [
+    {
+     "name": "key",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "label",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "description",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": false,
+     "default": "''"
+    },
+    {
+     "name": "category",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": false,
+     "default": "'Beta'"
+    },
+    {
+     "name": "state",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": false,
+     "default": "'off'"
+    },
+    {
+     "name": "sort_order",
+     "type": "BIGINT",
+     "pg_type": "integer",
+     "nullable": false,
+     "default": "100"
+    },
+    {
+     "name": "updated_at",
+     "type": "TIMESTAMP",
+     "pg_type": "timestamp with time zone",
+     "nullable": false,
+     "default": "current_timestamp()"
+    },
+    {
+     "name": "updated_by",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    }
+   ],
+   "primary_key": [
+    "key"
+   ],
+   "unique": [],
+   "serial": null,
+   "foreign_keys": []
+  },
+  "funding_requests": {
+   "columns": [
+    {
+     "name": "id",
+     "type": "BIGINT",
+     "pg_type": "integer",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "data_asset_id",
+     "type": "BIGINT",
+     "pg_type": "integer",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "requesting_lob_id",
+     "type": "BIGINT",
+     "pg_type": "integer",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "co_funding_lobs",
+     "type": "ARRAY<BIGINT>",
+     "pg_type": "_int4",
+     "nullable": true,
+     "default": "array()"
+    },
+    {
+     "name": "combined_value",
+     "type": "DECIMAL(38,10)",
+     "pg_type": "numeric",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "status",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": "'proposed'"
+    },
+    {
+     "name": "sponsor",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "cost_share_json",
+     "type": "STRING",
+     "pg_type": "jsonb",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "brief_md",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "created_at",
+     "type": "TIMESTAMP",
+     "pg_type": "timestamp with time zone",
+     "nullable": false,
+     "default": "current_timestamp()"
+    },
+    {
+     "name": "account_id",
+     "type": "BIGINT",
+     "pg_type": "integer",
+     "nullable": false,
+     "default": null
+    }
+   ],
+   "primary_key": [
+    "id"
+   ],
+   "unique": [],
+   "serial": "id",
+   "foreign_keys": [
+    {
+     "column": "data_asset_id",
+     "ref_table": "data_assets",
+     "ref_column": "id",
+     "on_delete": "cascade"
+    },
+    {
+     "column": "requesting_lob_id",
+     "ref_table": "lobs",
+     "ref_column": "id",
+     "on_delete": "set_null"
+    },
+    {
+     "column": "account_id",
+     "ref_table": "accounts",
+     "ref_column": "id",
+     "on_delete": "cascade"
+    }
+   ]
+  },
+  "glossary_terms": {
+   "columns": [
+    {
+     "name": "id",
+     "type": "BIGINT",
+     "pg_type": "integer",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "term",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "definition",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "domain_id",
+     "type": "BIGINT",
+     "pg_type": "integer",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "lob_id",
+     "type": "BIGINT",
+     "pg_type": "integer",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "synonyms",
+     "type": "ARRAY<STRING>",
+     "pg_type": "_text",
+     "nullable": true,
+     "default": "array()"
+    },
+    {
+     "name": "source_systems",
+     "type": "ARRAY<STRING>",
+     "pg_type": "_text",
+     "nullable": true,
+     "default": "array()"
+    },
+    {
+     "name": "owner",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "origin",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": false,
+     "default": "'manual'"
+    },
+    {
+     "name": "is_user_edited",
+     "type": "BOOLEAN",
+     "pg_type": "boolean",
+     "nullable": false,
+     "default": "false"
+    },
+    {
+     "name": "created_at",
+     "type": "TIMESTAMP",
+     "pg_type": "timestamp with time zone",
+     "nullable": false,
+     "default": "current_timestamp()"
+    },
+    {
+     "name": "updated_at",
+     "type": "TIMESTAMP",
+     "pg_type": "timestamp with time zone",
+     "nullable": false,
+     "default": "current_timestamp()"
+    },
+    {
+     "name": "account_id",
+     "type": "BIGINT",
+     "pg_type": "integer",
+     "nullable": true,
+     "default": null
+    }
+   ],
+   "primary_key": [
+    "id"
+   ],
+   "unique": [
+    [
+     "term"
+    ]
+   ],
+   "serial": "id",
+   "foreign_keys": [
+    {
+     "column": "domain_id",
+     "ref_table": "data_domains",
+     "ref_column": "id",
+     "on_delete": "set_null"
+    },
+    {
+     "column": "lob_id",
+     "ref_table": "lobs",
+     "ref_column": "id",
+     "on_delete": "set_null"
+    },
+    {
+     "column": "account_id",
+     "ref_table": "accounts",
+     "ref_column": "id",
+     "on_delete": "cascade"
+    }
+   ]
+  },
+  "ingestion_runs": {
+   "columns": [
+    {
+     "name": "id",
+     "type": "BIGINT",
+     "pg_type": "integer",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "kind",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "status",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": false,
+     "default": "'running'"
+    },
+    {
+     "name": "stats_json",
+     "type": "STRING",
+     "pg_type": "jsonb",
+     "nullable": false,
+     "default": "'{}'"
+    },
+    {
+     "name": "error",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "actor",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "started_at",
+     "type": "TIMESTAMP",
+     "pg_type": "timestamp with time zone",
+     "nullable": false,
+     "default": "current_timestamp()"
+    },
+    {
+     "name": "finished_at",
+     "type": "TIMESTAMP",
+     "pg_type": "timestamp with time zone",
+     "nullable": true,
+     "default": null
+    }
+   ],
+   "primary_key": [
+    "id"
+   ],
+   "unique": [],
+   "serial": "id",
+   "foreign_keys": []
+  },
+  "kb_article_versions": {
+   "columns": [
+    {
+     "name": "id",
+     "type": "BIGINT",
+     "pg_type": "integer",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "article_id",
+     "type": "BIGINT",
+     "pg_type": "integer",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "version",
+     "type": "BIGINT",
+     "pg_type": "integer",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "title",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "body_md",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "summary",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "change_note",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "edited_by",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "edited_at",
+     "type": "TIMESTAMP",
+     "pg_type": "timestamp with time zone",
+     "nullable": false,
+     "default": "current_timestamp()"
+    }
+   ],
+   "primary_key": [
+    "id"
+   ],
+   "unique": [
+    [
+     "article_id",
+     "version"
+    ]
+   ],
+   "serial": "id",
+   "foreign_keys": [
+    {
+     "column": "article_id",
+     "ref_table": "kb_articles",
+     "ref_column": "id",
+     "on_delete": "cascade"
+    }
+   ]
+  },
+  "kb_articles": {
+   "columns": [
+    {
+     "name": "id",
+     "type": "BIGINT",
+     "pg_type": "integer",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "title",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "slug",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "folder_id",
+     "type": "BIGINT",
+     "pg_type": "integer",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "body_md",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": false,
+     "default": "''"
+    },
+    {
+     "name": "summary",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "tags",
+     "type": "ARRAY<STRING>",
+     "pg_type": "_text",
+     "nullable": false,
+     "default": "array()"
+    },
+    {
+     "name": "status",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": false,
+     "default": "'draft'"
+    },
+    {
+     "name": "generated_by",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "version",
+     "type": "BIGINT",
+     "pg_type": "integer",
+     "nullable": false,
+     "default": "1"
+    },
+    {
+     "name": "created_by",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "updated_by",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "created_at",
+     "type": "TIMESTAMP",
+     "pg_type": "timestamp with time zone",
+     "nullable": false,
+     "default": "current_timestamp()"
+    },
+    {
+     "name": "updated_at",
+     "type": "TIMESTAMP",
+     "pg_type": "timestamp with time zone",
+     "nullable": false,
+     "default": "current_timestamp()"
+    },
+    {
+     "name": "account_id",
+     "type": "BIGINT",
+     "pg_type": "integer",
+     "nullable": true,
+     "default": null
+    }
+   ],
+   "primary_key": [
+    "id"
+   ],
+   "unique": [
+    [
+     "slug"
+    ]
+   ],
+   "serial": "id",
+   "foreign_keys": [
+    {
+     "column": "folder_id",
+     "ref_table": "kb_folders",
+     "ref_column": "id",
+     "on_delete": "set_null"
+    },
+    {
+     "column": "account_id",
+     "ref_table": "accounts",
+     "ref_column": "id",
+     "on_delete": "cascade"
+    }
+   ]
+  },
+  "kb_attachments": {
+   "columns": [
+    {
+     "name": "id",
+     "type": "BIGINT",
+     "pg_type": "integer",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "article_id",
+     "type": "BIGINT",
+     "pg_type": "integer",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "filename",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "mime_type",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "size_bytes",
+     "type": "BIGINT",
+     "pg_type": "bigint",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "storage",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "volume_path",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "content",
+     "type": "BINARY",
+     "pg_type": "bytea",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "checksum",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "uploaded_by",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "uploaded_at",
+     "type": "TIMESTAMP",
+     "pg_type": "timestamp with time zone",
+     "nullable": false,
+     "default": "current_timestamp()"
+    }
+   ],
+   "primary_key": [
+    "id"
+   ],
+   "unique": [],
+   "serial": "id",
+   "foreign_keys": [
+    {
+     "column": "article_id",
+     "ref_table": "kb_articles",
+     "ref_column": "id",
+     "on_delete": "cascade"
+    }
+   ]
+  },
+  "kb_folders": {
+   "columns": [
+    {
+     "name": "id",
+     "type": "BIGINT",
+     "pg_type": "integer",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "name",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "parent_id",
+     "type": "BIGINT",
+     "pg_type": "integer",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "path",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "sort_order",
+     "type": "BIGINT",
+     "pg_type": "integer",
+     "nullable": false,
+     "default": "0"
+    },
+    {
+     "name": "created_by",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "created_at",
+     "type": "TIMESTAMP",
+     "pg_type": "timestamp with time zone",
+     "nullable": false,
+     "default": "current_timestamp()"
+    },
+    {
+     "name": "updated_at",
+     "type": "TIMESTAMP",
+     "pg_type": "timestamp with time zone",
+     "nullable": false,
+     "default": "current_timestamp()"
+    },
+    {
+     "name": "account_id",
+     "type": "BIGINT",
+     "pg_type": "integer",
+     "nullable": true,
+     "default": null
+    }
+   ],
+   "primary_key": [
+    "id"
+   ],
+   "unique": [],
+   "serial": "id",
+   "foreign_keys": [
+    {
+     "column": "account_id",
+     "ref_table": "accounts",
+     "ref_column": "id",
+     "on_delete": "cascade"
+    },
+    {
+     "column": "parent_id",
+     "ref_table": "kb_folders",
+     "ref_column": "id",
+     "on_delete": "cascade"
+    }
+   ]
+  },
+  "kb_links": {
+   "columns": [
+    {
+     "name": "id",
+     "type": "BIGINT",
+     "pg_type": "integer",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "article_id",
+     "type": "BIGINT",
+     "pg_type": "integer",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "entity_type",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "entity_id",
+     "type": "BIGINT",
+     "pg_type": "integer",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "relation",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": false,
+     "default": "'related'"
+    },
+    {
+     "name": "created_by",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "created_at",
+     "type": "TIMESTAMP",
+     "pg_type": "timestamp with time zone",
+     "nullable": false,
+     "default": "current_timestamp()"
+    }
+   ],
+   "primary_key": [
+    "id"
+   ],
+   "unique": [
+    [
+     "article_id",
+     "entity_type",
+     "entity_id",
+     "relation"
+    ]
+   ],
+   "serial": "id",
+   "foreign_keys": [
+    {
+     "column": "article_id",
+     "ref_table": "kb_articles",
+     "ref_column": "id",
+     "on_delete": "cascade"
+    }
+   ]
+  },
+  "linked_databricks_assets": {
+   "columns": [
+    {
+     "name": "id",
+     "type": "BIGINT",
+     "pg_type": "integer",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "use_case_id",
+     "type": "BIGINT",
+     "pg_type": "integer",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "asset_type",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "asset_id",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "asset_name",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    }
+   ],
+   "primary_key": [
+    "id"
+   ],
+   "unique": [],
+   "serial": "id",
+   "foreign_keys": [
+    {
+     "column": "use_case_id",
+     "ref_table": "use_cases",
+     "ref_column": "id",
+     "on_delete": "cascade"
+    }
+   ]
+  },
+  "lobs": {
+   "columns": [
+    {
+     "name": "id",
+     "type": "BIGINT",
+     "pg_type": "integer",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "name",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "description",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    }
+   ],
+   "primary_key": [
+    "id"
+   ],
+   "unique": [
+    [
+     "name"
+    ]
+   ],
+   "serial": "id",
+   "foreign_keys": []
+  },
+  "research_runs": {
+   "columns": [
+    {
+     "name": "id",
+     "type": "BIGINT",
+     "pg_type": "integer",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "company_name",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "scope",
+     "type": "ARRAY<STRING>",
+     "pg_type": "_text",
+     "nullable": true,
+     "default": "array()"
+    },
+    {
+     "name": "status",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": false,
+     "default": "'running'"
+    },
+    {
+     "name": "stats_json",
+     "type": "STRING",
+     "pg_type": "jsonb",
+     "nullable": false,
+     "default": "'{}'"
+    },
+    {
+     "name": "warnings",
+     "type": "ARRAY<STRING>",
+     "pg_type": "_text",
+     "nullable": true,
+     "default": "array()"
+    },
+    {
+     "name": "model",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "used_llm",
+     "type": "BOOLEAN",
+     "pg_type": "boolean",
+     "nullable": false,
+     "default": "false"
+    },
+    {
+     "name": "error",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "actor",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "started_at",
+     "type": "TIMESTAMP",
+     "pg_type": "timestamp with time zone",
+     "nullable": false,
+     "default": "current_timestamp()"
+    },
+    {
+     "name": "finished_at",
+     "type": "TIMESTAMP",
+     "pg_type": "timestamp with time zone",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "account_id",
+     "type": "BIGINT",
+     "pg_type": "integer",
+     "nullable": false,
+     "default": null
+    }
+   ],
+   "primary_key": [
+    "id"
+   ],
+   "unique": [],
+   "serial": "id",
+   "foreign_keys": [
+    {
+     "column": "account_id",
+     "ref_table": "accounts",
+     "ref_column": "id",
+     "on_delete": "cascade"
+    }
+   ]
+  },
+  "roadmap_items": {
+   "columns": [
+    {
+     "name": "id",
+     "type": "BIGINT",
+     "pg_type": "integer",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "use_case_id",
+     "type": "BIGINT",
+     "pg_type": "integer",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "horizon",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "wave",
+     "type": "BIGINT",
+     "pg_type": "integer",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "target_date",
+     "type": "DATE",
+     "pg_type": "date",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "completion_date",
+     "type": "DATE",
+     "pg_type": "date",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "notes",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "account_id",
+     "type": "BIGINT",
+     "pg_type": "integer",
+     "nullable": false,
+     "default": null
+    }
+   ],
+   "primary_key": [
+    "id"
+   ],
+   "unique": [],
+   "serial": "id",
+   "foreign_keys": [
+    {
+     "column": "account_id",
+     "ref_table": "accounts",
+     "ref_column": "id",
+     "on_delete": "cascade"
+    },
+    {
+     "column": "use_case_id",
+     "ref_table": "use_cases",
+     "ref_column": "id",
+     "on_delete": "cascade"
+    }
+   ]
+  },
+  "schema_migrations": {
+   "columns": [
+    {
+     "name": "filename",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "checksum",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "applied_at",
+     "type": "TIMESTAMP",
+     "pg_type": "timestamp with time zone",
+     "nullable": false,
+     "default": "current_timestamp()"
+    },
+    {
+     "name": "applied_by",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "duration_ms",
+     "type": "BIGINT",
+     "pg_type": "integer",
+     "nullable": true,
+     "default": null
+    }
+   ],
+   "primary_key": [
+    "filename"
+   ],
+   "unique": [],
+   "serial": null,
+   "foreign_keys": []
+  },
+  "uc_enables_uc": {
+   "columns": [
+    {
+     "name": "from_use_case_id",
+     "type": "BIGINT",
+     "pg_type": "integer",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "to_use_case_id",
+     "type": "BIGINT",
+     "pg_type": "integer",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "detected_by_agent",
+     "type": "BOOLEAN",
+     "pg_type": "boolean",
+     "nullable": false,
+     "default": "false"
+    },
+    {
+     "name": "rationale",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    }
+   ],
+   "primary_key": [
+    "from_use_case_id",
+    "to_use_case_id"
+   ],
+   "unique": [],
+   "serial": null,
+   "foreign_keys": [
+    {
+     "column": "from_use_case_id",
+     "ref_table": "use_cases",
+     "ref_column": "id",
+     "on_delete": "cascade"
+    },
+    {
+     "column": "to_use_case_id",
+     "ref_table": "use_cases",
+     "ref_column": "id",
+     "on_delete": "cascade"
+    }
+   ]
+  },
+  "uc_requires_asset": {
+   "columns": [
+    {
+     "name": "use_case_id",
+     "type": "BIGINT",
+     "pg_type": "integer",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "data_asset_id",
+     "type": "BIGINT",
+     "pg_type": "integer",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "criticality",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": false,
+     "default": "'required'"
+    },
+    {
+     "name": "manual",
+     "type": "BOOLEAN",
+     "pg_type": "boolean",
+     "nullable": false,
+     "default": "false"
+    }
+   ],
+   "primary_key": [
+    "use_case_id",
+    "data_asset_id"
+   ],
+   "unique": [],
+   "serial": null,
+   "foreign_keys": [
+    {
+     "column": "data_asset_id",
+     "ref_table": "data_assets",
+     "ref_column": "id",
+     "on_delete": "cascade"
+    },
+    {
+     "column": "use_case_id",
+     "ref_table": "use_cases",
+     "ref_column": "id",
+     "on_delete": "cascade"
+    }
+   ]
+  },
+  "uc_requires_domain": {
+   "columns": [
+    {
+     "name": "use_case_id",
+     "type": "BIGINT",
+     "pg_type": "integer",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "domain_id",
+     "type": "BIGINT",
+     "pg_type": "integer",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "necessity",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": false,
+     "default": "'required'"
+    },
+    {
+     "name": "rationale",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "mapped_by",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": false,
+     "default": "'catalog'"
+    },
+    {
+     "name": "manual",
+     "type": "BOOLEAN",
+     "pg_type": "boolean",
+     "nullable": false,
+     "default": "false"
+    },
+    {
+     "name": "mapped_at",
+     "type": "TIMESTAMP",
+     "pg_type": "timestamp with time zone",
+     "nullable": false,
+     "default": "current_timestamp()"
+    }
+   ],
+   "primary_key": [
+    "use_case_id",
+    "domain_id"
+   ],
+   "unique": [],
+   "serial": null,
+   "foreign_keys": [
+    {
+     "column": "use_case_id",
+     "ref_table": "use_cases",
+     "ref_column": "id",
+     "on_delete": "cascade"
+    },
+    {
+     "column": "domain_id",
+     "ref_table": "data_domains",
+     "ref_column": "id",
+     "on_delete": "cascade"
+    }
+   ]
+  },
+  "use_cases": {
+   "columns": [
+    {
+     "name": "id",
+     "type": "BIGINT",
+     "pg_type": "integer",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "title",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "description",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "lob_id",
+     "type": "BIGINT",
+     "pg_type": "integer",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "sub_vertical",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "stage",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "phase",
+     "type": "BIGINT",
+     "pg_type": "integer",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "status",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": false,
+     "default": "'not_started'"
+    },
+    {
+     "name": "category",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "effort_tshirt",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "priority_score",
+     "type": "DECIMAL(38,10)",
+     "pg_type": "numeric",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "risk_tags",
+     "type": "ARRAY<STRING>",
+     "pg_type": "_text",
+     "nullable": true,
+     "default": "array()"
+    },
+    {
+     "name": "compliance_tags",
+     "type": "ARRAY<STRING>",
+     "pg_type": "_text",
+     "nullable": true,
+     "default": "array()"
+    },
+    {
+     "name": "hypothesized_value_json",
+     "type": "STRING",
+     "pg_type": "jsonb",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "realized_value_amount",
+     "type": "DECIMAL(38,10)",
+     "pg_type": "numeric",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "realized_value_json",
+     "type": "STRING",
+     "pg_type": "jsonb",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "realized_override_enabled",
+     "type": "BOOLEAN",
+     "pg_type": "boolean",
+     "nullable": false,
+     "default": "false"
+    },
+    {
+     "name": "realized_override_amount",
+     "type": "DECIMAL(38,10)",
+     "pg_type": "numeric",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "realized_override_note",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "status_source",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": false,
+     "default": "'manual'"
+    },
+    {
+     "name": "created_by",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "created_at",
+     "type": "TIMESTAMP",
+     "pg_type": "timestamp with time zone",
+     "nullable": false,
+     "default": "current_timestamp()"
+    },
+    {
+     "name": "updated_at",
+     "type": "TIMESTAMP",
+     "pg_type": "timestamp with time zone",
+     "nullable": false,
+     "default": "current_timestamp()"
+    },
+    {
+     "name": "requires_locked",
+     "type": "BOOLEAN",
+     "pg_type": "boolean",
+     "nullable": false,
+     "default": "false"
+    },
+    {
+     "name": "origin",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": false,
+     "default": "'custom'"
+    },
+    {
+     "name": "in_portfolio",
+     "type": "BOOLEAN",
+     "pg_type": "boolean",
+     "nullable": false,
+     "default": "true"
+    },
+    {
+     "name": "domains_locked",
+     "type": "BOOLEAN",
+     "pg_type": "boolean",
+     "nullable": false,
+     "default": "false"
+    },
+    {
+     "name": "generated_from_preview",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "generation_lens",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    }
+   ],
+   "primary_key": [
+    "id"
+   ],
+   "unique": [],
+   "serial": "id",
+   "foreign_keys": [
+    {
+     "column": "lob_id",
+     "ref_table": "lobs",
+     "ref_column": "id",
+     "on_delete": "set_null"
+    }
+   ]
+  },
+  "user_active_account": {
+   "columns": [
+    {
+     "name": "user_email",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "account_id",
+     "type": "BIGINT",
+     "pg_type": "integer",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "updated_at",
+     "type": "TIMESTAMP",
+     "pg_type": "timestamp with time zone",
+     "nullable": false,
+     "default": "current_timestamp()"
+    }
+   ],
+   "primary_key": [
+    "user_email"
+   ],
+   "unique": [],
+   "serial": null,
+   "foreign_keys": [
+    {
+     "column": "account_id",
+     "ref_table": "accounts",
+     "ref_column": "id",
+     "on_delete": "set_null"
+    }
+   ]
+  },
+  "value_assumptions": {
+   "columns": [
+    {
+     "name": "id",
+     "type": "BIGINT",
+     "pg_type": "integer",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "key",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "label",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "value",
+     "type": "DECIMAL(38,10)",
+     "pg_type": "numeric",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "unit",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "category",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "description",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "source",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": false,
+     "default": "'default'"
+    },
+    {
+     "name": "source_note",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "confidence",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "updated_at",
+     "type": "TIMESTAMP",
+     "pg_type": "timestamp with time zone",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "account_id",
+     "type": "BIGINT",
+     "pg_type": "integer",
+     "nullable": true,
+     "default": null
+    }
+   ],
+   "primary_key": [
+    "id"
+   ],
+   "unique": [
+    [
+     "account_id",
+     "key"
+    ]
+   ],
+   "serial": "id",
+   "foreign_keys": [
+    {
+     "column": "account_id",
+     "ref_table": "accounts",
+     "ref_column": "id",
+     "on_delete": "cascade"
+    }
+   ]
+  },
+  "value_records": {
+   "columns": [
+    {
+     "name": "id",
+     "type": "BIGINT",
+     "pg_type": "integer",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "use_case_id",
+     "type": "BIGINT",
+     "pg_type": "integer",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "kind",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "metric_type",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "amount",
+     "type": "DECIMAL(38,10)",
+     "pg_type": "numeric",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "unit",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "fiscal_period",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "confidence",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "created_by",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "created_at",
+     "type": "TIMESTAMP",
+     "pg_type": "timestamp with time zone",
+     "nullable": false,
+     "default": "current_timestamp()"
+    },
+    {
+     "name": "account_id",
+     "type": "BIGINT",
+     "pg_type": "integer",
+     "nullable": false,
+     "default": null
+    }
+   ],
+   "primary_key": [
+    "id"
+   ],
+   "unique": [],
+   "serial": "id",
+   "foreign_keys": [
+    {
+     "column": "use_case_id",
+     "ref_table": "use_cases",
+     "ref_column": "id",
+     "on_delete": "cascade"
+    },
+    {
+     "column": "account_id",
+     "ref_table": "accounts",
+     "ref_column": "id",
+     "on_delete": "cascade"
+    }
+   ]
+  },
+  "value_snapshots": {
+   "columns": [
+    {
+     "name": "id",
+     "type": "BIGINT",
+     "pg_type": "integer",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "account_id",
+     "type": "BIGINT",
+     "pg_type": "integer",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "captured_at",
+     "type": "TIMESTAMP",
+     "pg_type": "timestamp with time zone",
+     "nullable": false,
+     "default": "current_timestamp()"
+    },
+    {
+     "name": "reason",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": false,
+     "default": "'manual'"
+    },
+    {
+     "name": "detail",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "captured_by",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "total_value_mm",
+     "type": "DECIMAL(38,10)",
+     "pg_type": "numeric",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "buildable_value_mm",
+     "type": "DECIMAL(38,10)",
+     "pg_type": "numeric",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "realized_value_mm",
+     "type": "DECIMAL(38,10)",
+     "pg_type": "numeric",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "shovel_ready",
+     "type": "BIGINT",
+     "pg_type": "integer",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "nearly_ready",
+     "type": "BIGINT",
+     "pg_type": "integer",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "awaiting_prereqs",
+     "type": "BIGINT",
+     "pg_type": "integer",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "blocked",
+     "type": "BIGINT",
+     "pg_type": "integer",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "sources_total",
+     "type": "BIGINT",
+     "pg_type": "integer",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "sources_ready",
+     "type": "BIGINT",
+     "pg_type": "integer",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "domains_total",
+     "type": "BIGINT",
+     "pg_type": "integer",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "domains_satisfied",
+     "type": "BIGINT",
+     "pg_type": "integer",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "use_cases_total",
+     "type": "BIGINT",
+     "pg_type": "integer",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "use_cases_live",
+     "type": "BIGINT",
+     "pg_type": "integer",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "metrics_json",
+     "type": "STRING",
+     "pg_type": "jsonb",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "captured_minute",
+     "type": "TIMESTAMP",
+     "pg_type": "timestamp without time zone",
+     "nullable": true,
+     "default": null
+    }
+   ],
+   "primary_key": [
+    "id"
+   ],
+   "unique": [
+    [
+     "account_id",
+     "captured_minute",
+     "reason"
+    ]
+   ],
+   "serial": "id",
+   "foreign_keys": [
+    {
+     "column": "account_id",
+     "ref_table": "accounts",
+     "ref_column": "id",
+     "on_delete": "cascade"
+    }
+   ]
+  }
+ },
+ "views": [
+  "asset_status_by_account"
+ ]
+}

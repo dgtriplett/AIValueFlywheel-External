@@ -1,0 +1,238 @@
+# AI Value Flywheel — Databricks Asset Bundle
+#
+# Plan, track, and operationalize a Data & AI transformation: maturity assessment,
+# use-case portfolio, data readiness, dependency-sequenced roadmap, and value
+# tracking — deployed into YOUR workspace and owned by your team.
+#
+# QUICK START (see README.md for prerequisites)
+#   1. Edit the `variables:` defaults below (at minimum warehouse_id and
+#      admin_emails), or pass them with --var on the command line.
+#   2. Pick where app state lives and deploy:
+#
+#        databricks bundle deploy -t lakebase     # Lakebase Postgres (recommended)
+#        databricks bundle deploy -t delta        # Delta tables via a SQL warehouse
+#
+#      Deploy creates the app, its storage, and a `setup` job; the setup job runs
+#      automatically on every deploy (schema migrations + reference catalog; never
+#      touches your data) and the app is started.
+#   3. Open the app URL printed by:  databricks bundle summary -t <target>
+#
+# Everything environment-specific is a variable; nothing is baked in. Re-deploying
+# is safe: setup only applies pending migrations and adds missing catalog rows.
+bundle:
+  name: ai-value-flywheel
+
+variables:
+  # --- required ------------------------------------------------------------
+  warehouse_id:
+    description: >-
+      SQL warehouse ID. Used for Unity Catalog discovery, ai_query() enrichment, and —
+      on the delta target — all app-state reads and writes (Serverless recommended).
+  admin_emails:
+    description: >-
+      Comma-separated emails of the app's first administrators (they can add more
+      in the app's Admin page).
+  # --- naming --------------------------------------------------------------
+  app_name:
+    description: Databricks App name (lowercase, hyphens).
+    default: ai-value-flywheel
+  organization_name:
+    description: Name of the first business unit created in the app (rename later in-app).
+    default: My organization
+  # --- AI ------------------------------------------------------------------
+  serving_endpoint:
+    description: Foundation Model chat endpoint for the agents (use-case mapping, briefs, PoC docs).
+    default: databricks-claude-sonnet-4-5
+  ai_query_endpoint:
+    description: Foundation Model endpoint used by SQL ai_query() for discovery enrichment.
+    default: databricks-claude-sonnet-4-5
+  # --- storage: lakebase target ---------------------------------------------
+  lakebase_project:
+    description: Lakebase (Autoscaling Postgres) project the lakebase target creates for app state.
+    default: ai-value-flywheel
+  # --- storage: delta target ------------------------------------------------
+  delta_catalog:
+    description: Unity Catalog catalog for app-state tables (delta target). You need CREATE SCHEMA on it.
+    default: main
+  delta_schema:
+    description: Schema the delta target creates for app-state tables.
+    default: ai_value_flywheel
+  # --- optional features ----------------------------------------------------
+  discovery_catalog:
+    description: >-
+      Catalog for the workspace-discovery inventory (Operate > Discovery). Leave
+      empty to skip; the feature then shows setup instructions.
+    default: ""
+  discovery_schema:
+    description: Schema for the discovery inventory.
+    default: ai_value_flywheel_discovery
+  genie_mirror_catalog:
+    description: Catalog for the Genie mirror of the portfolio (optional; empty to skip).
+    default: ""
+  genie_mirror_schema:
+    description: Schema for the Genie mirror tables.
+    default: ai_value_flywheel_genie
+  genie_space_id:
+    description: >-
+      Genie space for "Ask" over the portfolio. Leave empty, deploy, create the space
+      from Admin > Setup, then set this to the id it prints and redeploy.
+    default: ""
+  refresh_catalog:
+    description: >-
+      "true" to overwrite reference catalog rows with this release's version on the
+      next deploy (rows you added are never touched). Default only adds missing rows.
+    default: "false"
+  app_env:
+    description: Environment label shown in the app (DEV / PROD).
+    default: PROD
+
+resources:
+  apps:
+    ai_value_flywheel:
+      name: ${var.app_name}
+      description: "AI Value Flywheel — plan, track, and operationalize your Data & AI roadmap."
+      source_code_path: ./
+      lifecycle:
+        started: true
+      config:
+        command: ["python", "-m", "uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8000"]
+        env:
+          - name: DATABRICKS_WAREHOUSE_ID
+            value_from: sql-warehouse
+          - name: SERVING_ENDPOINT
+            value_from: serving-endpoint
+          - name: AI_QUERY_ENDPOINT
+            value_from: ai-query-endpoint
+          - name: APP_ADMINS
+            value: ${var.admin_emails}
+          - name: ATLAS_CATALOG
+            value: ${var.discovery_catalog}
+          - name: ATLAS_SCHEMA
+            value: ${var.discovery_schema}
+          - name: GENIE_MIRROR_CATALOG
+            value: ${var.genie_mirror_catalog}
+          - name: GENIE_MIRROR_SCHEMA
+            value: ${var.genie_mirror_schema}
+          - name: GENIE_SPACE_ID
+            value: ${var.genie_space_id}
+          - name: APP_ENV
+            value: ${var.app_env}
+          - name: LOG_LEVEL
+            value: INFO
+          - name: RATE_LIMITS
+            value: "on"
+      resources:
+        - name: sql-warehouse
+          description: Warehouse for discovery, ai_query() enrichment, and (delta) app state.
+          sql_warehouse:
+            id: ${var.warehouse_id}
+            permission: CAN_USE
+        - name: serving-endpoint
+          description: Foundation Model endpoint backing the agents.
+          serving_endpoint:
+            name: ${var.serving_endpoint}
+            permission: CAN_QUERY
+        - name: ai-query-endpoint
+          description: Foundation Model endpoint used by SQL ai_query() enrichment.
+          serving_endpoint:
+            name: ${var.ai_query_endpoint}
+            permission: CAN_QUERY
+
+  jobs:
+    setup:
+      name: ${var.app_name}-setup
+      description: >-
+        Applies schema migrations, seeds the reference catalog, bootstraps admins, and
+        grants the app's service principal access. Idempotent; runs on every deploy.
+      max_concurrent_runs: 1
+      tasks:
+        - task_key: setup
+          environment_key: default
+          spark_python_task:
+            python_file: ./scripts/setup.py
+            parameters:
+              - --storage-backend={{job.parameters.storage_backend}}
+              - --app-name=${var.app_name}
+              - --warehouse-id=${var.warehouse_id}
+              - --lakebase-project=${var.lakebase_project}
+              - --pg-database=databricks_postgres
+              - --delta-catalog=${var.delta_catalog}
+              - --delta-schema=${var.delta_schema}
+              - --discovery-catalog=${var.discovery_catalog}
+              - --discovery-schema=${var.discovery_schema}
+              - --genie-catalog=${var.genie_mirror_catalog}
+              - --genie-schema=${var.genie_mirror_schema}
+              - --organization-name=${var.organization_name}
+              - --admins=${var.admin_emails}
+              - --refresh-catalog=${var.refresh_catalog}
+      parameters:
+        - name: storage_backend
+          default: lakebase
+      environments:
+        - environment_key: default
+          spec:
+            environment_version: "4"
+            dependencies:
+              - -r ${workspace.file_path}/requirements.txt
+
+  job_runs:
+    setup_on_deploy:
+      job_id: ${resources.jobs.setup.id}
+      lifecycle:
+        triggers:
+          - on_bundle_deploy: true
+
+targets:
+  # App state in Lakebase (managed Postgres). Recommended: fastest, transactional.
+  lakebase:
+    default: true
+    mode: production
+    workspace:
+      root_path: /Workspace/Users/${workspace.current_user.userName}/.bundle/${bundle.name}/lakebase
+    resources:
+      postgres_projects:
+        app_state:
+          project_id: ${var.lakebase_project}
+          display_name: ${var.app_name} app state
+          pg_version: 17
+      apps:
+        ai_value_flywheel:
+          config:
+            env:
+              - name: STORAGE_BACKEND
+                value: lakebase
+          resources:
+            - name: lakebase
+              description: Lakebase database holding the app state.
+              postgres:
+                branch: ${resources.postgres_projects.app_state.name}/branches/production
+                database: ${resources.postgres_projects.app_state.name}/branches/production/databases/databricks-postgres
+                permission: CAN_CONNECT_AND_CREATE
+      jobs:
+        setup:
+          parameters:
+            - name: storage_backend
+              default: lakebase
+
+  # App state in Delta tables in Unity Catalog, read and written through the SQL
+  # warehouse. For workspaces where Lakebase is not available.
+  delta:
+    mode: production
+    workspace:
+      root_path: /Workspace/Users/${workspace.current_user.userName}/.bundle/${bundle.name}/delta
+    resources:
+      apps:
+        ai_value_flywheel:
+          config:
+            env:
+              - name: STORAGE_BACKEND
+                value: delta
+              - name: DELTA_CATALOG
+                value: ${var.delta_catalog}
+              - name: DELTA_SCHEMA
+                value: ${var.delta_schema}
+      jobs:
+        setup:
+          parameters:
+            - name: storage_backend
+              default: delta

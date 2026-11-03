@@ -1,0 +1,1070 @@
+{
+  "4": [
+    "reliability",
+    "efficiency"
+  ],
+  "5": [
+    "revenue",
+    "efficiency"
+  ],
+  "6": [
+    "reliability",
+    "efficiency",
+    "electrification"
+  ],
+  "7": [
+    "efficiency",
+    "electrification",
+    "reliability"
+  ],
+  "8": [
+    "reliability",
+    "efficiency",
+    "safety"
+  ],
+  "9": [
+    "reliability",
+    "safety"
+  ],
+  "10": [
+    "reliability",
+    "efficiency"
+  ],
+  "11": [
+    "reliability",
+    "storm",
+    "efficiency"
+  ],
+  "12": [
+    "reliability",
+    "efficiency"
+  ],
+  "13": [
+    "reliability",
+    "efficiency",
+    "safety"
+  ],
+  "14": [
+    "electrification",
+    "efficiency",
+    "reliability"
+  ],
+  "15": [
+    "reliability",
+    "regulatory",
+    "efficiency"
+  ],
+  "16": [
+    "customer",
+    "efficiency"
+  ],
+  "17": [
+    "customer",
+    "efficiency"
+  ],
+  "18": [
+    "customer",
+    "revenue",
+    "electrification"
+  ],
+  "19": [
+    "revenue",
+    "customer",
+    "efficiency"
+  ],
+  "20": [
+    "revenue",
+    "customer"
+  ],
+  "21": [
+    "regulatory",
+    "efficiency",
+    "electrification"
+  ],
+  "22": [
+    "regulatory",
+    "revenue"
+  ],
+  "23": [
+    "regulatory",
+    "electrification",
+    "efficiency"
+  ],
+  "24": [
+    "revenue",
+    "regulatory"
+  ],
+  "25": [
+    "regulatory"
+  ],
+  "26": [
+    "efficiency",
+    "revenue"
+  ],
+  "27": [
+    "efficiency",
+    "regulatory",
+    "revenue"
+  ],
+  "28": [
+    "safety",
+    "efficiency"
+  ],
+  "29": [
+    "safety",
+    "efficiency"
+  ],
+  "30": [
+    "reliability",
+    "safety",
+    "regulatory"
+  ],
+  "31": [
+    "reliability",
+    "efficiency"
+  ],
+  "32": [
+    "reliability",
+    "efficiency"
+  ],
+  "33": [
+    "regulatory",
+    "efficiency",
+    "electrification"
+  ],
+  "34": [
+    "electrification",
+    "efficiency"
+  ],
+  "35": [
+    "efficiency",
+    "revenue",
+    "reliability"
+  ],
+  "36": [
+    "reliability",
+    "efficiency",
+    "safety"
+  ],
+  "37": [
+    "reliability",
+    "efficiency"
+  ],
+  "38": [
+    "efficiency",
+    "electrification",
+    "reliability"
+  ],
+  "39": [
+    "reliability",
+    "safety",
+    "efficiency"
+  ],
+  "40": [
+    "reliability",
+    "efficiency"
+  ],
+  "41": [
+    "electrification",
+    "reliability"
+  ],
+  "42": [
+    "reliability",
+    "electrification",
+    "efficiency"
+  ],
+  "43": [
+    "storm",
+    "safety"
+  ],
+  "44": [
+    "efficiency",
+    "reliability"
+  ],
+  "45": [
+    "electrification",
+    "efficiency"
+  ],
+  "46": [
+    "customer",
+    "revenue",
+    "regulatory"
+  ],
+  "47": [
+    "customer",
+    "electrification"
+  ],
+  "48": [
+    "customer",
+    "electrification"
+  ],
+  "49": [
+    "customer",
+    "efficiency"
+  ],
+  "50": [
+    "customer"
+  ],
+  "51": [
+    "electrification",
+    "efficiency",
+    "regulatory"
+  ],
+  "52": [
+    "electrification",
+    "revenue",
+    "efficiency"
+  ],
+  "53": [
+    "efficiency",
+    "reliability",
+    "regulatory"
+  ],
+  "54": [
+    "revenue",
+    "electrification",
+    "regulatory"
+  ],
+  "55": [
+    "regulatory",
+    "reliability",
+    "efficiency"
+  ],
+  "56": [
+    "efficiency",
+    "safety",
+    "regulatory"
+  ],
+  "57": [
+    "efficiency",
+    "revenue"
+  ],
+  "58": [
+    "efficiency",
+    "regulatory",
+    "revenue"
+  ],
+  "59": [
+    "efficiency",
+    "reliability"
+  ],
+  "60": [
+    "efficiency",
+    "regulatory",
+    "revenue"
+  ],
+  "61": [
+    "efficiency",
+    "reliability",
+    "safety"
+  ],
+  "62": [
+    "efficiency",
+    "reliability"
+  ],
+  "63": [
+    "reliability",
+    "efficiency",
+    "revenue"
+  ],
+  "64": [
+    "reliability",
+    "efficiency"
+  ],
+  "65": [
+    "reliability",
+    "efficiency"
+  ],
+  "66": [
+    "efficiency",
+    "reliability"
+  ],
+  "67": [
+    "reliability",
+    "efficiency",
+    "safety"
+  ],
+  "68": [
+    "reliability",
+    "efficiency"
+  ],
+  "69": [
+    "efficiency",
+    "reliability",
+    "revenue"
+  ],
+  "70": [
+    "reliability",
+    "efficiency",
+    "revenue"
+  ],
+  "71": [
+    "reliability",
+    "efficiency",
+    "electrification"
+  ],
+  "72": [
+    "efficiency",
+    "safety",
+    "reliability"
+  ],
+  "73": [
+    "efficiency",
+    "reliability",
+    "safety"
+  ],
+  "74": [
+    "reliability",
+    "efficiency",
+    "storm"
+  ],
+  "75": [
+    "reliability",
+    "efficiency",
+    "revenue"
+  ],
+  "76": [
+    "electrification",
+    "customer",
+    "efficiency"
+  ],
+  "77": [
+    "customer",
+    "efficiency"
+  ],
+  "78": [
+    "customer",
+    "electrification"
+  ],
+  "79": [
+    "electrification",
+    "revenue",
+    "efficiency"
+  ],
+  "80": [
+    "customer",
+    "efficiency",
+    "revenue"
+  ],
+  "81": [
+    "regulatory",
+    "efficiency"
+  ],
+  "82": [
+    "regulatory",
+    "efficiency",
+    "revenue"
+  ],
+  "83": [
+    "regulatory"
+  ],
+  "84": [
+    "regulatory",
+    "electrification",
+    "efficiency"
+  ],
+  "85": [
+    "regulatory",
+    "efficiency"
+  ],
+  "86": [
+    "efficiency",
+    "revenue",
+    "regulatory"
+  ],
+  "87": [
+    "safety",
+    "efficiency"
+  ],
+  "88": [
+    "reliability",
+    "storm",
+    "regulatory"
+  ],
+  "89": [
+    "efficiency",
+    "revenue"
+  ],
+  "90": [
+    "efficiency",
+    "reliability",
+    "revenue"
+  ],
+  "91": [
+    "safety",
+    "reliability",
+    "regulatory"
+  ],
+  "92": [
+    "efficiency",
+    "revenue"
+  ],
+  "93": [
+    "efficiency",
+    "revenue",
+    "reliability"
+  ],
+  "94": [
+    "regulatory",
+    "reliability",
+    "safety"
+  ],
+  "95": [
+    "reliability",
+    "efficiency",
+    "regulatory"
+  ],
+  "96": [
+    "safety",
+    "reliability",
+    "regulatory"
+  ],
+  "97": [
+    "efficiency",
+    "revenue"
+  ],
+  "98": [
+    "revenue",
+    "safety"
+  ],
+  "99": [
+    "regulatory",
+    "reliability",
+    "safety"
+  ],
+  "100": [
+    "reliability",
+    "safety",
+    "efficiency"
+  ],
+  "101": [
+    "efficiency",
+    "reliability"
+  ],
+  "102": [
+    "safety",
+    "reliability",
+    "regulatory"
+  ],
+  "103": [
+    "electrification",
+    "regulatory",
+    "efficiency"
+  ],
+  "104": [
+    "efficiency",
+    "reliability"
+  ],
+  "105": [
+    "safety",
+    "efficiency",
+    "regulatory"
+  ],
+  "106": [
+    "reliability",
+    "safety",
+    "efficiency"
+  ],
+  "107": [
+    "electrification",
+    "regulatory",
+    "efficiency"
+  ],
+  "108": [
+    "regulatory",
+    "efficiency"
+  ],
+  "109": [
+    "efficiency",
+    "reliability",
+    "revenue"
+  ],
+  "110": [
+    "efficiency",
+    "reliability",
+    "electrification"
+  ],
+  "111": [
+    "reliability",
+    "efficiency"
+  ],
+  "112": [
+    "reliability",
+    "regulatory"
+  ],
+  "113": [
+    "reliability",
+    "efficiency"
+  ],
+  "114": [
+    "regulatory",
+    "reliability"
+  ],
+  "115": [
+    "customer",
+    "efficiency"
+  ],
+  "116": [
+    "customer",
+    "revenue"
+  ],
+  "117": [
+    "regulatory",
+    "customer",
+    "efficiency"
+  ],
+  "118": [
+    "safety",
+    "regulatory"
+  ],
+  "119": [
+    "storm",
+    "regulatory",
+    "efficiency"
+  ],
+  "120": [
+    "revenue",
+    "efficiency"
+  ],
+  "121": [
+    "efficiency",
+    "revenue"
+  ],
+  "122": [
+    "efficiency",
+    "safety"
+  ],
+  "123": [
+    "reliability",
+    "safety",
+    "efficiency"
+  ],
+  "124": [
+    "electrification",
+    "revenue",
+    "regulatory"
+  ],
+  "125": [
+    "electrification",
+    "revenue",
+    "efficiency"
+  ],
+  "126": [
+    "safety",
+    "reliability",
+    "efficiency"
+  ],
+  "127": [
+    "reliability",
+    "electrification",
+    "efficiency"
+  ],
+  "128": [
+    "reliability",
+    "efficiency",
+    "regulatory"
+  ],
+  "129": [
+    "efficiency",
+    "revenue"
+  ],
+  "130": [
+    "reliability",
+    "efficiency",
+    "safety"
+  ],
+  "131": [
+    "efficiency",
+    "reliability"
+  ],
+  "132": [
+    "efficiency",
+    "safety"
+  ],
+  "133": [
+    "efficiency",
+    "revenue"
+  ],
+  "134": [
+    "efficiency",
+    "customer"
+  ],
+  "135": [
+    "revenue",
+    "customer"
+  ],
+  "136": [
+    "efficiency",
+    "regulatory",
+    "revenue"
+  ],
+  "137": [
+    "electrification",
+    "reliability",
+    "efficiency"
+  ],
+  "138": [
+    "efficiency",
+    "reliability",
+    "electrification"
+  ],
+  "139": [
+    "reliability",
+    "efficiency",
+    "customer"
+  ],
+  "140": [
+    "regulatory",
+    "efficiency"
+  ],
+  "141": [
+    "revenue",
+    "regulatory",
+    "customer"
+  ],
+  "142": [
+    "regulatory",
+    "efficiency"
+  ],
+  "143": [
+    "regulatory",
+    "reliability"
+  ],
+  "144": [
+    "efficiency",
+    "reliability",
+    "revenue"
+  ],
+  "145": [
+    "customer",
+    "regulatory"
+  ],
+  "146": [
+    "customer",
+    "efficiency"
+  ],
+  "147": [
+    "reliability",
+    "efficiency",
+    "regulatory"
+  ],
+  "148": [
+    "reliability",
+    "efficiency",
+    "regulatory"
+  ],
+  "149": [
+    "safety",
+    "efficiency",
+    "regulatory"
+  ],
+  "150": [
+    "efficiency",
+    "regulatory",
+    "safety"
+  ],
+  "151": [
+    "regulatory",
+    "efficiency",
+    "reliability"
+  ],
+  "152": [
+    "efficiency",
+    "regulatory",
+    "safety"
+  ],
+  "153": [
+    "reliability",
+    "regulatory",
+    "efficiency"
+  ],
+  "154": [
+    "reliability",
+    "safety",
+    "regulatory"
+  ],
+  "155": [
+    "efficiency",
+    "reliability",
+    "regulatory"
+  ],
+  "156": [
+    "reliability",
+    "safety"
+  ],
+  "157": [
+    "safety",
+    "reliability",
+    "efficiency"
+  ],
+  "158": [
+    "reliability",
+    "regulatory",
+    "safety"
+  ],
+  "159": [
+    "reliability",
+    "safety",
+    "efficiency"
+  ],
+  "160": [
+    "safety",
+    "reliability",
+    "efficiency"
+  ],
+  "161": [
+    "efficiency",
+    "reliability",
+    "safety"
+  ],
+  "162": [
+    "safety",
+    "regulatory",
+    "reliability"
+  ],
+  "163": [
+    "efficiency",
+    "regulatory",
+    "safety"
+  ],
+  "164": [
+    "regulatory",
+    "reliability",
+    "efficiency"
+  ],
+  "165": [
+    "safety",
+    "efficiency",
+    "regulatory"
+  ],
+  "166": [
+    "reliability",
+    "efficiency",
+    "regulatory"
+  ],
+  "167": [
+    "reliability",
+    "efficiency",
+    "safety"
+  ],
+  "168": [
+    "reliability",
+    "safety"
+  ],
+  "169": [
+    "reliability",
+    "safety"
+  ],
+  "170": [
+    "reliability",
+    "efficiency",
+    "safety"
+  ],
+  "171": [
+    "safety",
+    "reliability",
+    "efficiency"
+  ],
+  "172": [
+    "efficiency",
+    "safety",
+    "regulatory"
+  ],
+  "173": [
+    "reliability",
+    "safety",
+    "efficiency"
+  ],
+  "174": [
+    "reliability",
+    "efficiency",
+    "regulatory"
+  ],
+  "175": [
+    "reliability",
+    "safety",
+    "regulatory"
+  ],
+  "176": [
+    "reliability",
+    "efficiency",
+    "safety"
+  ],
+  "177": [
+    "reliability",
+    "efficiency",
+    "regulatory"
+  ],
+  "178": [
+    "regulatory",
+    "efficiency"
+  ],
+  "179": [
+    "reliability",
+    "efficiency",
+    "regulatory"
+  ],
+  "180": [
+    "reliability",
+    "safety"
+  ],
+  "181": [
+    "regulatory",
+    "reliability",
+    "efficiency"
+  ],
+  "182": [
+    "reliability",
+    "regulatory",
+    "safety"
+  ],
+  "183": [
+    "efficiency",
+    "safety",
+    "regulatory"
+  ],
+  "184": [
+    "reliability",
+    "efficiency"
+  ],
+  "185": [
+    "reliability",
+    "safety",
+    "efficiency"
+  ],
+  "186": [
+    "reliability",
+    "safety"
+  ],
+  "187": [
+    "reliability",
+    "regulatory"
+  ],
+  "188": [
+    "regulatory",
+    "efficiency",
+    "safety"
+  ],
+  "189": [
+    "regulatory",
+    "efficiency"
+  ],
+  "190": [
+    "regulatory",
+    "reliability"
+  ],
+  "191": [
+    "regulatory",
+    "reliability",
+    "safety"
+  ],
+  "192": [
+    "revenue",
+    "efficiency",
+    "regulatory"
+  ],
+  "193": [
+    "revenue",
+    "regulatory",
+    "electrification"
+  ],
+  "194": [
+    "revenue",
+    "regulatory"
+  ],
+  "195": [
+    "revenue",
+    "efficiency",
+    "regulatory"
+  ],
+  "196": [
+    "revenue",
+    "electrification"
+  ],
+  "197": [
+    "revenue",
+    "efficiency"
+  ],
+  "198": [
+    "revenue",
+    "efficiency"
+  ],
+  "199": [
+    "reliability",
+    "efficiency"
+  ],
+  "200": [
+    "efficiency",
+    "reliability"
+  ],
+  "201": [
+    "reliability",
+    "efficiency"
+  ],
+  "202": [
+    "reliability",
+    "safety"
+  ],
+  "203": [
+    "efficiency",
+    "reliability"
+  ],
+  "204": [
+    "reliability",
+    "safety"
+  ],
+  "205": [
+    "safety",
+    "regulatory"
+  ],
+  "206": [
+    "regulatory",
+    "safety"
+  ],
+  "207": [
+    "efficiency",
+    "electrification",
+    "revenue"
+  ],
+  "208": [
+    "reliability",
+    "efficiency"
+  ],
+  "209": [
+    "efficiency",
+    "revenue"
+  ],
+  "210": [
+    "revenue",
+    "efficiency"
+  ],
+  "211": [
+    "revenue",
+    "efficiency"
+  ],
+  "212": [
+    "revenue",
+    "regulatory"
+  ],
+  "213": [
+    "reliability",
+    "safety",
+    "efficiency"
+  ],
+  "214": [
+    "efficiency",
+    "electrification",
+    "reliability"
+  ],
+  "215": [
+    "reliability",
+    "efficiency"
+  ],
+  "216": [
+    "reliability",
+    "efficiency"
+  ],
+  "217": [
+    "efficiency",
+    "reliability",
+    "revenue"
+  ],
+  "218": [
+    "storm",
+    "reliability",
+    "safety"
+  ],
+  "219": [
+    "electrification",
+    "efficiency",
+    "revenue"
+  ],
+  "220": [
+    "reliability",
+    "safety",
+    "efficiency"
+  ],
+  "221": [
+    "revenue",
+    "efficiency"
+  ],
+  "222": [
+    "customer",
+    "electrification"
+  ],
+  "223": [
+    "revenue",
+    "customer"
+  ],
+  "224": [
+    "regulatory",
+    "efficiency"
+  ],
+  "225": [
+    "regulatory"
+  ],
+  "226": [
+    "regulatory",
+    "revenue",
+    "efficiency"
+  ],
+  "227": [
+    "regulatory",
+    "safety"
+  ],
+  "228": [
+    "regulatory",
+    "efficiency"
+  ],
+  "229": [
+    "efficiency",
+    "reliability"
+  ],
+  "230": [
+    "safety",
+    "efficiency"
+  ],
+  "231": [
+    "safety"
+  ],
+  "232": [
+    "efficiency",
+    "reliability",
+    "regulatory"
+  ],
+  "233": [
+    "revenue",
+    "efficiency"
+  ],
+  "234": [
+    "efficiency",
+    "reliability"
+  ],
+  "235": [
+    "reliability",
+    "efficiency"
+  ],
+  "236": [
+    "reliability",
+    "efficiency"
+  ],
+  "237": [
+    "reliability",
+    "efficiency",
+    "electrification"
+  ],
+  "238": [
+    "revenue",
+    "efficiency",
+    "regulatory"
+  ],
+  "239": [
+    "efficiency",
+    "reliability",
+    "revenue"
+  ],
+  "240": [
+    "reliability",
+    "efficiency"
+  ]
+}

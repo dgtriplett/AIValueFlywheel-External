@@ -1,0 +1,188 @@
+[
+  {
+    "id": "ds_meter_billing",
+    "category": "Customer",
+    "name": "Customer Information System (CIS) / billing",
+    "description": "Account, premise, rate, billing transactions"
+  },
+  {
+    "id": "ds_ami_meter",
+    "category": "Customer",
+    "name": "AMI / smart meter reads",
+    "description": "Interval kWh / kW reads, voltage, events"
+  },
+  {
+    "id": "ds_call_center",
+    "category": "Customer",
+    "name": "Call center / IVR / chat logs",
+    "description": "Customer interaction records, call topics, AHT"
+  },
+  {
+    "id": "ds_outage_notifications",
+    "category": "Customer",
+    "name": "Outage notifications / alerts",
+    "description": "Customer-facing outage messages and acknowledgements"
+  },
+  {
+    "id": "ds_program_enrollment",
+    "category": "Customer",
+    "name": "Demand response / program enrollment",
+    "description": "Enrollment status in DR, EE, EV, TOU, NEM programs"
+  },
+  {
+    "id": "ds_outage_management",
+    "category": "Distribution",
+    "name": "Outage Management System (OMS)",
+    "description": "Trouble tickets, momentary/sustained outages, restoration"
+  },
+  {
+    "id": "ds_distribution_scada",
+    "category": "Distribution",
+    "name": "Distribution SCADA",
+    "description": "Substation telemetry, switch states, feeder loading"
+  },
+  {
+    "id": "ds_dms_adms",
+    "category": "Distribution",
+    "name": "DMS / ADMS state estimation",
+    "description": "Network model state, FLISR, Volt-VAR, contingency"
+  },
+  {
+    "id": "ds_dist_assets_gis",
+    "category": "Distribution",
+    "name": "GIS network model",
+    "description": "Connectivity model, asset locations, line ratings"
+  },
+  {
+    "id": "ds_transformer_records",
+    "category": "Distribution",
+    "name": "Transformer / asset records",
+    "description": "Manufacturer, install date, ratings, condition assessments"
+  },
+  {
+    "id": "ds_trans_scada",
+    "category": "Transmission",
+    "name": "Transmission SCADA + EMS",
+    "description": "Bus voltages, line flows, breaker / RTU status"
+  },
+  {
+    "id": "ds_pmu",
+    "category": "Transmission",
+    "name": "Phasor measurement units (PMUs)",
+    "description": "Synchrophasor data, oscillation events"
+  },
+  {
+    "id": "ds_iso_market",
+    "category": "Transmission",
+    "name": "ISO/RTO market & operations data",
+    "description": "LMP, congestion, capacity, ancillary, ICCP feeds"
+  },
+  {
+    "id": "ds_weather",
+    "category": "Transmission",
+    "name": "Weather feeds (NOAA / vendor)",
+    "description": "Forecasts, lightning, wind, fire-risk, ambient temp"
+  },
+  {
+    "id": "ds_pi_historian",
+    "category": "Generation",
+    "name": "Plant historian (PI / IP.21 / Wonderware)",
+    "description": "Continuous unit telemetry tags"
+  },
+  {
+    "id": "ds_dcs_controls",
+    "category": "Generation",
+    "name": "DCS / unit-control / ICS data",
+    "description": "Setpoints, alarms, sequence-of-events"
+  },
+  {
+    "id": "ds_fuel_mgmt",
+    "category": "Generation",
+    "name": "Fuel management / coal-yard / gas-nominations",
+    "description": "Inventory, BTU, deliveries, hedges"
+  },
+  {
+    "id": "ds_emissions_cems",
+    "category": "Generation",
+    "name": "CEMS / emissions monitoring",
+    "description": "NOx/SOx/CO2/Hg per unit, EPA reporting"
+  },
+  {
+    "id": "ds_outage_planning",
+    "category": "Generation",
+    "name": "Outage / maintenance planning",
+    "description": "Planned outage schedules, unit availability"
+  },
+  {
+    "id": "ds_work_management",
+    "category": "Field & Workforce",
+    "name": "Work management (Maximo / SAP PM / Oracle WAM)",
+    "description": "Work orders, history, parts, labor"
+  },
+  {
+    "id": "ds_mobile_workforce",
+    "category": "Field & Workforce",
+    "name": "Mobile workforce / dispatch",
+    "description": "Crew location, ETAs, completed work"
+  },
+  {
+    "id": "ds_safety_incidents",
+    "category": "Field & Workforce",
+    "name": "Safety / incident reporting",
+    "description": "OSHA recordables, near-misses, JSAs"
+  },
+  {
+    "id": "ds_hr_workforce",
+    "category": "Field & Workforce",
+    "name": "HR / workforce data",
+    "description": "Headcount, retirement-eligible, certifications"
+  },
+  {
+    "id": "ds_erp_financial",
+    "category": "Corporate",
+    "name": "ERP / financial (SAP / Oracle / Workday)",
+    "description": "GL, cost centers, capex, opex"
+  },
+  {
+    "id": "ds_procurement",
+    "category": "Corporate",
+    "name": "Procurement / supply chain",
+    "description": "POs, vendors, contracts, spend categories"
+  },
+  {
+    "id": "ds_capital_projects",
+    "category": "Corporate",
+    "name": "Capital project tracking",
+    "description": "Project portfolio, milestones, EVM"
+  },
+  {
+    "id": "ds_regulatory_filings",
+    "category": "Corporate",
+    "name": "Regulatory / rate-case workpapers",
+    "description": "FERC Form 1, EIA-861, state-PUC filings"
+  },
+  {
+    "id": "ds_it_observability",
+    "category": "IT / OT / Security",
+    "name": "IT logs / observability",
+    "description": "Network, app, infrastructure logs"
+  },
+  {
+    "id": "ds_ot_security",
+    "category": "IT / OT / Security",
+    "name": "OT security telemetry",
+    "description": "ICS/SCADA security events, NERC CIP audit logs"
+  },
+  {
+    "id": "ds_identity_iam",
+    "category": "IT / OT / Security",
+    "name": "Identity / IAM",
+    "description": "Workforce + customer identity, SSO, entitlements"
+  },
+  {
+    "id": "ds_geospatial",
+    "category": "IT / OT / Security",
+    "name": "Geospatial / drone / satellite imagery",
+    "description": "Lidar, satellite, drone images for veg/asset inspection"
+  }
+]
