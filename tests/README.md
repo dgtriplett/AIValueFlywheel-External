@@ -29,7 +29,9 @@ that has never talked to Databricks.
 | `test_value_engine.py` | The parameterized value model: component arithmetic, low/high bands, realized value, and the shipped catalog (every assumption key it references is seeded, so nothing silently evaluates to $0). |
 | `test_normalization.py` | Deterministic canonical matching (exact / alias / normalized) and that manual mappings are never overwritten. |
 | `test_source_resolution.py` | The discovery→catalog join: 100% of a realistic corpus of customer schema names (`maximo`, `osisoft_pi`, `sap_isu`) resolves deterministically, and **zero** analytics-noise names (`dim_date`, `bronze`, `poc_project`) resolve. Both corpora are the test — a resolver that matches everything makes the coverage numbers fiction. |
-| `test_sync_packages.py` | Cross-app roadmap import resolution: maturity-assessment free-text data requirements map to canonical Value Flywheel assets instead of creating generic imported dataset rows. |
+| `test_sync_packages.py` | Free-text data-need labels (e.g. a roadmap's datasets) resolve to canonical catalog assets instead of creating generic imported dataset rows. |
+| `test_roadmap_package.py` | The roadmap package: bad files are refused with a reason, imperfect ones import with warnings (never silent fixes), matching only suggests and ranks the right catalog use case first, a new version's diff names what was added/changed/dropped, and the roadmap's value keeps its base exactly. |
+| `test_aitr_deck.py` | Importing an AITR deck: only allow-listed roadmap content is taken, value is gross to the organization (any attribution model is never applied), in-flight and enabler tiles are left out, attribution sentences are removed from prose, the page is read as data and never run, and a deck that cannot be cleaned is refused. |
 | `test_confirm.py` | Propose/confirm token lifecycle — single use, TTL expiry, payload integrity. |
 | `test_taxonomy.py` | Taxonomy dimension vocabularies and effective-dating. |
 | `test_migrator.py` | Migrations apply **at most once**, in order, and drift aborts before applying anything. Also that `startup_check` never executes DDL. |
@@ -50,7 +52,6 @@ that has never talked to Databricks.
 | `test_no_redundancy.py` | One definition per rule: no module restates `READY_STATUSES`, copies the cost table, or evaluates value models outside `value_engine`. |
 | `test_app_wiring.py` | Every router is mounted, and no literal route is shadowed by a parameterized one declared before it. |
 | `test_llm_negotiation.py` | Optional-parameter negotiation (`temperature` / `response_format` rejection) and that every model call goes through a negotiating helper. |
-| `test_preassessment.py` | The pre-assessment worksheet round-trip: the full workbook's tabs follow wizard order, customer-picked dropdown labels parse back to option values (multi-select rows become value lists), unlisted answers are warned rather than guessed, and a legacy 2-tab checklist still imports. |
 | `test_authoring.py` | The use-case authoring agent's rules: only catalog ids survive validation (and dropped ones are reported), enums are coerced, a use case can't be both a prerequisite and enabled, and no accepted dependency edge can close a cycle in the enables graph. |
 | `test_storage_schema.py` | The Postgres baseline, the generated Delta schema, and `server/storage/schema_meta.json` describe the same tables and columns; every table has a primary key; Delta ids are 64-bit; and the schema invariants (knowledge-base uniqueness, cascades, snapshots not foreign-keyed) hold. |
 | `test_research.py` | Assumption parsing: invented keys rejected, unit misreads flagged, `"3.6M"` coerced, confidence downgraded. |

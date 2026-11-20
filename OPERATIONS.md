@@ -7,7 +7,7 @@ schema changes, and troubleshooting. Settings are in [CONFIGURATION.md](CONFIGUR
 
 | What | Lakebase target | Delta target |
 |---|---|---|
-| App state (business units, assessments, portfolios, statuses, values, comments, knowledge base) | Lakebase project `lakebase_project`, database `databricks_postgres`, schema `public` | `<delta_catalog>.<delta_schema>` |
+| App state (business units, imported roadmaps, portfolios, statuses, values, comments, knowledge base) | Lakebase project `lakebase_project`, database `databricks_postgres`, schema `public` | `<delta_catalog>.<delta_schema>` |
 | Reference catalog (shipped use cases, data assets, domains, sources, dependencies) | Same tables, `origin = 'catalog'` | Same |
 | App code | Workspace files under the bundle root | Same |
 | Schema version | `schema_migrations` table | `schema_migrations` table |

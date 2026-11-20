@@ -23,17 +23,22 @@ behind the agents. Deployed and upgraded by a Databricks Asset Bundle.
 
 ## Product surfaces
 
-- **Assess** (`frontend/src/components/AssessmentWizard.tsx` and the `Step*` files,
-  `ResultsDashboard.tsx`, `RoadmapView.tsx`): a four-step maturity assessment, scored
-  client-side (`frontend/src/data/scoring.ts`) against the bundled catalog, producing
-  recommendations and a capacity-constrained 3–5 year roadmap. The pre-assessment
-  worksheet (`server/preassessment_template.py`, `frontend/src/data/preassessmentSpec.ts`)
-  round-trips every wizard question through Excel. Assessments are saved per business
-  unit (`account_assessments`).
-- **Operate** (`OperateView.tsx`): the business unit's portfolio, readiness, coverage,
-  data status, value, what-if, reconciliation and discovery. **Promote**
-  (`/api/assess/promote`) turns an assessment into portfolio rows and per-unit data
-  status.
+- **Operate** (`OperateView.tsx`): the business unit's roadmap and portfolio — pillar
+  progress, priority, readiness, coverage, data status, value, what-if, reconciliation
+  and discovery. Each use case's drawer adds the roadmap's own context (why it matters,
+  KPI, value estimate and assumptions, first-version plan).
+- **Roadmap import** (`RoadmapImportModal.tsx`, `server/routes/roadmap_import.py`):
+  seeds and refreshes the portfolio from a roadmap. The upload is either the AI
+  Transformation Roadmap (AITR) deck (`.html`), which `server/aitr_deck.py` reads into a
+  package in memory, or a roadmap package (`.json`, [ROADMAP_PACKAGE.md](ROADMAP_PACKAGE.md)).
+  `server/roadmap_package.py` validates it, suggests a catalog match for every use case
+  and diffs it against the last version; a person confirms every row before anything
+  is written. History lives in `roadmap_imports`; pillars in `account_pillars`; what the
+  roadmap said about each use case in `account_roadmap_use_cases`.
+- **Explore** (`ExploreView.tsx` over `RoadmapView.tsx` / `RoadmapBlastRadius.tsx`): the
+  shipped catalog as a dependency map. Selecting a use case shows its blast radius
+  (prerequisites, what it unlocks, shared data); the business unit's portfolio is
+  highlighted and any use case can be added to it (`/api/explore/portfolio`).
 - **Authoring** (`server/authoring.py`, `server/routes/authoring.py`,
   `AuthorUseCaseModal.tsx`): add a use case by hand; the agent proposes its mappings,
   a person reviews them, and a confirm token performs the write.
@@ -43,7 +48,8 @@ behind the agents. Deployed and upgraded by a Databricks Asset Bundle.
 ## Multi-tenancy: business units
 
 Each business unit is an `accounts` row. Per-unit state (portfolio membership,
-data-asset status, assessments, value assumptions, comments, value records) carries
+data-asset status, imported roadmaps and pillars, value assumptions, comments, value
+records) carries
 `account_id NOT NULL`. The shared reference catalog (`use_cases`, `data_assets`,
 domains, sources, edges) has none. `server/accounts.py` resolves the active unit for
 each request into a context variable, and membership (`account_members`) gates
@@ -82,10 +88,15 @@ with `$n` parameters. `STORAGE_BACKEND` selects the implementation:
 
 Postgres is the schema of record:
 
-- `server/migrations/001_baseline.sql`: the complete schema for a fresh install.
-- `server/migrations_delta/001_baseline.sql`: the Delta equivalent, **generated** by
+- `server/migrations/001_baseline.sql`: the 1.x schema. Its `account_assessments` and
+  `account_promotions` tables are no longer written (the assessment moved out of the
+  app in 2.0) and are kept so an upgraded install loses nothing.
+- `server/migrations/002_roadmap_import.sql`: roadmap import (`roadmap_imports`,
+  `account_pillars`, `account_roadmap_use_cases`). Additive.
+- `server/migrations_delta/NNN_*.sql`: the Delta equivalent of each, **generated** by
   `scripts/gen_delta_schema.py` from a database with the Postgres migrations
-  applied, together with `server/storage/schema_meta.json`.
+  applied, together with `server/storage/schema_meta.json`. The generator only writes
+  files that do not exist yet, since an applied file is checksummed.
 
 Later changes are new numbered files in **both** directories, with the metadata
 regenerated. `tests/test_storage_schema.py` fails if the three drift apart.

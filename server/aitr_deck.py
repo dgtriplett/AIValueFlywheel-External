@@ -30,11 +30,11 @@ _EFFORT = {"low": "S", "medium": "M", "high": "L", "very high": "XL"}
 
 # Sentences/clauses containing any of these never leave the building.
 _UNSAFE = re.compile(
-    r"(?i)(attribut|\bBVA\b|databricks[- ]attributable|credited to data and ai|logfood|"
+    r"(?i)(attribut|\bBVA\b|databricks[- ]attributable|credited to data and ai|"
     r"salesforce|\bUCOs?\b|\bDBUs?\b|account team|🔒|go/[a-z])")
 # A final check over the whole package: these must not appear anywhere.
 _FORBIDDEN = re.compile(
-    r"(?i)(attribut|\bBVA\b|databricks[- ]attributable|logfood|salesforce|\bUCOs?\b|"
+    r"(?i)(attribut|\bBVA\b|databricks[- ]attributable|salesforce|\bUCOs?\b|"
     r"\bDBUs?\b|🔒|kb_[a-z0-9_]+|\bgo/[a-z])")
 
 

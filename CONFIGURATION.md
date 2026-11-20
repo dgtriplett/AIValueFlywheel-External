@@ -53,8 +53,8 @@ Trade-offs:
 - **Latency.** Every statement is a warehouse round trip: about 0.2–0.5 s inside
   Databricks Apps, and several seconds right after a serverless warehouse auto-stops.
   Reads are cached in the app for `DELTA_CACHE_TTL_S` seconds and invalidated when
-  the app writes to the tables they read. Pages that write a lot (saving an
-  assessment, promoting it, creating a business unit) take a few seconds.
+  the app writes to the tables they read. Pages that write a lot (importing a
+  roadmap, creating a business unit) take a few seconds.
 - **The warehouse must be running** while people use the app. Serverless with a short
   auto-stop is the cost-effective choice.
 - **Concurrency.** Delta uses optimistic concurrency. The app retries conflicting

@@ -1,21 +1,26 @@
-# AI Value Realization
+# AI Value Realization (AIVR)
 
-Plan, track, and operationalize your Data & AI transformation — in your own
-Databricks workspace.
+Turn your Data & AI roadmap into delivered, measured value — in your own Databricks
+workspace.
 
-AI Value Realization is a Databricks App your team deploys and owns. It ships with a
-curated reference catalog of 240 Power & Utilities data/AI use cases, 164 data
-assets and 31 data sources, the dependencies between them, and parameterized value
-models. You use it to:
+AIVR is a Databricks App your team deploys and owns. Bring in the roadmap your
+organization agreed, and AIVR becomes the place you build it out: what is ready to
+start, what is blocked and by which data, what each use case unlocks, and the value
+realized against the value planned. It ships with a curated reference catalog of 240
+Power & Utilities data/AI use cases, 164 data assets and 31 data sources, the
+dependencies between them, and parameterized value models.
 
-- **Assess** — a guided maturity assessment (profile, infrastructure, what's in
-  production, capabilities) that produces a maturity score, prioritized next use
-  cases, and a dependency-sequenced 3–5 year roadmap. Send stakeholders a
-  pre-assessment worksheet first and the session becomes a review, not data entry.
-- **Operate** — promote the assessment into a working portfolio per business unit:
-  readiness (which use cases are data-blocked and by what), coverage, data-source
-  status, value (hypothesized vs realized), what-if ("what does landing this source
-  unlock?"), and reconciliation against what is actually in your Unity Catalog.
+- **Operate** — the roadmap, per business unit. Import it (an AI Transformation
+  Roadmap deck `.html`, or a [roadmap package](ROADMAP_PACKAGE.md) `.json` from any
+  planning tool) and every use case lands with its strategic pillar, priority, value
+  estimate and first-version plan. Then track delivery: readiness (which use cases are
+  data-blocked and by what), coverage, data-source status, value (planned vs
+  realized), what-if ("what does landing this source unlock?"), and reconciliation
+  against what is actually in your Unity Catalog. Import the next version and AIVR
+  shows what changed instead of overwriting your progress.
+- **Explore** — the catalog as a dependency map. Pick any use case to see its blast
+  radius: what it needs first, what it unlocks, and what shares its data. Add use cases
+  to your portfolio from here.
 - **Extend** — add your own use cases. Describe one in a few sentences and an agent
   maps it to your data assets, data domains, prerequisite and downstream use cases,
   and a value model; you review every mapping before it is saved.
@@ -80,14 +85,20 @@ discovery schema needs a catalog owner), hand them to a metastore admin — the 
 
 ## Use
 
-1. **Assess** — click *Start assessment*. On step 1 you can *Download worksheet*,
-   send it to stakeholders, and *Upload completed* to pre-fill every step.
-2. **Promote to Operate** — from the results, turn the assessment into a business
-   unit's portfolio.
-3. **Operate** — track status and realized value, see what's blocked, model what
-   landing a data source unlocks, add use cases from the catalog or your own with
-   **＋ Add use case**.
-4. **Admin** — manage business units, administrators, the use-case and data catalog,
+1. **Create a business unit** (top bar) for each part of the organization that owns a
+   roadmap, and share it with the people who deliver it (owners and editors change it,
+   viewers only look).
+2. **Import the roadmap** — *Operate → Roadmap → Import roadmap*. Upload the roadmap
+   deck (`.html`) or package (`.json`). Review how each use case lines up with the
+   catalog: map it to a catalog use case, create it new, or skip it (*Suggest matches
+   with AI* helps with the rest). Nothing is saved until you click *Import*.
+3. **Operate** — move use cases through *Scoping → In progress → Live → Value realized*,
+   record realized value, land the data that blocks the next ones, and use *What-if* to
+   choose which source to land first. When the roadmap is revised, import the new
+   version: AIVR shows what was added, changed and dropped.
+4. **Explore** — browse the catalog, see each use case's blast radius, and add more to
+   the portfolio.
+5. **Admin** — manage business units, administrators, the use-case and data catalog,
    value assumptions, and feature flags.
 
 ## Operate and maintain
@@ -95,6 +106,8 @@ discovery schema needs a catalog owner), hand them to a metastore admin — the 
 - [OPERATIONS.md](OPERATIONS.md) — backups and export, upgrades, catalog refresh,
   schema drift, rotating the model endpoint, troubleshooting.
 - [CONFIGURATION.md](CONFIGURATION.md) — every bundle variable and app setting.
+- [ROADMAP_PACKAGE.md](ROADMAP_PACKAGE.md) — what a roadmap import reads, and the
+  package format for producing one from any planning tool.
 - [ARCHITECTURE.md](ARCHITECTURE.md) — how the app is built, the data model, and the
   two storage backends.
 - [CONTRIBUTING.md](CONTRIBUTING.md) — local development and tests.

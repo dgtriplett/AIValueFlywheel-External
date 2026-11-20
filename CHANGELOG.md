@@ -1,5 +1,40 @@
 # Changelog
 
+## 2.0.0 — 2026-11
+
+Renamed **AI Value Realization (AIVR)**. The app now starts from a roadmap your
+organization has already agreed and is where you build it out and measure it.
+
+- **Import a roadmap.** *Operate → Roadmap → Import roadmap* takes an AI
+  Transformation Roadmap deck (`.html`) or a roadmap package (`.json`, format in
+  [ROADMAP_PACKAGE.md](ROADMAP_PACKAGE.md), example in `reference/`). Each use case is
+  matched to the catalog, created new, or skipped, and a person confirms every row
+  before anything is written (*Suggest matches with AI* helps with the hard ones).
+  Pillars, priority (now / next / later), workstream, the roadmap's value estimate and
+  its first-version plan come with it. Importing the next version shows what was
+  added, changed and dropped; dropped use cases stay in the portfolio, flagged.
+- **Operate** shows pillar progress (live vs on the roadmap, value live vs planned), a
+  priority column in roadmap order, and a *Roadmap* tab on every use case.
+- **Explore** replaces Assess: the catalog as a dependency map with each use case's
+  blast radius, your portfolio highlighted, and *Add to portfolio* on any use case.
+- **Removed:** the maturity assessment (wizard, scoring, results dashboard,
+  pre-assessment worksheet, compare, scenarios, assessment AI insights and decks) and
+  *Promote to Operate*. Their tables stay in the schema, unused, so an upgraded
+  install keeps its history.
+- **Viewer** members can no longer import roadmaps or add use cases from Explore.
+- Schema migration `002_roadmap_import` (additive).
+- `GET /api/sync/catalog` (was `/api/sync/value-flywheel-catalog`, still served) for
+  planning tools that align their roadmap to the catalog. The maturity-assessment
+  package import (`/api/sync/maturity-roadmap/*`) is removed.
+- Headers `X-AIVR-Account` / `X-AIVR-User` (the 1.x names are still accepted); backup
+  files are `aivr-backup/1` (1.x backups still restore).
+
+**Coming from 1.x:** the bundle, app, Lakebase project and schemas have new default
+names (`ai-value-realization`), so a 2.0 deploy creates a new install next to the old
+one rather than changing it. Move your data with *Admin → Download backup* on the old
+app and `scripts/restore.py` into the new one, then remove the old install with
+`databricks bundle destroy` from a 1.x checkout.
+
 ## 1.0.0 — 2026-11
 
 First release as a customer-deployable application.
