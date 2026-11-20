@@ -101,7 +101,7 @@
     "wizard_category": "Operational",
     "source_id": null,
     "confidence": "flag",
-    "notes": "Gas cathodic-protection telemetry \u2014 gas-integrity data not represented in the 31 (or in grid-atlas's 146). Add a gas-integrity coarse source if the gas motion needs it."
+    "notes": "Gas cathodic-protection telemetry \u2014 gas-integrity data not represented in the 31 (or in the original 146-module catalog). Add a gas-integrity coarse source if the gas motion needs it."
   },
   {
     "wizard_id": "ds_ili",

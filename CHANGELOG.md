@@ -30,10 +30,13 @@ organization has already agreed and is where you build it out and measure it.
   files are `aivr-backup/1` (1.x backups still restore).
 
 **Coming from 1.x:** the bundle, app, Lakebase project and schemas have new default
-names (`ai-value-realization`), so a 2.0 deploy creates a new install next to the old
-one rather than changing it. Move your data with *Admin → Download backup* on the old
-app and `scripts/restore.py` into the new one, then remove the old install with
-`databricks bundle destroy` from a 1.x checkout.
+names (`ai-value-realization`). Deploy 2.0 from a **fresh clone**: the CLI keeps
+deployment state in the checkout's `.databricks/` folder per target, so deploying from
+a checkout that deployed 1.x plans to delete the 1.x app and replace its Lakebase
+project (the CLI stops and asks first — do not approve it). From a fresh clone, 2.0
+installs next to 1.x. Move your data with *Admin → Download backup* on the old app and
+`scripts/restore.py` into the new one, then remove the old install with
+`databricks bundle destroy` from the 1.x checkout.
 
 ## 1.0.0 — 2026-11
 

@@ -11,17 +11,76 @@ data-source definitions, dependency mappings, and default value assumptions — 
 directional guidance. Value estimates must be validated against your own data and
 assumptions before use in any financial or investment decision.
 
-This Software depends on the following open source projects, which are installed
-from their own distributions at build or deploy time and are licensed under their
-own terms:
 
-Python (requirements.txt)
-  FastAPI (MIT), Uvicorn (BSD-3-Clause), asyncpg (Apache-2.0), aiohttp (Apache-2.0),
-  OpenAI Python (Apache-2.0), Databricks SDK for Python (Apache-2.0),
-  Databricks SQL Connector for Python (Apache-2.0), sqlglot (MIT), Pydantic (MIT),
-  python-multipart (Apache-2.0), openpyxl (MIT), python-docx (MIT), python-pptx (MIT)
+This Software depends on the following third-party open source software, installed
+from its own distributions at build or deploy time (Python packages from
+requirements.txt; JavaScript packages from frontend/package.json, compiled into
+frontend/dist). Each is licensed under its own terms:
 
-JavaScript (frontend/package.json; compiled into frontend/dist)
-  React and React DOM (MIT), React Flow (MIT), Recharts (MIT), lucide-react (ISC),
-  clsx (MIT); build tooling: Vite (MIT), TypeScript (Apache-2.0), Tailwind CSS (MIT),
-  PostCSS (MIT), Autoprefixer (MIT)
+Apache License 2.0
+
+aiohttp (Python) - https://github.com/aio-libs/aiohttp
+(LICENSE carries no copyright line.) Includes llhttp (MIT): Copyright © 2018 Fedor Indutny
+
+asyncpg (Python) - https://github.com/MagicStack/asyncpg
+Copyright (C) 2016-present the asyncpg authors and contributors.
+
+databricks-sdk (Python) - https://github.com/databricks/databricks-sdk-py
+Copyright 2023 Databricks, Inc.  All rights reserved.
+
+databricks-sql-connector (Python) - https://github.com/databricks/databricks-sql-python
+(LICENSE carries no copyright line.)
+
+openai (Python) - https://github.com/openai/openai-python
+(LICENSE carries no copyright line.)
+
+python-multipart (Python) - https://github.com/Kludex/python-multipart
+(LICENSE carries no copyright line.)
+
+BSD 3-Clause License
+
+uvicorn (Python) - https://github.com/encode/uvicorn
+Copyright © 2017-present, [Encode OSS Ltd](https://www.encode.io/).
+
+MIT License
+
+fastapi (Python) - https://github.com/fastapi/fastapi
+Copyright (c) 2018 Sebastián Ramírez
+
+openpyxl (Python) - https://foss.heptapod.net/openpyxl/openpyxl
+Copyright (c) 2010 openpyxl
+
+pydantic (Python) - https://github.com/pydantic/pydantic
+Copyright (c) 2017 to present Pydantic Services Inc. and individual contributors.
+
+python-docx (Python) - https://github.com/python-openxml/python-docx
+Copyright (c) 2013 Steve Canny, https://github.com/scanny
+
+python-pptx (Python) - https://github.com/scanny/python-pptx
+Copyright (c) 2013 Steve Canny, https://github.com/scanny
+
+sqlglot (Python) - https://github.com/tobymao/sqlglot
+Copyright (c) 2026 Toby Mao
+
+clsx (JavaScript) - https://github.com/lukeed/clsx
+Copyright (c) Luke Edwards <luke.edwards05@gmail.com> (lukeed.com)
+
+react (JavaScript) - https://github.com/facebook/react
+Copyright (c) Facebook, Inc. and its affiliates.
+
+react-dom (JavaScript) - https://github.com/facebook/react
+Copyright (c) Facebook, Inc. and its affiliates.
+
+reactflow (JavaScript) - https://github.com/xyflow/xyflow
+Copyright (c) 2019-2023 webkid GmbH
+
+recharts (JavaScript) - https://github.com/recharts/recharts
+Copyright (c) 2015-present recharts
+
+ISC License
+
+lucide-react (JavaScript) - https://github.com/lucide-icons/lucide
+Copyright (c) for portions of Lucide are held by Cole Bemis 2013-2022 as part of Feather (MIT). All other copyright (c) for Lucide are held by Lucide Contributors 2022.
+
+Build-only tooling (not distributed): Vite (MIT), TypeScript (Apache-2.0),
+Tailwind CSS (MIT), PostCSS (MIT), Autoprefixer (MIT).

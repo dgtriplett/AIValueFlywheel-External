@@ -44,6 +44,10 @@ JSON backup; back those up with the platform options below.
 3. Read [CHANGELOG.md](CHANGELOG.md) for that release.
 4. `databricks bundle deploy -t <target>`.
 
+Read the plan before approving anything: `databricks bundle plan -t <target>` lists
+what a deploy will create, update and delete. A deploy that would delete or replace
+the app or its Lakebase project stops and asks; that is never part of a normal upgrade.
+
 The setup job runs on every deploy. It applies only migrations not yet recorded in
 `schema_migrations`, adds reference-catalog rows that are new in the release, and
 never modifies business-unit data. Migrations are never applied at app startup: the

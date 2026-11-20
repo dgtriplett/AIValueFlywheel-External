@@ -62,3 +62,4 @@ __pycache__/
 .ruff_cache/
 .databricks/
 frontend/node_modules/
+.names-denylist
