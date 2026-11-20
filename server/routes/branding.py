@@ -81,7 +81,7 @@ async def get_branding():
     data = dict(row) if row else {}
     # Explicit branding wins; otherwise a researched company name brands the
     # instance for free; otherwise the product name.
-    display_name = (data.get("display_name") or company or "AI Value Flywheel")
+    display_name = (data.get("display_name") or company or "AI Value Realization")
     return {
         "display_name": display_name,
         "subtitle": data.get("subtitle")

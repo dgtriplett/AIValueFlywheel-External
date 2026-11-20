@@ -16,7 +16,8 @@ module global would leak one request's account into another's.
 
 RESOLUTION ORDER
 ----------------
-  1. `X-Grid-Atlas-Account` header — set by the UI's account switcher.
+  1. `X-AIVR-Account` header — set by the UI's business-unit switcher (the 1.x
+     name, `X-Grid-Atlas-Account`, is still accepted).
   2. `account` query parameter — so a link can carry it (an exported report, a
      shared URL).
   3. The default account.
@@ -49,7 +50,8 @@ logger = logging.getLogger(__name__)
 current_account_id: ContextVar[int | None] = ContextVar(
     "current_account_id", default=None)
 
-ACCOUNT_HEADER = "x-grid-atlas-account"
+ACCOUNT_HEADER = "x-aivr-account"
+LEGACY_ACCOUNT_HEADER = "x-grid-atlas-account"  # 1.x clients
 
 # Cached default so the common path is not a query per request. Invalidated whenever
 # an account is created, deleted, or made default.
@@ -106,6 +108,30 @@ async def role_for(email: str | None, account_id: int) -> str | None:
         "SELECT role FROM account_members WHERE account_id = $1 "
         "AND lower(user_email) = lower($2)", account_id, email)
     return row["role"] if row else None
+
+
+async def can_edit(email: str | None, account_id: int | None) -> bool:
+    """Owners and editors may change an account's data; viewers may only look.
+    A global admin may edit any account. With no account (pre-setup), editing is
+    allowed, matching the unscoped fallback everywhere else."""
+    if account_id is None:
+        return True
+    if await is_admin(email):
+        return True
+    return (await role_for(email, account_id)) in ("owner", "editor")
+
+
+async def require_editor(request) -> tuple[str, int | None]:
+    """(actor, account_id) for a write, or 403 for a viewer."""
+    from fastapi import HTTPException
+
+    from .common import current_user
+    actor = current_user(request)
+    account_id = await current()
+    if not await can_edit(actor, account_id):
+        raise HTTPException(403, "You have view-only access to this business unit. "
+                                 "Ask an owner to make you an editor.")
+    return actor, account_id
 
 
 async def can_manage_members(email: str | None, account_id: int) -> bool:
@@ -172,6 +198,7 @@ async def resolve(request) -> int | None:
     from .common import current_user
     email = current_user(request)
     raw = (request.headers.get(ACCOUNT_HEADER)
+           or request.headers.get(LEGACY_ACCOUNT_HEADER)
            or request.query_params.get("account"))
     if raw:
         requested = None
@@ -226,7 +253,7 @@ def install_middleware(app) -> None:
                 if token is not None and current_account_id.get() is not None:
                     # Echoed so a client can confirm which account answered, which
                     # is the first question when a number looks wrong.
-                    response.headers["X-Grid-Atlas-Account"] = str(
+                    response.headers["X-AIVR-Account"] = str(
                         current_account_id.get())
                 return response
             finally:

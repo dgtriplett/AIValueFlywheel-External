@@ -80,8 +80,9 @@ def version() -> str:
     return bundle().get("version", "unknown")
 
 
-def assessment_title_crosswalk() -> dict[str, str]:
-    """Assessment-worksheet use-case id (e.g. p1_gen_demand_forecast) -> catalog title."""
+def catalog_title_crosswalk() -> dict[str, str]:
+    """Shipped-catalog use-case id (e.g. p1_gen_demand_forecast, used by the Explore
+    map) -> use_cases.title. Stored under its 1.x key, `assessment_use_case_title`."""
     return dict(bundle().get("crosswalks", {}).get("assessment_use_case_title", {}))
 
 

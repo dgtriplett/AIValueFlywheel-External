@@ -35,6 +35,8 @@ interface UseCaseDetailCardProps {
     horizonValueLowMM?: number | null;
     horizonValueHighMM?: number | null;
   };
+  /** Extra actions (e.g. "Add to portfolio") shown under the title. */
+  actions?: React.ReactNode;
 }
 
 export const UseCaseDetailCard: React.FC<UseCaseDetailCardProps> = ({
@@ -47,6 +49,7 @@ export const UseCaseDetailCard: React.FC<UseCaseDetailCardProps> = ({
   onComplexityChange,
   territorySize,
   customerContext,
+  actions,
 }) => {
   const uc = recommendation.useCase;
   const phaseColor = PHASE_COLORS[uc.phase];
@@ -90,6 +93,7 @@ export const UseCaseDetailCard: React.FC<UseCaseDetailCardProps> = ({
                 </span>
               </div>
               <h2 className="text-xl font-bold text-heading">{uc.name}</h2>
+              {actions && <div className="mt-3 flex flex-wrap items-center gap-2">{actions}</div>}
               {pocDocEnabled && customerContext && (
                 <div className="mt-3">
                   <PocDocButton

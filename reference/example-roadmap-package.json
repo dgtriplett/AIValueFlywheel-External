@@ -1,0 +1,180 @@
+{
+  "format": "aivr.roadmap",
+  "format_version": 1,
+  "generated_at": "2026-11-20T00:00:00Z",
+  "generator": { "name": "Example planning tool", "version": "1.0" },
+  "roadmap": {
+    "id": "example-power-and-light",
+    "version": "1",
+    "title": "Example Power & Light: Data & AI Roadmap",
+    "organization": "Example Power & Light",
+    "industry": "power_utilities",
+    "target_executive": "CEO",
+    "currency": "USD"
+  },
+  "pillars": [
+    { "id": "reliability", "name": "Keep the lights on", "description": "Fewer and shorter outages across the network." },
+    { "id": "affordability", "name": "Affordable bills", "description": "Lower cost to serve, passed through in rates." },
+    { "id": "clean", "name": "Cleaner generation", "description": "Connect and run more renewables, faster." },
+    { "id": "customer", "name": "Easy to do business with", "description": "Accurate bills and proactive communication." }
+  ],
+  "stages": [
+    { "id": "gen", "name": "Generation", "description": "Plants, renewables and storage" },
+    { "id": "grid", "name": "Transmission & distribution", "description": "Lines, substations and feeders" },
+    { "id": "cust", "name": "Customer", "description": "Metering, billing and service" }
+  ],
+  "workstreams": [
+    { "id": "ws_storm", "name": "Storm-ready grid", "description": "Predict, prevent and restore faster.", "use_case_ids": ["veg", "storm", "outage", "wildfire"] },
+    { "id": "ws_fleet", "name": "Self-optimising fleet", "description": "More output from every asset.", "use_case_ids": ["solar", "queue"] },
+    { "id": "ws_cust", "name": "Right first time", "description": "Bills and answers customers trust.", "use_case_ids": ["billing", "crewassist"] }
+  ],
+  "data_categories": [
+    { "id": "assets", "name": "Assets & work", "description": "What the network is and what crews did to it" },
+    { "id": "ops", "name": "Operations", "description": "Telemetry, outages and weather" },
+    { "id": "cust", "name": "Customer", "description": "Meters, bills and contacts" }
+  ],
+  "datasets": [
+    { "id": "gis", "name": "GIS network model", "category_id": "assets" },
+    { "id": "wo", "name": "Work Order Management", "category_id": "assets" },
+    { "id": "oms", "name": "Outage management events", "category_id": "ops" },
+    { "id": "scada", "name": "SCADA telemetry", "category_id": "ops" },
+    { "id": "wx", "name": "Weather forecasts and history", "category_id": "ops" },
+    { "id": "ami", "name": "AMI interval reads", "category_id": "cust" },
+    { "id": "cis", "name": "Customer billing system", "category_id": "cust" }
+  ],
+  "use_cases": [
+    {
+      "id": "veg",
+      "name": "Predictive Vegetation Management",
+      "summary": "Trim where the next outage will be, not where the cycle says.",
+      "business_problem": "Tree contact causes a large share of distribution outages, and trimming is scheduled on fixed cycles regardless of growth or risk.",
+      "kpi": "Tree-caused outage minutes per year",
+      "pillar_ids": ["reliability", "affordability"],
+      "stage_id": "grid",
+      "workstream_id": "ws_storm",
+      "priority_rank": 1,
+      "priority_tier": "now",
+      "effort": "M",
+      "effort_quadrant": "Quick Win",
+      "dataset_ids": ["gis", "oms", "wx", "wo"],
+      "value": { "annual_low": 1800000, "annual_base": 2600000, "annual_high": 3400000,
+                 "basis": "Avoided outage restoration cost and deferred trim spend",
+                 "formula": "circuit miles x trim cost per mile x share re-prioritised + avoided restoration" },
+      "plan": {
+        "headline": "Rank circuits by tree risk before the next trim season.",
+        "pilot": "Two operating regions with their outage history and trim records",
+        "phases": [
+          { "name": "Crawl", "when": "Weeks 1-12", "title": "Score tree risk on two regions",
+            "steps": ["Join outage cause codes to the network model", "Score every span", "Compare against this year's trim plan"] },
+          { "name": "Walk", "when": "Months 4-9", "title": "Re-sequence the trim plan", "steps": ["Feed the ranked list to the trim contractor"] },
+          { "name": "Run", "when": "Months 10-18", "title": "All regions, refreshed weekly", "steps": [] }
+        ]
+      }
+    },
+    {
+      "id": "storm",
+      "name": "Storm impact prediction and crew pre-staging",
+      "summary": "Forecast damage by area 72 hours out and stage crews before the storm.",
+      "kpi": "Restoration time after major storms",
+      "pillar_ids": ["reliability"],
+      "stage_id": "grid",
+      "workstream_id": "ws_storm",
+      "priority_rank": 2,
+      "priority_tier": "now",
+      "effort": "L",
+      "dataset_ids": ["oms", "wx", "gis"],
+      "value": { "annual_low": 1200000, "annual_base": 2000000, "annual_high": 3000000,
+                 "basis": "Fewer mutual-assistance crew-days and faster restoration" }
+    },
+    {
+      "id": "outage",
+      "name": "Outage Detection & Prediction",
+      "summary": "Spot outages from meter last-gasp signals before customers call.",
+      "kpi": "Minutes from outage to dispatch",
+      "pillar_ids": ["reliability", "customer"],
+      "stage_id": "grid",
+      "workstream_id": "ws_storm",
+      "priority_rank": 3,
+      "priority_tier": "next",
+      "effort": "Medium",
+      "dataset_ids": ["ami", "oms", "scada"],
+      "value": { "annual_low": 900000, "annual_base": 1500000, "annual_high": 2100000 }
+    },
+    {
+      "id": "wildfire",
+      "name": "Wildfire ignition risk scoring",
+      "summary": "Score every span's ignition risk daily from asset condition, fuel and weather.",
+      "business_problem": "Power-shutoff decisions rely on regional weather alone, which switches off far more customers than the risk requires.",
+      "kpi": "Customers affected per public-safety shutoff",
+      "pillar_ids": ["reliability", "customer"],
+      "stage_id": "grid",
+      "workstream_id": "ws_storm",
+      "priority_rank": 4,
+      "priority_tier": "next",
+      "effort": "XL",
+      "effort_quadrant": "Big Bet",
+      "dataset_ids": ["gis", "wx", "wo", "scada"],
+      "data_requirements": { "assets": ["Asset Registry & Hierarchy", "Work Order Management"], "sources": [],
+                             "rationale": "Ignition risk needs asset age and condition joined to fuel and weather." },
+      "value": { "annual_low": 2000000, "annual_base": 4000000, "annual_high": 7500000,
+                 "basis": "Avoided shutoff customer-minutes and liability exposure" }
+    },
+    {
+      "id": "solar",
+      "name": "Solar fleet underperformance recovery",
+      "summary": "Find and price the solar faults that cost the most energy, and fix those first.",
+      "kpi": "Recovered solar energy (MWh a year)",
+      "pillar_ids": ["clean", "affordability"],
+      "stage_id": "gen",
+      "workstream_id": "ws_fleet",
+      "priority_rank": 5,
+      "priority_tier": "now",
+      "effort": "S",
+      "effort_quadrant": "Quick Win",
+      "dataset_ids": ["scada", "wo", "wx"],
+      "value": { "annual_low": 600000, "annual_base": 1100000, "annual_high": 1500000 }
+    },
+    {
+      "id": "queue",
+      "name": "Interconnection queue triage",
+      "summary": "Predict which interconnection requests will reach operation, and study those first.",
+      "kpi": "Months from application to interconnection agreement",
+      "pillar_ids": ["clean"],
+      "stage_id": "gen",
+      "workstream_id": "ws_fleet",
+      "priority_rank": 7,
+      "priority_tier": "later",
+      "effort": "M",
+      "dataset_ids": ["gis"]
+    },
+    {
+      "id": "billing",
+      "name": "Billing anomaly and theft detection",
+      "summary": "Catch estimated, mis-rated and tampered bills before they go out.",
+      "kpi": "Bills corrected after issue",
+      "pillar_ids": ["customer", "affordability"],
+      "stage_id": "cust",
+      "workstream_id": "ws_cust",
+      "priority_rank": 6,
+      "priority_tier": "next",
+      "effort": "M",
+      "dataset_ids": ["ami", "cis"],
+      "catalog_match": { "title": "Billing Accuracy, Anomaly & Theft Detection" },
+      "value": { "annual_low": 700000, "annual_base": 1000000, "annual_high": 1300000 }
+    },
+    {
+      "id": "crewassist",
+      "name": "Field crew assistant",
+      "summary": "A conversational assistant that answers procedure and asset-history questions on the job.",
+      "kpi": "Repeat truck rolls",
+      "pillar_ids": ["affordability"],
+      "stage_id": "grid",
+      "workstream_id": "ws_cust",
+      "priority_rank": 8,
+      "priority_tier": "later",
+      "effort": "S",
+      "dataset_ids": ["wo"],
+      "value": { "annual_low": 300000, "annual_base": 500000, "annual_high": 800000 }
+    }
+  ]
+}

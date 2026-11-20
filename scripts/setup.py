@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Install / upgrade AI Value Flywheel's app state. Runs as the bundle's `setup` job.
+"""Install / upgrade AI Value Realization's app state. Runs as the bundle's `setup` job.
 
 `databricks bundle deploy` triggers this job (see databricks.yml); it is also safe
 to run by hand (`databricks bundle run setup -t <target>`) or from a laptop
@@ -137,7 +137,7 @@ def configure_delta(w, args) -> None:
     ok, err = sql_statement(
         w, args.warehouse_id,
         f"CREATE SCHEMA IF NOT EXISTS `{args.delta_catalog}`.`{args.delta_schema}` "
-        "COMMENT 'AI Value Flywheel app state'")
+        "COMMENT 'AI Value Realization app state'")
     if not ok:
         sys.exit(f"could not create schema {args.delta_catalog}.{args.delta_schema}: {err}")
     os.environ.update({

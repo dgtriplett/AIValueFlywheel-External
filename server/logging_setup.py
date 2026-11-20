@@ -135,7 +135,7 @@ def install_middleware(app) -> None:
     """
     from starlette.middleware.base import BaseHTTPMiddleware
 
-    logger = logging.getLogger("grid_atlas.request")
+    logger = logging.getLogger("aivr.request")
 
     class RequestContextMiddleware(BaseHTTPMiddleware):
         async def dispatch(self, request, call_next):

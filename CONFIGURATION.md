@@ -12,17 +12,17 @@ an app config file by hand.
 |---|---|---|---|
 | `warehouse_id` | **yes** | — | SQL warehouse ID. Used for discovery, `ai_query()` enrichment and, on the `delta` target, all app-state reads and writes. |
 | `admin_emails` | **yes** | — | Comma-separated emails of the first administrators. More can be added in **Admin → Admins**. |
-| `app_name` | | `ai-value-flywheel` | Databricks App name. Also names the setup job (`<app_name>-setup`). |
+| `app_name` | | `ai-value-realization` | Databricks App name. Also names the setup job (`<app_name>-setup`). |
 | `organization_name` | | `My organization` | Name of the first business unit created on install. Rename it in the app. |
 | `serving_endpoint` | | `databricks-claude-sonnet-4-5` | Chat model endpoint for the agents (use-case mapping, value models, briefs, PoC documents, AI insights). |
 | `ai_query_endpoint` | | `databricks-claude-sonnet-4-5` | Endpoint used by SQL `ai_query()` for discovery enrichment. |
-| `lakebase_project` | | `ai-value-flywheel` | `lakebase` target: the Lakebase project the bundle creates for app state. |
+| `lakebase_project` | | `ai-value-realization` | `lakebase` target: the Lakebase project the bundle creates for app state. |
 | `delta_catalog` | | `main` | `delta` target: catalog for the app-state schema. The deployer needs `USE CATALOG` and `CREATE SCHEMA`. |
-| `delta_schema` | | `ai_value_flywheel` | `delta` target: schema the setup job creates for app-state tables. |
+| `delta_schema` | | `ai_value_realization` | `delta` target: schema the setup job creates for app-state tables. |
 | `discovery_catalog` | | `none` | Optional. Catalog for the workspace-discovery inventory (Operate → Discovery / Reconciliation). `none` disables it. |
-| `discovery_schema` | | `ai_value_flywheel_discovery` | Schema for the discovery inventory. |
+| `discovery_schema` | | `ai_value_realization_discovery` | Schema for the discovery inventory. |
 | `genie_mirror_catalog` | | `none` | Optional. Catalog for the Genie mirror of the portfolio ("Ask" in natural language). |
-| `genie_mirror_schema` | | `ai_value_flywheel_genie` | Schema for the Genie mirror tables. |
+| `genie_mirror_schema` | | `ai_value_realization_genie` | Schema for the Genie mirror tables. |
 | `genie_space_id` | | `none` | Set after creating the Genie space from **Admin → Setup**, then redeploy. |
 | `refresh_catalog` | | `"false"` | `"true"` updates reference-catalog rows to this release's version on the next deploy (rows you created are never touched). See [OPERATIONS.md](OPERATIONS.md#upgrading). |
 | `app_env` | | `PROD` | Environment label shown in the app's corner. |
@@ -77,7 +77,7 @@ The setup job creates the schema as the deployer, who can therefore grant these.
 
 The bundle sets these. They're listed so an operator can recognize them in the app's
 **Environment** tab and logs, or override one in `databricks.yml` under
-`resources.apps.ai_value_flywheel.config.env`.
+`resources.apps.ai_value_realization.config.env`.
 
 | Setting | Set from | Purpose |
 |---|---|---|

@@ -1,4 +1,4 @@
-# AI Value Flywheel — Databricks Asset Bundle
+# AI Value Realization — Databricks Asset Bundle
 #
 # Plan, track, and operationalize a Data & AI transformation: maturity assessment,
 # use-case portfolio, data readiness, dependency-sequenced roadmap, and value
@@ -20,7 +20,7 @@
 # Everything environment-specific is a variable; nothing is baked in. Re-deploying
 # is safe: setup only applies pending migrations and adds missing catalog rows.
 bundle:
-  name: ai-value-flywheel
+  name: ai-value-realization
 
 variables:
   # --- required ------------------------------------------------------------
@@ -35,7 +35,7 @@ variables:
   # --- naming --------------------------------------------------------------
   app_name:
     description: Databricks App name (lowercase, hyphens).
-    default: ai-value-flywheel
+    default: ai-value-realization
   organization_name:
     description: Name of the first business unit created in the app (rename later in-app).
     default: My organization
@@ -49,14 +49,14 @@ variables:
   # --- storage: lakebase target ---------------------------------------------
   lakebase_project:
     description: Lakebase (Autoscaling Postgres) project the lakebase target creates for app state.
-    default: ai-value-flywheel
+    default: ai-value-realization
   # --- storage: delta target ------------------------------------------------
   delta_catalog:
     description: Unity Catalog catalog for app-state tables (delta target). You need CREATE SCHEMA on it.
     default: main
   delta_schema:
     description: Schema the delta target creates for app-state tables.
-    default: ai_value_flywheel
+    default: ai_value_realization
   # --- optional features ----------------------------------------------------
   discovery_catalog:
     description: >-
@@ -65,13 +65,13 @@ variables:
     default: "none"
   discovery_schema:
     description: Schema for the discovery inventory.
-    default: ai_value_flywheel_discovery
+    default: ai_value_realization_discovery
   genie_mirror_catalog:
     description: Catalog for the Genie mirror of the portfolio (optional; `none` to skip).
     default: "none"
   genie_mirror_schema:
     description: Schema for the Genie mirror tables.
-    default: ai_value_flywheel_genie
+    default: ai_value_realization_genie
   genie_space_id:
     description: >-
       Genie space for "Ask" over the portfolio. Leave `none`, deploy, create the space
@@ -88,9 +88,9 @@ variables:
 
 resources:
   apps:
-    ai_value_flywheel:
+    ai_value_realization:
       name: ${var.app_name}
-      description: "AI Value Flywheel — plan, track, and operationalize your Data & AI roadmap."
+      description: "AI Value Realization — plan, track, and operationalize your Data & AI roadmap."
       source_code_path: ./
       lifecycle:
         started: true
@@ -197,7 +197,7 @@ targets:
           display_name: ${var.app_name} app state
           pg_version: 17
       apps:
-        ai_value_flywheel:
+        ai_value_realization:
           config:
             env:
               - name: STORAGE_BACKEND
@@ -223,7 +223,7 @@ targets:
       root_path: /Workspace/Users/${workspace.current_user.userName}/.bundle/${bundle.name}/delta
     resources:
       apps:
-        ai_value_flywheel:
+        ai_value_realization:
           config:
             env:
               - name: STORAGE_BACKEND

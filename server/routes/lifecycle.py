@@ -1,15 +1,12 @@
-"""Assess lifecycle + Operate reconciliation + Admin — the account/assessment journey.
+"""Operate read models + Admin cross-account overview.
 
-    GET    /api/assessments                list this account's assessments (drafts + submitted)
-    GET    /api/assessments/latest         the latest submitted (for pre-populating a new one)
-    GET    /api/assessments/{id}           one assessment
-    POST   /api/assessments                upsert (create/save draft or submit)
-    DELETE /api/assessments/{id}           delete one
-
+    GET    /api/operate/roadmap            the business unit's portfolio, with readiness,
+                                           value and what the imported roadmap says
+    GET    /api/operate/data-lineage       coarse source -> fine modules
     GET    /api/operate/reconciliation     self-reported vs discovered, per coarse source
 
     GET    /api/admin/overview             cross-account rollup (admins only)
-    GET    /api/admin/assessments          every assessment across accounts (admins only)
+    GET/POST/DELETE /api/admin/admins      the admins allow-list (admins only)
 
 All per-account reads are account-scoped by the middleware and membership-gated. The
 admin endpoints are the ONLY cross-account surface and require the admins allow-list —
@@ -17,7 +14,6 @@ they are a separate experience, never blended with a user's own-account view.
 """
 from __future__ import annotations
 
-import json
 import logging
 
 from fastapi import APIRouter, HTTPException, Request
@@ -58,96 +54,6 @@ class AssessmentIn(BaseModel):
     current_phase: int | None = None
 
 
-@router.get("/assessments")
-async def list_assessments(status: str | None = None):
-    account_id = await _require_account()
-    clause = "AND status = $2" if status else ""
-    args = [account_id] + ([status] if status else [])
-    rows = rows_to_list(await db.fetch(f"""
-        SELECT id, status, label, overall_score, current_phase,
-               created_by, created_at, updated_at, submitted_at
-        FROM account_assessments WHERE account_id = $1 {clause}
-        ORDER BY updated_at DESC
-    """, *args))
-    return {"assessments": rows, "account_id": account_id}
-
-
-@router.get("/assessments/latest")
-async def latest_assessment():
-    """The most recent SUBMITTED assessment — a new assessment prefills from this so the
-    user doesn't re-enter everything they selected last time."""
-    account_id = await _require_account()
-    row = await db.fetchrow("""
-        SELECT id, status, label, answers_json, results_json, overall_score, current_phase,
-               submitted_at
-        FROM account_assessments WHERE account_id = $1 AND status = 'submitted'
-        ORDER BY submitted_at DESC NULLS LAST, updated_at DESC LIMIT 1
-    """, account_id)
-    return {"assessment": _decode(row)}
-
-
-@router.get("/assessments/{aid}")
-async def get_assessment(aid: str):
-    account_id = await _require_account()
-    row = await db.fetchrow("""
-        SELECT id, status, label, answers_json, results_json, overall_score, current_phase,
-               created_by, created_at, updated_at, submitted_at
-        FROM account_assessments WHERE id = $1 AND account_id = $2
-    """, aid, account_id)
-    if row is None:
-        raise HTTPException(404, "Assessment not found")
-    return {"assessment": _decode(row)}
-
-
-@router.post("/assessments")
-async def upsert_assessment(body: AssessmentIn, request: Request):
-    account_id = await _require_account()
-    actor = current_user(request)
-    if body.status not in ("draft", "submitted"):
-        raise HTTPException(422, "status must be draft or submitted")
-    await db.execute("""
-        INSERT INTO account_assessments
-            (id, account_id, status, label, answers_json, results_json,
-             overall_score, current_phase, created_by, submitted_at)
-        VALUES ($1,$2,$3,$4,$5::jsonb,$6::jsonb,$7,$8,$9,
-                CASE WHEN $3='submitted' THEN now() ELSE NULL END)
-        ON CONFLICT (id) DO UPDATE SET
-            status=EXCLUDED.status, label=EXCLUDED.label,
-            answers_json=EXCLUDED.answers_json, results_json=EXCLUDED.results_json,
-            overall_score=EXCLUDED.overall_score, current_phase=EXCLUDED.current_phase,
-            updated_at=now(),
-            submitted_at=CASE WHEN EXCLUDED.status='submitted' AND account_assessments.submitted_at IS NULL
-                              THEN now() ELSE account_assessments.submitted_at END
-    """, body.id, account_id, body.status, body.label,
-        json.dumps(body.answers_json), json.dumps(body.results_json) if body.results_json is not None else None,
-        body.overall_score, body.current_phase, actor)
-    return {"id": body.id, "status": body.status, "account_id": account_id}
-
-
-@router.delete("/assessments/{aid}")
-async def delete_assessment(aid: str):
-    account_id = await _require_account()
-    row = await db.fetchrow(
-        "DELETE FROM account_assessments WHERE id=$1 AND account_id=$2 RETURNING id",
-        aid, account_id)
-    if row is None:
-        raise HTTPException(404, "Assessment not found")
-    return {"deleted": aid}
-
-
-def _decode(row):
-    if row is None:
-        return None
-    d = dict(row)
-    for k in ("answers_json", "results_json"):
-        if isinstance(d.get(k), str):
-            try:
-                d[k] = json.loads(d[k])
-            except Exception:  # noqa: BLE001 - leave a malformed blob as text
-                pass
-    return d
-
-
 # ---------------------------------------------------------------------------
 # Operate — the operationalized roadmap (account portfolio + readiness + value)
 # ---------------------------------------------------------------------------
@@ -169,10 +75,17 @@ async def operate_roadmap():
     ucs = [dict(u) for u in await db.fetch(
         f"SELECT uc.* FROM use_cases uc WHERE {condition} ORDER BY uc.phase, uc.id", *params)]
     rmap = await readiness_map()
+    # What the imported roadmap says about each use case (empty before any import).
+    road = {r["use_case_id"]: r for r in await db.fetch("""
+        SELECT use_case_id, pillar_ids, stage, workstream, priority_rank, priority_tier,
+               value_base, dropped_at
+        FROM account_roadmap_use_cases WHERE account_id = $1
+    """, account_id)}
 
     out = []
     summary = {"total": len(ucs), "shovel_ready": 0, "awaiting_prerequisites": 0,
-               "nearly_ready": 0, "blocked": 0, "hypothesized_mm": 0.0, "realized_mm": 0.0}
+               "nearly_ready": 0, "blocked": 0, "hypothesized_mm": 0.0, "realized_mm": 0.0,
+               "on_roadmap": 0, "roadmap_value_mm": 0.0}
     for u in ucs:
         rng = compute_value_range(u.get("hypothesized_value_json"), assumptions)
         hyp = rng["mid"] if rng else 0
@@ -185,10 +98,23 @@ async def operate_roadmap():
         # small and disagree with the dashboard for the same account.
         summary["hypothesized_mm"] += hyp or 0
         summary["realized_mm"] += (real or 0)
+        r = road.get(u["id"])
+        roadmap = None
+        if r is not None:
+            dropped = r.get("dropped_at") is not None
+            value_mm = round(float(r["value_base"]) / 1e6, 2) if r.get("value_base") is not None else None
+            roadmap = {"pillar_ids": list(r.get("pillar_ids") or []), "stage": r.get("stage"),
+                       "workstream": r.get("workstream"), "priority_rank": r.get("priority_rank"),
+                       "priority_tier": r.get("priority_tier"), "value_base_mm": value_mm,
+                       "dropped": dropped}
+            if not dropped:
+                summary["on_roadmap"] += 1
+                summary["roadmap_value_mm"] += value_mm or 0
         out.append({"id": u["id"], "title": u["title"], "phase": u.get("phase"),
                     "status": u.get("status"), "readiness": readiness,
                     "hypothesized_mm": round(hyp or 0, 2),
-                    "realized_mm": round(real or 0, 3)})
+                    "realized_mm": round(real or 0, 3), "roadmap": roadmap})
+    summary["roadmap_value_mm"] = round(summary["roadmap_value_mm"], 2)
     summary["hypothesized_mm"] = round(summary["hypothesized_mm"], 2)
     summary["realized_mm"] = round(summary["realized_mm"], 3)
     return {"account_id": account_id, "use_cases": out, "summary": summary}
@@ -290,11 +216,9 @@ async def admin_overview(request: Request):
     accounts = rows_to_list(await db.fetch("""
         SELECT a.id, a.slug, a.name, a.utility_type, a.is_active, a.profile_complete,
                (SELECT count(*) FROM account_members m WHERE m.account_id = a.id) AS members,
-               (SELECT count(*) FROM account_assessments x WHERE x.account_id = a.id) AS assessments,
-               (SELECT count(*) FROM account_assessments x WHERE x.account_id = a.id AND x.status='submitted') AS submitted,
                (SELECT count(*) FROM account_portfolio_use_cases p WHERE p.account_id = a.id) AS portfolio,
-               (SELECT count(*) FROM account_promotions pr WHERE pr.account_id = a.id) AS promotions,
-               (SELECT max(created_at) FROM account_promotions pr WHERE pr.account_id = a.id) AS last_promoted
+               (SELECT count(*) FROM roadmap_imports ri WHERE ri.account_id = a.id) AS roadmap_imports,
+               (SELECT max(created_at) FROM roadmap_imports ri WHERE ri.account_id = a.id) AS last_imported
         FROM accounts a ORDER BY a.is_default DESC, lower(a.name)
     """))
     users = rows_to_list(await db.fetch("""
@@ -305,18 +229,6 @@ async def admin_overview(request: Request):
     admins = [r["user_email"] for r in await db.fetch("SELECT user_email FROM admins ORDER BY 1")]
     return {"accounts": accounts, "users": users, "admins": admins,
             "totals": {"accounts": len(accounts), "users": len(users)}}
-
-
-@router.get("/admin/assessments")
-async def admin_assessments(request: Request):
-    await _require_admin(request)
-    rows = rows_to_list(await db.fetch("""
-        SELECT x.id, x.account_id, a.name AS account_name, x.status, x.label,
-               x.overall_score, x.current_phase, x.created_by, x.created_at, x.submitted_at
-        FROM account_assessments x JOIN accounts a ON a.id = x.account_id
-        ORDER BY x.updated_at DESC
-    """))
-    return {"assessments": rows}
 
 
 class AdminIn(BaseModel):

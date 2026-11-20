@@ -1,5 +1,5 @@
 /*
- * AI Value Flywheel — Setup & Discovery Console
+ * AI Value Realization — Setup & Discovery Console
  *
  * A dependency-free operator console for the workflows added by the discovery
  * and agent layers. See index.html's comment for why this is plain JS rather
@@ -3040,116 +3040,6 @@
   }
 
   // ---------------------------------------------------------------------
-  // Roadmap import — handoff from the Data & AI Maturity Assessment app
-  // ---------------------------------------------------------------------
-  async function viewRoadmapImport() {
-    main.innerHTML = `
-      <h2>Roadmap import</h2>
-      <p class="lede">Bring a generated maturity-assessment roadmap into this
-        operational portfolio. Preview maps incoming use cases against existing
-        Value Flywheel records; Apply writes only after the preview has been reviewed.</p>
-      <div id="result"></div>
-      <section class="card">
-        <h3>Roadmap package</h3>
-        <div class="row" style="align-items:flex-start">
-          <div class="grow">
-            <label for="ri-file">JSON package</label>
-            <input id="ri-file" type="file" accept=".json,application/json">
-          </div>
-        </div>
-        <div class="field" style="margin-top:12px">
-          <label for="ri-json">Or paste package JSON</label>
-          <textarea id="ri-json" rows="14" style="width:100%;font-family:ui-monospace,
-            SFMono-Regular,monospace;font-size:12px"
-            placeholder='{"schemaVersion":"grid-atlas.sync.v1","packageType":"maturity_assessment_roadmap","useCases":[]}'></textarea>
-        </div>
-        <div class="row" style="gap:8px">
-          <button class="action secondary" data-act="preview" data-busy="Previewing…">
-            Preview import</button>
-          <button class="action" data-act="apply" data-busy="Importing…">
-            Apply import</button>
-        </div>
-      </section>
-      <section class="card">
-        <h3>Expected source</h3>
-        <p class="small muted">Export endpoint:
-          <code>/api/exports/value-flywheel-roadmap?assessmentId=&lt;id&gt;</code>
-          from the Data &amp; AI Maturity Assessment app.</p>
-      </section>`;
-
-    $("#ri-file").addEventListener("change", async () => {
-      const file = $("#ri-file").files && $("#ri-file").files[0];
-      if (!file) return;
-      $("#ri-json").value = await file.text();
-      $("#result").innerHTML = banner("info", `${file.name} loaded. Preview before applying.`);
-    });
-
-    onActions(main, {
-      preview: async () => {
-        const payload = await readRoadmapImportPackage();
-        renderRoadmapImportResult(await api("/sync/maturity-roadmap/preview", {
-          method: "POST",
-          body: JSON.stringify({ package: payload, dry_run: true }),
-        }), false);
-      },
-      apply: async () => {
-        const payload = await readRoadmapImportPackage();
-        if (!confirm("Apply this roadmap package to the operational portfolio?")) return;
-        renderRoadmapImportResult(await api("/sync/maturity-roadmap/apply", {
-          method: "POST",
-          body: JSON.stringify({ package: payload, dry_run: false }),
-        }), true);
-      },
-    });
-  }
-
-  async function readRoadmapImportPackage() {
-    let raw = ($("#ri-json").value || "").trim();
-    if (!raw) {
-      const file = $("#ri-file").files && $("#ri-file").files[0];
-      if (file) raw = await file.text();
-    }
-    if (!raw) throw new Error("Choose a roadmap package JSON file or paste JSON.");
-    let payload;
-    try {
-      payload = JSON.parse(raw);
-    } catch (error) {
-      throw new Error(`Package is not valid JSON: ${error.message}`);
-    }
-    const pkg = payload.package && typeof payload.package === "object"
-      ? payload.package
-      : payload;
-    const cases = pkg.useCases || pkg.use_cases || [];
-    if (!Array.isArray(cases) || cases.length === 0) {
-      throw new Error("Package must include a non-empty useCases array.");
-    }
-    return pkg;
-  }
-
-  function renderRoadmapImportResult(result, applied) {
-    const useCases = result.useCases || {};
-    const summary = result.summary || {};
-    const idMap = result.idMap || {};
-    $("#result").innerHTML = `
-      ${banner(applied ? "ok" : "info", applied
-        ? "Roadmap package imported."
-        : "Preview complete. Nothing has been written.")}
-      <div class="stat" style="margin:12px 0">
-        ${metricCell("Incoming", num(useCases.incoming ?? Object.keys(idMap).length))}
-        ${metricCell("Mapped", num(useCases.mapped ?? summary.mapped ?? 0))}
-        ${metricCell("Create / match", num(useCases.toCreateOrTitleMatch
-          ?? ((summary.created || 0) + (summary.updated || 0))))}
-        ${metricCell("Roadmap items", num(result.roadmapItems ?? 0))}
-      </div>
-      ${applied ? `<table>
-        <thead><tr><th>Action</th><th class="num">Count</th></tr></thead>
-        <tbody>${Object.entries(summary).map(([k, v]) => `
-          <tr><td>${text(k)}</td><td class="num">${num(v)}</td></tr>`).join("")}</tbody>
-      </table>` : ""}
-      <p class="small muted">Source app: ${text(result.sourceApp || "data-ai-maturity-assessment")}</p>`;
-  }
-
-  // ---------------------------------------------------------------------
   // Accounts
   // ---------------------------------------------------------------------
   /*
@@ -3701,7 +3591,6 @@
     dependencies: viewDependencies,
     trend: viewTrend,
     executive: viewExecutive,
-    roadmap_import: viewRoadmapImport,
     accounts: viewAccounts,
     kb: viewKnowledge,
     proposals: viewProposals,
@@ -3776,7 +3665,6 @@
       hint: "Create and document new work",
       items: [
         ["generate", "Generate use cases"],
-        ["roadmap_import", "Import roadmap"],
         ["proposals", "Write a proposal"],
         ["kb", "Knowledge base"],
         ["artifacts", "What's built"],

@@ -268,6 +268,73 @@
     }
    ]
   },
+  "account_pillars": {
+   "columns": [
+    {
+     "name": "account_id",
+     "type": "BIGINT",
+     "pg_type": "integer",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "pillar_id",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "name",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "description",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "sort_order",
+     "type": "BIGINT",
+     "pg_type": "integer",
+     "nullable": false,
+     "default": "0"
+    },
+    {
+     "name": "source",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": false,
+     "default": "'roadmap'"
+    },
+    {
+     "name": "updated_at",
+     "type": "TIMESTAMP",
+     "pg_type": "timestamp with time zone",
+     "nullable": false,
+     "default": "current_timestamp()"
+    }
+   ],
+   "primary_key": [
+    "account_id",
+    "pillar_id"
+   ],
+   "unique": [],
+   "serial": null,
+   "foreign_keys": [
+    {
+     "column": "account_id",
+     "ref_table": "accounts",
+     "ref_column": "id",
+     "on_delete": "cascade"
+    }
+   ]
+  },
   "account_portfolio_use_cases": {
    "columns": [
     {
@@ -389,6 +456,203 @@
      "ref_table": "account_assessments",
      "ref_column": "id",
      "on_delete": "set_null"
+    }
+   ]
+  },
+  "account_roadmap_use_cases": {
+   "columns": [
+    {
+     "name": "account_id",
+     "type": "BIGINT",
+     "pg_type": "integer",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "use_case_id",
+     "type": "BIGINT",
+     "pg_type": "integer",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "external_id",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "roadmap_import_id",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "name",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "summary",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "business_problem",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "kpi",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "pillar_ids",
+     "type": "ARRAY<STRING>",
+     "pg_type": "_text",
+     "nullable": false,
+     "default": "array()"
+    },
+    {
+     "name": "stage",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "workstream",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "priority_rank",
+     "type": "BIGINT",
+     "pg_type": "integer",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "priority_tier",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "effort",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "effort_quadrant",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "value_currency",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "value_low",
+     "type": "DECIMAL(38,10)",
+     "pg_type": "numeric",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "value_base",
+     "type": "DECIMAL(38,10)",
+     "pg_type": "numeric",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "value_high",
+     "type": "DECIMAL(38,10)",
+     "pg_type": "numeric",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "value_json",
+     "type": "STRING",
+     "pg_type": "jsonb",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "plan_json",
+     "type": "STRING",
+     "pg_type": "jsonb",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "data_needs_json",
+     "type": "STRING",
+     "pg_type": "jsonb",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "dropped_at",
+     "type": "TIMESTAMP",
+     "pg_type": "timestamp with time zone",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "updated_at",
+     "type": "TIMESTAMP",
+     "pg_type": "timestamp with time zone",
+     "nullable": false,
+     "default": "current_timestamp()"
+    }
+   ],
+   "primary_key": [
+    "account_id",
+    "use_case_id"
+   ],
+   "unique": [
+    [
+     "account_id",
+     "external_id"
+    ]
+   ],
+   "serial": null,
+   "foreign_keys": [
+    {
+     "column": "account_id",
+     "ref_table": "accounts",
+     "ref_column": "id",
+     "on_delete": "cascade"
+    },
+    {
+     "column": "use_case_id",
+     "ref_table": "use_cases",
+     "ref_column": "id",
+     "on_delete": "cascade"
     }
    ]
   },
@@ -767,14 +1031,14 @@
    "serial": "id",
    "foreign_keys": [
     {
-     "column": "use_case_id",
-     "ref_table": "use_cases",
+     "column": "lob_id",
+     "ref_table": "lobs",
      "ref_column": "id",
      "on_delete": "set_null"
     },
     {
-     "column": "lob_id",
-     "ref_table": "lobs",
+     "column": "use_case_id",
+     "ref_table": "use_cases",
      "ref_column": "id",
      "on_delete": "set_null"
     }
@@ -2973,6 +3237,12 @@
    "serial": "id",
    "foreign_keys": [
     {
+     "column": "account_id",
+     "ref_table": "accounts",
+     "ref_column": "id",
+     "on_delete": "cascade"
+    },
+    {
      "column": "data_asset_id",
      "ref_table": "data_assets",
      "ref_column": "id",
@@ -2983,12 +3253,6 @@
      "ref_table": "lobs",
      "ref_column": "id",
      "on_delete": "set_null"
-    },
-    {
-     "column": "account_id",
-     "ref_table": "accounts",
-     "ref_column": "id",
-     "on_delete": "cascade"
     }
    ]
   },
@@ -3097,6 +3361,12 @@
    "serial": "id",
    "foreign_keys": [
     {
+     "column": "account_id",
+     "ref_table": "accounts",
+     "ref_column": "id",
+     "on_delete": "cascade"
+    },
+    {
      "column": "domain_id",
      "ref_table": "data_domains",
      "ref_column": "id",
@@ -3107,12 +3377,6 @@
      "ref_table": "lobs",
      "ref_column": "id",
      "on_delete": "set_null"
-    },
-    {
-     "column": "account_id",
-     "ref_table": "accounts",
-     "ref_column": "id",
-     "on_delete": "cascade"
     }
    ]
   },
@@ -3386,16 +3650,16 @@
    "serial": "id",
    "foreign_keys": [
     {
-     "column": "folder_id",
-     "ref_table": "kb_folders",
-     "ref_column": "id",
-     "on_delete": "set_null"
-    },
-    {
      "column": "account_id",
      "ref_table": "accounts",
      "ref_column": "id",
      "on_delete": "cascade"
+    },
+    {
+     "column": "folder_id",
+     "ref_table": "kb_folders",
+     "ref_column": "id",
+     "on_delete": "set_null"
     }
    ]
   },
@@ -3847,6 +4111,93 @@
     }
    ]
   },
+  "roadmap_imports": {
+   "columns": [
+    {
+     "name": "id",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "account_id",
+     "type": "BIGINT",
+     "pg_type": "integer",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "source_app",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "roadmap_id",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": false,
+     "default": null
+    },
+    {
+     "name": "roadmap_version",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "title",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "package_json",
+     "type": "STRING",
+     "pg_type": "jsonb",
+     "nullable": false,
+     "default": "'{}'"
+    },
+    {
+     "name": "summary_json",
+     "type": "STRING",
+     "pg_type": "jsonb",
+     "nullable": false,
+     "default": "'{}'"
+    },
+    {
+     "name": "created_by",
+     "type": "STRING",
+     "pg_type": "text",
+     "nullable": true,
+     "default": null
+    },
+    {
+     "name": "created_at",
+     "type": "TIMESTAMP",
+     "pg_type": "timestamp with time zone",
+     "nullable": false,
+     "default": "current_timestamp()"
+    }
+   ],
+   "primary_key": [
+    "id"
+   ],
+   "unique": [],
+   "serial": null,
+   "foreign_keys": [
+    {
+     "column": "account_id",
+     "ref_table": "accounts",
+     "ref_column": "id",
+     "on_delete": "cascade"
+    }
+   ]
+  },
   "roadmap_items": {
    "columns": [
     {
@@ -3959,7 +4310,7 @@
     {
      "name": "duration_ms",
      "type": "BIGINT",
-     "pg_type": "integer",
+     "pg_type": "bigint",
      "nullable": true,
      "default": null
     }
@@ -4135,14 +4486,14 @@
    "serial": null,
    "foreign_keys": [
     {
-     "column": "use_case_id",
-     "ref_table": "use_cases",
+     "column": "domain_id",
+     "ref_table": "data_domains",
      "ref_column": "id",
      "on_delete": "cascade"
     },
     {
-     "column": "domain_id",
-     "ref_table": "data_domains",
+     "column": "use_case_id",
+     "ref_table": "use_cases",
      "ref_column": "id",
      "on_delete": "cascade"
     }
@@ -4599,14 +4950,14 @@
    "serial": "id",
    "foreign_keys": [
     {
-     "column": "use_case_id",
-     "ref_table": "use_cases",
+     "column": "account_id",
+     "ref_table": "accounts",
      "ref_column": "id",
      "on_delete": "cascade"
     },
     {
-     "column": "account_id",
-     "ref_table": "accounts",
+     "column": "use_case_id",
+     "ref_table": "use_cases",
      "ref_column": "id",
      "on_delete": "cascade"
     }

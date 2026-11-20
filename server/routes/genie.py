@@ -151,12 +151,12 @@ async def provision_space(body: ProvisionIn, request: Request):
             company = row["company_name"] if row else None
         except Exception:  # noqa: BLE001 - a nicer title is not worth failing for
             pass
-        title = (f"{company} — Portfolio (AI Value Flywheel)" if company
-                 else "AI Value Flywheel — Portfolio")
+        title = (f"{company} — Portfolio (AI Value Realization)" if company
+                 else "AI Value Realization — Portfolio")
 
     description = (body.description or "").strip() or (
         "Natural-language questions over the use-case portfolio: value, readiness, "
-        "data sources and lines of business. Created by AI Value Flywheel.")
+        "data sources and lines of business. Created by AI Value Realization.")
 
     # Refresh the mirror first. A failure here is fatal to provisioning — a space over
     # tables that do not exist is worse than no space, because it looks configured and

@@ -359,7 +359,7 @@ async def grants():
     """Just the GRANT statements, for handing to a metastore admin."""
     sp = await _service_principal()
     lines = [
-        f"-- AI Value Flywheel: privileges for the app service principal `{sp}`.",
+        f"-- AI Value Realization: privileges for the app service principal `{sp}`.",
         "-- Run as a metastore admin or catalog owner.",
         "",
     ]

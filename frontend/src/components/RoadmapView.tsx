@@ -30,7 +30,17 @@ import { getValueOverride } from '../data/refinements';
 interface RoadmapViewProps {
   results: AssessmentResults | null;
   answers: AssessmentAnswers | null;
-  onBack: () => void;
+  onBack?: () => void;
+  /** Explore: title shown in the header. */
+  title?: string;
+  /** Explore: extra controls rendered at the right of the header. */
+  headerActions?: React.ReactNode;
+  /** Explore: actions rendered inside the use-case detail panel for the open use case. */
+  detailActions?: (ucId: string) => React.ReactNode;
+  /** Legend labels for the two highlighted states (defaults are the portfolio wording). */
+  legend?: { completed: string; recommended: string; future: string };
+  /** Explore: the active account's name, for the POC scope generator on the detail card. */
+  customerName?: string;
   assumptions?: BusinessAssumptions;
   onAssumptionsChange?: (a: BusinessAssumptions) => void;
   locale?: LocalePrefs;
@@ -94,7 +104,8 @@ function getNodeStatus(
 
 export const RoadmapView: React.FC<RoadmapViewProps> = ({
   results, answers, onBack, assumptions: assumptionsProp, onAssumptionsChange,
-  locale, onLocaleChange, fxRates,
+  locale, onLocaleChange, fxRates, title, headerActions, detailActions, customerName,
+  legend = { completed: 'Live', recommended: 'On the roadmap', future: 'Not on the roadmap' },
 }) => {
   const industry = useActiveIndustry();
   const industries = useIndustries();
@@ -220,7 +231,7 @@ export const RoadmapView: React.FC<RoadmapViewProps> = ({
       priorityScore: 0,
       capabilityScore: 0,
       complexityScore: 0,
-      reasoning: results ? 'This use case was not in your top recommendations based on current priorities.' : '',
+      reasoning: '',
     };
   }, [detailUcId, results]);
 
@@ -233,14 +244,19 @@ export const RoadmapView: React.FC<RoadmapViewProps> = ({
       {/* Header */}
       <header className="border-b border-navy-600 px-6 py-3 sticky top-0 z-40 bg-navy/95 backdrop-blur">
         <div className="max-w-[1800px] mx-auto flex items-center gap-4">
-          <button onClick={onBack} className="flex items-center gap-2 text-sm text-slate-400 hover:text-heading transition-colors">
-            <ArrowLeft className="w-4 h-4" /> Back
-          </button>
-          <div className="h-5 w-px bg-navy-600" />
+          {onBack && (
+            <>
+              <button onClick={onBack} className="flex items-center gap-2 text-sm text-slate-400 hover:text-heading transition-colors">
+                <ArrowLeft className="w-4 h-4" /> Back
+              </button>
+              <div className="h-5 w-px bg-navy-600" />
+            </>
+          )}
           <h1 className="text-lg font-semibold text-heading flex-1">
-            Roadmap to an AI-Powered {industry.shortLabel || industry.label || 'Organization'}
-            {results && <span className="text-sm font-normal text-slate-400 ml-2">— Your Position Highlighted</span>}
+            {title || `Use-case catalog — ${industry.shortLabel || industry.label || 'all industries'}`}
+            {results && <span className="text-sm font-normal text-slate-400 ml-2">— your roadmap highlighted</span>}
           </h1>
+          {headerActions}
 
           {industries.length > 1 && (
             <div className="flex items-center gap-2">
@@ -587,9 +603,9 @@ export const RoadmapView: React.FC<RoadmapViewProps> = ({
             <div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-2 text-xs text-slate-500">
               {results && !lockedUcId && (
                 <>
-                  <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-status-green" /> Completed</div>
-                  <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-electric animate-pulse" /> Recommended Next</div>
-                  <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-navy-500" /> Future</div>
+                  <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-status-green" /> {legend.completed}</div>
+                  <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-electric animate-pulse" /> {legend.recommended}</div>
+                  <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-navy-500" /> {legend.future}</div>
                   <div className="h-3 w-px bg-navy-600" />
                 </>
               )}
@@ -624,6 +640,7 @@ export const RoadmapView: React.FC<RoadmapViewProps> = ({
           recommendation={detailRec}
           completedUseCases={results?.completedUseCases || []}
           onClose={() => setDetailUcId(null)}
+          actions={detailActions?.(detailRec.useCase.id)}
           assumptions={assumptions}
           valueOverride={answers ? getValueOverride(answers, detailRec.useCase.id) : undefined}
           complexityOverride={answers?.complexityOverrides?.[detailRec.useCase.id]}
@@ -634,7 +651,7 @@ export const RoadmapView: React.FC<RoadmapViewProps> = ({
             strategicPriorities: answers.profile.strategicPriorities || [],
             overallScore: results?.overallScore,
             currentPhase: results?.currentPhase,
-          } : undefined}
+          } : customerName ? { customerName } : undefined}
         />
         </ErrorBoundary>
       )}

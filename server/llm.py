@@ -37,3 +37,42 @@ async def chat_completion(messages: list, model: str = SERVING_ENDPOINT,
         content = "".join(
             b.get("text", "") if isinstance(b, dict) else str(b) for b in content)
     return content or ""
+
+
+def extract_json(text: str):
+    """Pull the first JSON object/array out of a model reply (tolerates ```json fences).
+
+    Reasoning models can emit thinking text (with its own braces) before the answer,
+    so a naive first-{/last-} slice captures garbage: every top-level {...} object is
+    tried in order and the first that parses wins."""
+    import json
+    import re
+
+    if not text:
+        return None
+    t = re.sub(r"```(?:json)?", "", text).strip()
+    try:
+        return json.loads(t)
+    except Exception:  # noqa: BLE001
+        pass
+    depth, start = 0, -1
+    for i, ch in enumerate(t):
+        if ch == "{":
+            if depth == 0:
+                start = i
+            depth += 1
+        elif ch == "}":
+            depth -= 1
+            if depth == 0 and start != -1:
+                try:
+                    return json.loads(t[start:i + 1])
+                except Exception:  # noqa: BLE001
+                    start = -1
+    for opener, closer in (("{", "}"), ("[", "]")):
+        i, j = t.find(opener), t.rfind(closer)
+        if i != -1 and j > i:
+            try:
+                return json.loads(t[i:j + 1])
+            except Exception:  # noqa: BLE001
+                continue
+    return None

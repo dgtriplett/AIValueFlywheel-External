@@ -3,12 +3,15 @@ import { api } from '../lib/api';
 import { WhatIfGraph } from './WhatIfGraph';
 import { ErrorBoundary } from './ErrorBoundary';
 import { AuthorUseCaseModal } from './AuthorUseCaseModal';
+import { RoadmapImportModal } from './RoadmapImportModal';
+import type { PortfolioRow, RoadmapSummary, RoadmapUseCase } from '../lib/api';
 
 /**
- * Operate — first-party, native in the shell (NO iframe). The operationalized roadmap
- * for the active account, rebuilt from the console's core functionality as native tabs:
+ * Operate — build and track the roadmap for the active business unit:
  *   Roadmap · Coverage · Data · Value · What-if · Reconciliation · Discovery
- * Everything is scoped to the active business unit and defensively fetched.
+ * The Roadmap tab is seeded by importing a roadmap package (RoadmapImportModal) and
+ * grows with use cases added from the catalog or authored here. Everything is scoped
+ * to the active business unit and defensively fetched.
  */
 const READINESS_LABEL: Record<string, string> = {
   shovel_ready: 'Shovel-ready', awaiting_prerequisites: 'Awaiting prerequisites',
@@ -33,7 +36,7 @@ function money(n?: number) {
 
 type Tab = 'roadmap' | 'coverage' | 'data' | 'value' | 'whatif' | 'reconciliation' | 'discovery';
 const TAB_LABEL: Record<Tab, string> = {
-  roadmap: 'Use Case Portfolio', coverage: 'Coverage', data: 'Data', value: 'Value',
+  roadmap: 'Roadmap', coverage: 'Coverage', data: 'Data', value: 'Value',
   whatif: 'What-if', reconciliation: 'Reconciliation', discovery: 'Discovery',
 };
 
@@ -46,7 +49,7 @@ export function OperateView({ accountName }: { accountName?: string }) {
       <div className="flex items-center justify-between flex-wrap gap-3 mb-5">
         <div>
           <h1 className="text-2xl font-bold text-heading">Operate — {accountName || 'roadmap'}</h1>
-          <p className="text-sm text-navy-400">Operationalize the roadmap: readiness, coverage, data, value, and what-if.</p>
+          <p className="text-sm text-navy-400">Build out the roadmap: what's ready to start, what's blocked and by which data, and the value realized.</p>
         </div>
         <div className="flex items-center rounded-lg bg-navy-800 p-0.5 text-sm flex-wrap">
           {tabs.map((t) => (
@@ -57,7 +60,7 @@ export function OperateView({ accountName }: { accountName?: string }) {
           ))}
         </div>
       </div>
-      {tab === 'roadmap' && <RoadmapTab />}
+      {tab === 'roadmap' && <RoadmapTab accountName={accountName} />}
       {tab === 'coverage' && <CoverageTab />}
       {tab === 'data' && <DataTab />}
       {tab === 'value' && <ValueTab />}
@@ -97,10 +100,61 @@ function useFetch<T>(fn: () => Promise<T>, deps: any[] = []): { data: T | null; 
   return { data, loading, err };
 }
 
-// --- Use Case Portfolio ----------------------------------------------------
-function RoadmapTab() {
-  const [nonce, setNonce] = useState(0);  // bump to refetch after catalog add
+// --- Roadmap (the business unit's portfolio) --------------------------------
+const TIER_LABEL: Record<string, string> = { now: 'Now', next: 'Next', later: 'Later' };
+const TIER_COLOR: Record<string, string> = {
+  now: 'text-emerald-500 border-emerald-600/40', next: 'text-info-500 border-info-600/40', later: 'text-navy-400 border-navy-600',
+};
+
+function RoadmapBanner({ summary, onImport }: { summary: RoadmapSummary | null; onImport: () => void }) {
+  const r = summary?.roadmap;
+  if (!summary) return null;
+  if (!r) {
+    return (
+      <div className="border border-info-600/40 bg-info-600/10 rounded-lg p-4 flex items-center justify-between gap-4 flex-wrap">
+        <div>
+          <div className="text-heading font-semibold">Start from your roadmap</div>
+          <div className="text-sm text-navy-300">Import the roadmap package your planning tool produced. Each use case lands here with its pillar, priority, value estimate and first-version plan, ready to track.</div>
+        </div>
+        <button onClick={onImport} className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-700">Import roadmap</button>
+      </div>
+    );
+  }
+  const when = r.imported_at ? new Date(r.imported_at).toLocaleDateString() : '';
+  return (
+    <div className="space-y-3">
+      <div className="flex items-center justify-between gap-3 flex-wrap">
+        <div className="text-sm text-navy-300">
+          <span className="text-heading font-semibold">{r.title || r.roadmap_id}</span>
+          {r.version && <span className="text-navy-400"> · version {r.version}</span>}
+          <span className="text-navy-500"> · imported {when}{r.imported_by ? ` by ${r.imported_by}` : ''}</span>
+        </div>
+        <button onClick={onImport} className="text-xs rounded border border-navy-600 text-navy-300 px-3 py-1.5 hover:bg-navy-700">⟳ Import a new version</button>
+      </div>
+      {summary.pillars.length > 0 && (
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+          {summary.pillars.map((p) => {
+            const pct = p.use_cases ? Math.round((p.live / p.use_cases) * 100) : 0;
+            return (
+              <div key={p.pillar_id} className="border border-navy-600 rounded-lg p-3 bg-navy-800/40" title={p.description || ''}>
+                <div className="text-xs text-navy-400 truncate">{p.name}</div>
+                <div className="text-sm text-heading mt-1"><b>{p.live}</b> of {p.use_cases} live <span className="text-navy-500">· {p.in_flight} in flight</span></div>
+                <div className="h-1.5 rounded bg-navy-700 mt-2 overflow-hidden"><div className="h-full bg-emerald-500" style={{ width: `${pct}%` }} /></div>
+                <div className="text-[11px] text-navy-500 mt-1">{p.value_live ? money(p.value_live / 1e6) : '$0'} of {money(p.value_base / 1e6)} roadmap value live</div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function RoadmapTab({ accountName }: { accountName?: string }) {
+  const [nonce, setNonce] = useState(0);  // bump to refetch after catalog add / import
   const { data, loading, err } = useFetch(() => api.operateRoadmap(), [nonce]);
+  const { data: roadmap } = useFetch(() => api.roadmapSummary().catch(() => null), [nonce]);
+  const [showImport, setShowImport] = useState(false);
   const [openId, setOpenId] = useState<number | null>(null);
   const [showAuthor, setShowAuthor] = useState(false);
   const [showCatalog, setShowCatalog] = useState(false);
@@ -114,19 +168,29 @@ function RoadmapTab() {
   };
   if (loading) return <Loading />;
   if (err) return <div className="text-rose-500 text-sm">{err}</div>;
-  const portfolio = data?.use_cases || [];
+  const portfolio: PortfolioRow[] = data?.use_cases || [];
   const summary: any = data?.summary || {};
+  const pillarName = new Map((roadmap?.pillars || []).map((p) => [p.pillar_id, p.name]));
+  const hasRoadmap = portfolio.some((u) => u.roadmap);
   const dist: Record<string, any> = { shovel_ready: summary.shovel_ready, awaiting_prerequisites: summary.awaiting_prerequisites, nearly_ready: summary.nearly_ready, blocked: summary.blocked };
+  // With a roadmap: the roadmap's own order (rank), then anything added since. Without
+  // one: phase, then value.
+  const rank = (u: PortfolioRow) => (u.roadmap && !u.roadmap.dropped ? (u.roadmap.priority_rank ?? 9e3) : 1e4);
   const shown = [...portfolio]
     .filter((u) => !filter || u.readiness === filter)
-    .sort((a, b) => (a.phase ?? 1) - (b.phase ?? 1) || (b.hypothesized_mm ?? 0) - (a.hypothesized_mm ?? 0));
+    .sort((a, b) => hasRoadmap
+      ? rank(a) - rank(b) || (b.hypothesized_mm ?? 0) - (a.hypothesized_mm ?? 0)
+      : (a.phase ?? 1) - (b.phase ?? 1) || (b.hypothesized_mm ?? 0) - (a.hypothesized_mm ?? 0));
   return (
     <div className="space-y-6">
+      <RoadmapBanner summary={roadmap} onImport={() => setShowImport(true)} />
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        <Tile label="Portfolio value (hyp.)" value={money(summary.hypothesized_mm)} />
+        <Tile label="Portfolio value (hyp.)" value={money(summary.hypothesized_mm)}
+          sub={summary.on_roadmap ? `Roadmap estimate ${money(summary.roadmap_value_mm)}` : undefined} />
         <Tile label="Realized" value={money(summary.realized_mm)} />
-        <Tile label="Shovel-ready" value={String(summary.shovel_ready ?? 0)} />
-        <Tile label="Use cases" value={String(summary.total ?? portfolio.length)} />
+        <Tile label="Shovel-ready" value={String(summary.shovel_ready ?? 0)} sub="all data needs met" />
+        <Tile label="Use cases" value={String(summary.total ?? portfolio.length)}
+          sub={summary.on_roadmap ? `${summary.on_roadmap} from the roadmap` : undefined} />
       </div>
       <div className="flex items-center justify-between flex-wrap gap-2">
         <div className="flex flex-wrap items-center gap-2">
@@ -144,16 +208,18 @@ function RoadmapTab() {
           <button onClick={() => setShowAuthor(true)} className="text-xs rounded border border-info-600/40 text-info-500 bg-info-600/10 px-3 py-1.5 hover:bg-info-600/20">＋ Add use case</button>
         </div>
       </div>
+      {showImport && <RoadmapImportModal accountName={accountName} onClose={() => setShowImport(false)}
+        onImported={() => setNonce((n) => n + 1)} />}
       {showAuthor && <AuthorUseCaseModal onClose={() => setShowAuthor(false)}
         onSaved={(id) => { setShowAuthor(false); setNonce((n) => n + 1); setOpenId(id); }} />}
-      {portfolio.length === 0 && <Empty>No use cases in this account's portfolio yet. Run an assessment in <b>Assess</b> and click <b>Promote to Operate</b>, use <b>＋ Add from catalog</b>, or describe your own with <b>＋ Add use case</b>.</Empty>}
+      {portfolio.length === 0 && <Empty>No use cases in this business unit's portfolio yet. <b>Import roadmap</b> above, pick use cases in <b>Explore</b> or with <b>＋ Add from catalog</b>, or describe your own with <b>＋ Add use case</b>.</Empty>}
 
       {portfolio.length > 0 && (
         <div className="overflow-x-auto border border-navy-600 rounded-lg">
           <table className="w-full text-sm">
             <thead><tr className="text-navy-400 text-xs bg-navy-800/60">
               <th className="text-left p-2">Use case</th>
-              <th className="text-left p-2">Phase</th>
+              {hasRoadmap ? <th className="text-left p-2">Priority</th> : <th className="text-left p-2">Phase</th>}
               <th className="text-left p-2">Status</th>
               <th className="text-left p-2">Readiness</th>
               <th className="text-right p-2">Hypothesized</th>
@@ -164,8 +230,20 @@ function RoadmapTab() {
               {shown.map((u) => (
                 <tr key={u.id} onClick={() => setOpenId(u.id)}
                   className="border-t border-navy-600/50 hover:bg-navy-800/40 cursor-pointer">
-                  <td className="p-2 text-heading">{u.title}</td>
-                  <td className="p-2 text-navy-400">Phase {u.phase ?? 1}</td>
+                  <td className="p-2 text-heading">
+                    {u.title}
+                    {u.roadmap?.dropped && <span className="ml-2 text-[10px] px-1.5 py-0.5 rounded border border-warning-600/40 text-warning-500" title="No longer on the latest imported roadmap">dropped from roadmap</span>}
+                    {u.roadmap && !u.roadmap.dropped && u.roadmap.pillar_ids.length > 0 && (
+                      <div className="text-[11px] text-navy-500">{u.roadmap.pillar_ids.map((p) => pillarName.get(p) || p).join(' · ')}{u.roadmap.workstream ? ` · ${u.roadmap.workstream}` : ''}</div>
+                    )}
+                  </td>
+                  {hasRoadmap ? (
+                    <td className="p-2">
+                      {u.roadmap?.priority_tier && !u.roadmap.dropped
+                        ? <span className={`text-[11px] px-1.5 py-0.5 rounded border ${TIER_COLOR[u.roadmap.priority_tier] || ''}`}>{TIER_LABEL[u.roadmap.priority_tier]}</span>
+                        : <span className="text-[11px] text-navy-500">{u.roadmap ? '—' : 'added'}</span>}
+                    </td>
+                  ) : <td className="p-2 text-navy-400">Phase {u.phase ?? 1}</td>}
                   <td className="p-2 text-navy-400 capitalize">{(u.status || '').replace(/_/g, ' ')}</td>
                   <td className="p-2">
                     {u.readiness && <span className={`text-[11px] px-1.5 py-0.5 rounded border ${READINESS_COLOR[u.readiness] || 'text-navy-400 border-navy-600'}`}>{READINESS_LABEL[u.readiness] || u.readiness}</span>}
@@ -309,8 +387,10 @@ function UseCaseDrawer({ id, onClose, onRemoved }: { id: number; onClose: () => 
   const [savingMeta, setSavingMeta] = useState(false);
   const [eTitle, setETitle] = useState('');
   const [eDesc, setEDesc] = useState('');
-  const [tab, setTab] = useState<'overview' | 'tracking' | 'value' | 'proposal' | 'notes'>('overview');
+  const [tab, setTab] = useState<'overview' | 'roadmap' | 'tracking' | 'value' | 'proposal' | 'notes'>('overview');
   const [remap, setRemap] = useState(false);
+  const [road, setRoad] = useState<RoadmapUseCase | null>(null);
+  useEffect(() => { api.roadmapUseCase(id).then((r) => setRoad(r.roadmap)).catch(() => setRoad(null)); }, [id]);
 
   const reload = React.useCallback(() => {
     setErr(null);
@@ -334,7 +414,7 @@ function UseCaseDrawer({ id, onClose, onRemoved }: { id: number; onClose: () => 
     finally { setSavingMeta(false); }
   };
   const removeFromPortfolio = async () => {
-    if (!window.confirm(`Remove “${uc.title || 'this use case'}” from this account's portfolio?\n\nIt stays in the catalog and can be re-added anytime.`)) return;
+    if (!window.confirm(`Remove “${uc.title || 'this use case'}” from this business unit's portfolio?\n\nIt stays in the catalog and can be re-added anytime.`)) return;
     setRemoving(true);
     try { await api.setPortfolio(id, false); (onRemoved || onClose)(); }
     finally { setRemoving(false); }
@@ -357,7 +437,9 @@ function UseCaseDrawer({ id, onClose, onRemoved }: { id: number; onClose: () => 
         <div className="sticky top-0 bg-navy-900 border-b border-navy-600 px-5 py-3 z-10">
           <div className="flex items-start justify-between gap-3">
             <div>
-              <div className="text-[11px] text-navy-500">Phase {uc.phase ?? '—'} · Use case</div>
+              <div className="text-[11px] text-navy-500">
+                {road ? <>On the roadmap{road.priority_tier ? ` · ${TIER_LABEL[road.priority_tier] || road.priority_tier}` : ''}{road.stage ? ` · ${road.stage}` : ''}</> : <>Phase {uc.phase ?? '—'} · Use case</>}
+              </div>
               <h2 className="text-lg font-bold text-heading">{uc.title || 'Use case'}</h2>
             </div>
             <button onClick={onClose} className="text-navy-400 hover:text-heading text-xl leading-none px-2">×</button>
@@ -377,7 +459,7 @@ function UseCaseDrawer({ id, onClose, onRemoved }: { id: number; onClose: () => 
               {removing ? 'Removing…' : '✕ Remove from portfolio'}</button>
           </div>
           <div className="flex items-center rounded-lg bg-navy-800 p-0.5 text-xs mt-3 w-max">
-            {(['overview', 'tracking', 'value', 'proposal', 'notes'] as const).map((t) => (
+            {(['overview', ...(road ? ['roadmap'] as const : []), 'tracking', 'value', 'proposal', 'notes'] as const).map((t) => (
               <button key={t} onClick={() => setTab(t)}
                 className={`px-2.5 py-1 rounded-md capitalize font-medium ${tab === t ? 'bg-navy-700 text-heading shadow-sm' : 'text-navy-400 hover:text-heading'}`}>{t}</button>
             ))}
@@ -472,6 +554,7 @@ function UseCaseDrawer({ id, onClose, onRemoved }: { id: number; onClose: () => 
                   </div>
                 </div>
               )}
+              {tab === 'roadmap' && road && <RoadmapSection r={road} />}
               {tab === 'tracking' && <TrackingSection uc={uc} onChange={reload} />}
               {tab === 'value' && <ValueSection uc={uc} onChange={reload} />}
               {tab === 'proposal' && <ProposalSection id={id} />}
@@ -482,6 +565,85 @@ function UseCaseDrawer({ id, onClose, onRemoved }: { id: number; onClose: () => 
       </div>
     </div>
     </>
+  );
+}
+
+/** What the imported roadmap said about this use case: why it matters, how it will be
+ *  measured, the value estimate and its assumptions, and the first-version plan. */
+function RoadmapSection({ r }: { r: RoadmapUseCase }) {
+  const v = r.value_json || {};
+  const plan = r.plan_json;
+  const needs = r.data_needs_json || {};
+  const cur = r.value_currency || 'USD';
+  const m = (x: number | null | undefined) => (x == null ? '—' : money(x / 1e6));
+  return (
+    <div className="space-y-4 text-sm">
+      {r.dropped_at && (
+        <div className="text-xs text-warning-500 border border-warning-600/40 bg-warning-600/10 rounded p-2">
+          Not on the latest imported roadmap (dropped {new Date(r.dropped_at).toLocaleDateString()}). It stays in the portfolio until you remove it.
+        </div>
+      )}
+      <div className="flex flex-wrap gap-1.5">
+        {r.pillars.map((p) => <span key={p.id} className="text-[11px] px-2 py-0.5 rounded-full border border-info-600/40 text-info-500">{p.name}</span>)}
+        {r.workstream && <span className="text-[11px] px-2 py-0.5 rounded-full border border-navy-600 text-navy-300">{r.workstream}</span>}
+        {r.effort && <span className="text-[11px] px-2 py-0.5 rounded-full border border-navy-600 text-navy-300">Effort {r.effort}{r.effort_quadrant ? ` · ${r.effort_quadrant}` : ''}</span>}
+      </div>
+      {r.summary && <p className="text-navy-300">{r.summary}</p>}
+      {r.business_problem && (
+        <div><div className="text-xs font-semibold text-navy-400 mb-1">Why it matters</div>
+          <p className="text-navy-300 whitespace-pre-line">{r.business_problem}</p></div>
+      )}
+      {r.kpi && <div><div className="text-xs font-semibold text-navy-400 mb-1">How success is measured</div><p className="text-navy-300">{r.kpi}</p></div>}
+      {r.value_base != null && (
+        <div className="border border-navy-600 rounded-lg p-3 bg-navy-800/40">
+          <div className="text-xs font-semibold text-navy-400">Roadmap value estimate {cur !== 'USD' ? `(${cur})` : ''}</div>
+          <div className="text-heading mt-1"><b>{m(r.value_base)}</b> a year <span className="text-navy-500 text-xs">range {m(r.value_low)}–{m(r.value_high)}</span></div>
+          {v.formula && <div className="text-[11px] text-navy-500 mt-1">{v.formula}</div>}
+          {v.basis && <div className="text-[11px] text-navy-400 mt-1">{v.basis}</div>}
+          {(v.assumptions || []).length > 0 && (
+            <details className="mt-2 text-[11px]">
+              <summary className="cursor-pointer text-navy-400">{(v.assumptions || []).length} assumptions</summary>
+              <ul className="mt-1 space-y-1">
+                {(v.assumptions || []).map((a, i) => (
+                  <li key={i} className="text-navy-300">
+                    <b className="text-navy-200">{a.label}</b>
+                    {a.base != null && <> — {a.low != null && a.high != null && a.low !== a.high ? `${a.low}–${a.high}, base ${a.base}` : a.base}{a.unit && a.unit !== 'USD' ? ` ${a.unit}` : ''}</>}
+                    {a.source && <span className="text-navy-500"> · {a.source}</span>}
+                  </li>
+                ))}
+              </ul>
+            </details>
+          )}
+          <div className="text-[11px] text-navy-500 mt-2">Track what's actually delivered in the <b>Value</b> tab.</div>
+        </div>
+      )}
+      {plan && (
+        <div>
+          <div className="text-xs font-semibold text-navy-400 mb-1">First-version plan</div>
+          {plan.headline && <div className="text-heading">{plan.headline}</div>}
+          {plan.pilot && <div className="text-xs text-navy-400 mt-0.5">Pilot: {plan.pilot}</div>}
+          <ol className="mt-2 space-y-2">
+            {plan.phases.map((ph, i) => (
+              <li key={i} className="border border-navy-600 rounded-lg p-2.5">
+                <div className="text-[11px] text-navy-500">{[ph.name, ph.when].filter(Boolean).join(' · ')}</div>
+                {ph.title && <div className="text-heading text-sm">{ph.title}</div>}
+                {ph.summary && <div className="text-xs text-navy-300 mt-0.5">{ph.summary}</div>}
+                {ph.steps.length > 0 && <ul className="list-disc ml-4 mt-1 text-xs text-navy-300">{ph.steps.map((st, k) => <li key={k}>{st}</li>)}</ul>}
+              </li>
+            ))}
+          </ol>
+        </div>
+      )}
+      {((needs.datasets || []).length > 0 || (needs.sources || []).length > 0) && (
+        <div>
+          <div className="text-xs font-semibold text-navy-400 mb-1">Data the roadmap expects</div>
+          <div className="text-xs text-navy-300">{[...(needs.datasets || []), ...(needs.assets || [])].filter((x, i, a) => a.indexOf(x) === i).join(' · ')}</div>
+          {(needs.sources || []).length > 0 && <div className="text-[11px] text-navy-500 mt-1">From: {(needs.sources || []).join(' · ')}</div>}
+          {needs.rationale && <div className="text-[11px] text-navy-500 mt-1">{needs.rationale}</div>}
+          <div className="text-[11px] text-navy-500 mt-1">Readiness on the <b>Overview</b> tab uses this app's data catalog.</div>
+        </div>
+      )}
+    </div>
   );
 }
 

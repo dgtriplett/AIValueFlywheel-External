@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""AI Value Flywheel — multi-workspace Unity Catalog metadata extractor.
+"""AI Value Realization — multi-workspace Unity Catalog metadata extractor.
 
 Sweeps `system.information_schema` across one or more Databricks workspaces and
-writes consolidated CSVs that the AI Value Flywheel app ingests to build its data-asset
+writes consolidated CSVs that the AI Value Realization app ingests to build its data-asset
 inventory.
 
 WHY THIS RUNS OUTSIDE THE APP
@@ -296,8 +296,8 @@ def main() -> None:
     parser.add_argument("--push", nargs="?", const="", default=None,
                         metavar="APP_URL",
                         help="after extracting, upload the CSVs straight to AI Value "
-                             "Flywheel (e.g. --push https://my-app.aws.databricksapps.com). "
-                             "Defaults to $AI_VALUE_FLYWHEEL_HOST.")
+                             "Realization (e.g. --push https://my-app.aws.databricksapps.com). "
+                             "Defaults to $AIVR_HOST.")
     parser.add_argument("--push-dry-run", action="store_true",
                         help="with --push, show what would be uploaded and stop")
     args = parser.parse_args()
@@ -311,7 +311,7 @@ def main() -> None:
 
     urls = read_workspace_list(input_path)
     print("=" * 64)
-    print("AI Value Flywheel — Databricks metadata extractor")
+    print("AI Value Realization — Databricks metadata extractor")
     print("=" * 64)
     print(f"workspaces: {len(urls)}   columns: {'no' if args.no_columns else 'yes'}")
     print(f"output:     {OUTPUT_DIR}")
@@ -347,7 +347,7 @@ def main() -> None:
     print(f"schemas:    {len(totals['schemas'])}")
     print(f"tables:     {len(totals['tables'])}")
     print(f"columns:    {len(totals['columns'])}")
-    print("\nUpload these to AI Value Flywheel → Setup → Data Sources:")
+    print("\nUpload these to AI Value Realization → Setup → Data Sources:")
     for key in ("schemas", "tables", "columns"):
         if totals[key]:
             print(f"  {OUTPUT_DIR / f'all_{key}.csv'}")

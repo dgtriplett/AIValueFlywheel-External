@@ -1,4 +1,4 @@
-"""Dual-mode authentication and environment configuration for AI Value Flywheel.
+"""Dual-mode authentication and environment configuration for AI Value Realization.
 
 Detects whether the app is running inside Databricks Apps (service principal
 credentials auto-injected) or locally (uses a Databricks CLI profile).
@@ -44,7 +44,7 @@ APP_ADMINS = frozenset(
 
 # Unity Catalog target for the Genie mirror (customer's own catalog/schema).
 GENIE_MIRROR_CATALOG = optional_setting("GENIE_MIRROR_CATALOG")
-GENIE_MIRROR_SCHEMA = optional_setting("GENIE_MIRROR_SCHEMA", "ai_value_flywheel_genie")
+GENIE_MIRROR_SCHEMA = optional_setting("GENIE_MIRROR_SCHEMA", "ai_value_realization_genie")
 
 # --- Discovery layer (Unity Catalog) ---------------------------------------
 # Where the ingestion pipeline writes workspace-metadata inventory and the
@@ -52,7 +52,7 @@ GENIE_MIRROR_SCHEMA = optional_setting("GENIE_MIRROR_SCHEMA", "ai_value_flywheel
 # a read-only projection of the portfolio for NL Q&A): this is working storage
 # for discovery, and the app SP needs CREATE TABLE / MODIFY / SELECT on it.
 ATLAS_CATALOG = optional_setting("ATLAS_CATALOG")
-ATLAS_SCHEMA = optional_setting("ATLAS_SCHEMA", "ai_value_flywheel_discovery")
+ATLAS_SCHEMA = optional_setting("ATLAS_SCHEMA", "ai_value_realization_discovery")
 
 
 def discovery_configured() -> bool:

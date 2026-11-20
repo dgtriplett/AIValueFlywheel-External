@@ -74,7 +74,7 @@ class Smoke:
         acct = self.call("POST", "/api/accounts", json={
             "name": f"Smoke Test BU {int(time.time())}", "utility_type": "electric"}, expect=(200, 201))
         acct_id = acct.get("id") or acct.get("account", {}).get("id")
-        self.c.headers["X-Grid-Atlas-Account"] = str(acct_id)
+        self.c.headers["X-AIVR-Account"] = str(acct_id)
         print("   business unit", acct_id, "user", me.get("email"))
 
         # Worksheet round trip (template -> parse).

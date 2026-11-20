@@ -1,9 +1,9 @@
-# AI Value Flywheel
+# AI Value Realization
 
 Plan, track, and operationalize your Data & AI transformation — in your own
 Databricks workspace.
 
-AI Value Flywheel is a Databricks App your team deploys and owns. It ships with a
+AI Value Realization is a Databricks App your team deploys and owns. It ships with a
 curated reference catalog of 240 Power & Utilities data/AI use cases, 164 data
 assets and 31 data sources, the dependencies between them, and parameterized value
 models. You use it to:
@@ -55,7 +55,7 @@ for details and the trade-offs.
 ### Deploy in three commands
 
 ```bash
-git clone <this repository> && cd ai-value-flywheel
+git clone <this repository> && cd ai-value-realization
 
 # 1. Set the two required variables (or edit the defaults in databricks.yml):
 export BUNDLE_VAR_warehouse_id=<your-warehouse-id>

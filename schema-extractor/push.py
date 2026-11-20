@@ -1,4 +1,4 @@
-"""Upload the extract straight to AI Value Flywheel, instead of by hand.
+"""Upload the extract straight to AI Value Realization, instead of by hand.
 
 WHY
 ---
@@ -106,7 +106,7 @@ def _multipart(path: Path) -> tuple[bytes, str]:
     Field name is fixed by the server (`file: UploadFile = File(...)`); sending it under
     any other name is a 422 that names the field but not the mistake.
     """
-    boundary = f"----AIValueFlywheel{uuid.uuid4().hex}"
+    boundary = f"----AIVR{uuid.uuid4().hex}"
     content_type = mimetypes.guess_type(path.name)[0] or "text/csv"
     body = b"".join((
         f"--{boundary}\r\n".encode(),
@@ -265,7 +265,7 @@ def push(output_dir: Path, host: str, *, dry_run: bool = False) -> int:
     except PushError as error:
         print(f"\nPUSH FAILED: {error}", file=sys.stderr)
         print(f"\nThe CSVs are still in {output_dir} — upload them by hand from "
-              "AI Value Flywheel → Get started → step 2A.", file=sys.stderr)
+              "AI Value Realization → Get started → step 2A.", file=sys.stderr)
         return 3
     except KeyboardInterrupt:
         print("\nPush interrupted. The CSVs are still on disk.", file=sys.stderr)
@@ -274,4 +274,4 @@ def push(output_dir: Path, host: str, *, dry_run: bool = False) -> int:
 
 def host_from_env() -> str | None:
     """Allow the host to come from the environment, for scheduled runs."""
-    return os.environ.get("AI_VALUE_FLYWHEEL_HOST") or None
+    return os.environ.get("AIVR_HOST") or os.environ.get("AI_VALUE_FLYWHEEL_HOST") or None

@@ -103,13 +103,13 @@ def _run_instructions() -> str:
         host = get_workspace_host()
     except Exception:  # noqa: BLE001 - the ZIP must build even if host lookup fails
         host = ""
-    target = "AI Value Flywheel → Get started → step 2A"
-    return f"""AI Value Flywheel — workspace metadata extractor
+    target = "AI Value Realization → Get started → step 2A"
+    return f"""AI Value Realization — workspace metadata extractor
 =========================================
 
 WHY YOU ARE RUNNING THIS LOCALLY
 --------------------------------
-AI Value Flywheel authenticates as a service principal that only has credentials for the
+AI Value Realization authenticates as a service principal that only has credentials for the
 one workspace it is deployed in. Your data is probably spread across more than
 that. This script runs under YOUR credentials, so it reaches every workspace you
 can reach, and produces files you upload back once.
@@ -184,7 +184,7 @@ async def download_extractor():
         buffer,
         media_type="application/zip",
         headers={"Content-Disposition":
-                 'attachment; filename="grid-atlas-schema-extractor.zip"'})
+                 'attachment; filename="aivr-schema-extractor.zip"'})
 
 
 @router.get("/extractor/info")
@@ -266,7 +266,7 @@ async def bootstrap(request: Request):
             is_user_edited BOOLEAN, is_present BOOLEAN,
             first_seen_at TIMESTAMP, last_seen_at TIMESTAMP
         ) USING DELTA
-        COMMENT 'AI Value Flywheel: discovered Unity Catalog schemas across workspaces.'
+        COMMENT 'AI Value Realization: discovered Unity Catalog schemas across workspaces.'
     """)
     await _sql(f"""
         CREATE TABLE IF NOT EXISTS {atlas_fqn('discovered_tables')} (
@@ -281,7 +281,7 @@ async def bootstrap(request: Request):
             is_user_edited BOOLEAN, is_present BOOLEAN,
             first_seen_at TIMESTAMP, last_seen_at TIMESTAMP
         ) USING DELTA
-        COMMENT 'AI Value Flywheel: discovered Unity Catalog tables + AI enrichment.'
+        COMMENT 'AI Value Realization: discovered Unity Catalog tables + AI enrichment.'
     """)
     await write_audit("ingestion", None, "bootstrap", actor,
                       {"catalog": ATLAS_CATALOG, "schema": ATLAS_SCHEMA})

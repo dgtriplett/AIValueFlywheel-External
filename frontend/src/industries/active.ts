@@ -21,7 +21,7 @@ import type { IndustryMeta } from './types';
 /** Industry-neutral default used while the catalog is loading or when the
  *  fetch fails. No industry-specific copy here — the wizard will populate
  *  with a real industry pack once /api/industries returns. */
-// Grid Compass is P&U-only and serves no /api/industries pack (local-first), so the
+// AI Value Realization is P&U-only and serves no /api/industries pack (local-first), so the
 // fallback IS the active industry. id must be 'pu' so StepProfile's legacy-P&U paths
 // (UTILITY_TYPE_OPTIONS for customer type, sizeOptionsFor for scale) render their
 // options when customerTypes/territorySize are empty — otherwise both grids are blank

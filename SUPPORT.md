@@ -1,6 +1,6 @@
 # Support
 
-**AI Value Flywheel is not a Databricks product and is not supported by Databricks.**
+**AI Value Realization is not a Databricks product and is not supported by Databricks.**
 It is a reference application provided under the [Databricks License](LICENSE),
 "as-is" and without warranty or service-level commitment of any kind.
 

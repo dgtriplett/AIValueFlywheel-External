@@ -15,13 +15,12 @@ logger = logging.getLogger(__name__)
 def current_user(request: Request) -> str:
     """Resolve the acting user from Databricks Apps headers.
 
-    Databricks Apps inject X-Forwarded-Email / X-Forwarded-User. The frontend
-    may also set X-Grid-Atlas-User for local dev (the legacy X-GridValue-User
-    header is still accepted so the pre-rebrand SPA build keeps working).
-    Falls back to 'system'.
+    Databricks Apps inject X-Forwarded-Email / X-Forwarded-User, and they always
+    win. Locally, X-AIVR-User names the user (the 1.x names X-Grid-Atlas-User and
+    X-GridValue-User are still accepted). Falls back to 'system'.
     """
     for header in ("x-forwarded-email", "x-forwarded-user",
-                   "x-grid-atlas-user", "x-gridvalue-user"):
+                   "x-aivr-user", "x-grid-atlas-user", "x-gridvalue-user"):
         val = request.headers.get(header)
         if val:
             return val

@@ -441,15 +441,13 @@ class TestExpensiveEndpointsAreLimited(unittest.TestCase):
 
     # Endpoint path fragment -> the limit class it must use.
     EXPECTED = {
-        # Assess AI Insights — LLM narrative/proposal endpoints. Proposals generate a
-        # use-case list ('generate'); the prose/audit calls cost like company research.
-        "server/routes/assess_ai.py": [('/exec-summary"', "research"),
-                                        ('/proposed-use-cases"', "generate"),
-                                        ('/data-strategy"', "research"),
-                                        ('/strategic-roadmap/narrative"', "research"),
-                                        ('/consistency-check"', "research"),
-                                        ('/poc-scope/generate"', "research"),
-                                        ('/strategic-roadmap/deck"', "research")],
+        # POC statement of work: a long prose generation, priced like company research.
+        "server/routes/explore.py": [('/poc-scope/generate"', "research"),
+                                     ('/explore/portfolio"', "write")],
+        # Roadmap import: AI match suggestions are a classification call; apply is a
+        # (large) ordinary write.
+        "server/routes/roadmap_import.py": [('/roadmap-import/suggest"', "generate"),
+                                            ('/roadmap-import/apply"', "write")],
         "server/routes/chat.py": [('@router.post("", ', "chat")],
         "server/routes/research.py": [('/company"', "research"), ('/apply"', "write")],
         "server/routes/authoring.py": [('/propose"', "generate"),

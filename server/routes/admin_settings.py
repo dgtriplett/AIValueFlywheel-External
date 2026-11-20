@@ -1,17 +1,15 @@
-"""Assess admin — custom assumption-field CRUD + cross-account trends.
+"""Admin settings: value-model assumption fields and the full backup.
 
-Completes the Assess admin console beyond the accounts/assessments/features/admins
-tabs. Assumption fields are the value-model inputs (the `value_assumptions` catalog);
-admins can add customer-specific ones, edit, or remove. Trends aggregate every
-account's assessments so an admin can see program progress. Both are admin-only —
-the cross-account surface, never blended with a user's own account view.
+Assumption fields are the value-model inputs (the `value_assumptions` catalog);
+admins can add organization-specific ones, edit, or remove them. Admin-only writes
+are the cross-account surface, never blended with a user's own business-unit view.
 
     GET    /api/assumption-fields                (catalog, any signed-in user)
     GET    /api/admin/assumption-fields          (admins)
     POST   /api/admin/assumption-fields          (admins) — add a custom field
     PUT    /api/admin/assumption-fields/{key}    (admins) — edit metadata/value
     DELETE /api/admin/assumption-fields/{key}    (admins)
-    GET    /api/admin/trends                      (admins) — cross-account rollup
+    GET    /api/admin/backup                      (admins) — every table as one JSON file
 """
 from __future__ import annotations
 
@@ -25,7 +23,7 @@ from ..common import current_user, rows_to_list
 from ..db import db
 
 logger = logging.getLogger(__name__)
-router = APIRouter(tags=["admin-assess"])
+router = APIRouter(tags=["admin-settings"])
 
 
 async def _require_admin(request: Request) -> str:
@@ -115,62 +113,6 @@ async def delete_assumption_field(key: str, request: Request):
 
 
 # ---------------------------------------------------------------------------
-# Cross-account trends
-# ---------------------------------------------------------------------------
-@router.get("/admin/trends")
-async def admin_trends(request: Request):
-    """Program-level rollup across every account's assessments (admins only)."""
-    await _require_admin(request)
-    rows = await db.fetch("""
-        SELECT x.account_id, a.name AS account_name, x.status, x.overall_score,
-               x.current_phase, x.submitted_at, x.created_at, x.results_json
-        FROM account_assessments x JOIN accounts a ON a.id = x.account_id
-    """)
-    submitted = [r for r in rows if r["status"] == "submitted"]
-    scores = [r["overall_score"] for r in submitted if r["overall_score"] is not None]
-    phase_dist: dict[str, int] = {}
-    for r in submitted:
-        p = str(r["current_phase"]) if r["current_phase"] is not None else "?"
-        phase_dist[p] = phase_dist.get(p, 0) + 1
-    buckets = {"0-20": 0, "21-40": 0, "41-60": 0, "61-80": 0, "81-100": 0}
-    for s in scores:
-        b = ("0-20" if s <= 20 else "21-40" if s <= 40 else "41-60" if s <= 60
-             else "61-80" if s <= 80 else "81-100")
-        buckets[b] += 1
-    by_month: dict[str, int] = {}
-    for r in submitted:
-        ts = r["submitted_at"] or r["created_at"]
-        if ts:
-            m = ts.strftime("%Y-%m")
-            by_month[m] = by_month.get(m, 0) + 1
-    # Most-recommended use cases across submitted assessments.
-    uc_counts: dict[str, int] = {}
-    import json as _json
-    for r in submitted:
-        rj = r["results_json"]
-        if isinstance(rj, str):
-            try:
-                rj = _json.loads(rj)
-            except Exception:  # noqa: BLE001
-                rj = {}
-        for rec in (rj or {}).get("recommendations", [])[:5]:
-            uc = rec.get("useCase") or rec
-            title = uc.get("title") or uc.get("name")
-            if title:
-                uc_counts[title] = uc_counts.get(title, 0) + 1
-    top_use_cases = sorted(uc_counts.items(), key=lambda kv: -kv[1])[:10]
-    return {
-        "total_assessments": len(rows),
-        "submitted": len(submitted),
-        "avg_score": round(sum(scores) / len(scores), 1) if scores else None,
-        "phase_distribution": phase_dist,
-        "score_buckets": buckets,
-        "submissions_by_month": dict(sorted(by_month.items())),
-        "top_recommended_use_cases": [{"title": t, "count": c} for t, c in top_use_cases],
-    }
-
-
-# ---------------------------------------------------------------------------
 # Full backup (admins only)
 # ---------------------------------------------------------------------------
 @router.get("/admin/backup")
@@ -194,4 +136,4 @@ async def admin_backup(request: Request):
     stamp = datetime.now(timezone.utc).strftime("%Y%m%d-%H%M%S")
     return Response(
         json.dumps(data, default=str), media_type="application/json",
-        headers={"Content-Disposition": f'attachment; filename="ai-value-flywheel-backup-{stamp}.json"'})
+        headers={"Content-Disposition": f'attachment; filename="aivr-backup-{stamp}.json"'})

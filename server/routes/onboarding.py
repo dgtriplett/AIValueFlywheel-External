@@ -39,7 +39,7 @@ async def export_template():
     ws0 = wb.active
     ws0.title = "Instructions"
     for i, line in enumerate([
-        ["AI Value Flywheel — Onboarding Workbook"],
+        ["AI Value Realization — Onboarding Workbook"],
         [""],
         ["Fill the highlighted (yellow) columns and re-upload via Data → Onboarding → Upload."],
         ["Do NOT edit the 'id' / 'key' columns — they map your edits back to the app."],
@@ -116,7 +116,7 @@ async def export_template():
     buf.seek(0)
     return StreamingResponse(
         buf, media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-        headers={"Content-Disposition": 'attachment; filename="grid-atlas-onboarding.xlsx"'})
+        headers={"Content-Disposition": 'attachment; filename="aivr-onboarding.xlsx"'})
 
 
 def _parse_workbook(content: bytes):

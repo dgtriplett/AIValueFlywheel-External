@@ -16,7 +16,9 @@ from decimal import Decimal
 
 from .storage.translate import schema_meta
 
-FORMAT = "ai-value-flywheel-backup/1"
+FORMAT = "aivr-backup/1"
+# Backups written by 1.x carry the old name; the table layout they hold is the same.
+READABLE_FORMATS = (FORMAT, "ai-value-flywheel-backup/1")
 SKIP = {"confirm_tokens", "schema_migrations"}
 
 
@@ -75,8 +77,8 @@ def _value(kind: str, v):
 
 
 async def restore(db, backup: dict, *, replace: bool = False) -> dict[str, int]:
-    if backup.get("format") != FORMAT:
-        raise ValueError(f"not an AI Value Flywheel backup (format {backup.get('format')!r})")
+    if backup.get("format") not in READABLE_FORMATS:
+        raise ValueError(f"not an AI Value Realization backup (format {backup.get('format')!r})")
     counts: dict[str, int] = {}
     meta = schema_meta()
     for t in table_order():

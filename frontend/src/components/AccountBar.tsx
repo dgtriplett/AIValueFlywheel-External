@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Building2, ChevronDown, Plus, LayoutGrid, ClipboardList, ArrowRight, Check, Sun, Moon, Shield, X, Users, UserPlus, Trash2 } from 'lucide-react';
+import { Building2, ChevronDown, Plus, LayoutGrid, Compass, Check, Sun, Moon, Shield, X, Users, UserPlus, Trash2 } from 'lucide-react';
 import { api, setActiveAccountId, type AccountRow, type AccountMember, type Session } from '../lib/api';
 import { AskAssistant } from './AskAssistant';
 
@@ -8,8 +8,7 @@ function applyTheme(theme: 'dark' | 'light') {
   try { localStorage.setItem('gc.theme', theme); } catch { /* private mode */ }
 }
 
-export type Mode = 'assess' | 'operate' | 'admin';
-interface PromoteSummary { sources_available: number; modules_set: number; use_cases_added: number; unresolved_use_cases: string[]; }
+export type Mode = 'operate' | 'explore' | 'admin';
 
 const UTILITY_TYPES = [
   { v: 'electric', l: 'Electric Utility' }, { v: 'gas', l: 'Gas Utility' },
@@ -21,18 +20,15 @@ const GEOGRAPHY = ['United States', 'Canada', 'Europe', 'Australia / Pacific', '
 const PRIORITIES = ['Grid Reliability', 'Cost Reduction', 'Customer Satisfaction', 'Regulatory Compliance',
   'Revenue Growth', 'Sustainability', 'Worker & Public Safety', 'Workforce & Backoffice Efficiency'];
 
-/** Converged-app top bar: account switcher (membership-gated), Assess/Operate/Admin mode
- *  toggle, theme toggle, and Promote-to-Operate. New-account = company-profile capture. */
-export function AccountBar({ onPromote, mode, onSetMode, onSession }: {
-  onPromote: () => Promise<PromoteSummary>;
+/** Top bar: brand, Operate / Explore / Admin, the business-unit switcher (membership-
+ *  gated), theme toggle and the assistant. A new business unit captures its profile once. */
+export function AccountBar({ mode, onSetMode, onSession }: {
   mode: Mode;
   onSetMode: (m: Mode) => void;
   onSession?: (s: Session) => void;
 }) {
   const [session, setSession] = useState<Session | null>(null);
   const [open, setOpen] = useState(false);
-  const [busy, setBusy] = useState(false);
-  const [summary, setSummary] = useState<PromoteSummary | null>(null);
   const [err, setErr] = useState<string | null>(null);
   const [showNew, setShowNew] = useState(false);
   const [showShare, setShowShare] = useState(false);
@@ -58,39 +54,41 @@ export function AccountBar({ onPromote, mode, onSetMode, onSession }: {
     try { await api.switchAccount(id); setActiveAccountId(id); window.location.reload(); }
     catch (e) { setErr(String(e)); }
   };
-  const doPromote = async () => {
-    setBusy(true); setErr(null); setSummary(null);
-    try { setSummary(await onPromote()); } catch (e) { setErr(String(e)); } finally { setBusy(false); }
-  };
 
   return (
     <div className="w-full border-b border-navy-600 bg-navy-900">
       <div className="max-w-7xl mx-auto px-4 py-2 flex items-center gap-4 flex-wrap">
+        <div className="flex items-baseline gap-2 pr-1" title="AI Value Realization">
+          <span className="text-heading font-bold tracking-tight">AIVR</span>
+          <span className="hidden lg:inline text-xs text-navy-400">AI Value Realization</span>
+        </div>
         <div className="flex items-center rounded-lg bg-navy-800 p-0.5 text-sm">
-          <button onClick={() => onSetMode('assess')}
-            className={`flex items-center gap-1.5 px-3 py-1 rounded-md font-medium ${mode === 'assess' ? 'bg-navy-700 shadow-sm text-heading' : 'text-navy-400 hover:text-heading'}`}>
-            <ClipboardList className="w-4 h-4" /> Assess
-          </button>
           <button onClick={() => onSetMode('operate')}
+            title="Operate — build and track the roadmap for this business unit"
             className={`flex items-center gap-1.5 px-3 py-1 rounded-md font-medium ${mode === 'operate' ? 'bg-navy-700 shadow-sm text-heading' : 'text-navy-400 hover:text-heading'}`}>
             <LayoutGrid className="w-4 h-4" /> Operate
+          </button>
+          <button onClick={() => onSetMode('explore')}
+            title="Explore — the use-case catalog and what each use case depends on"
+            className={`flex items-center gap-1.5 px-3 py-1 rounded-md font-medium ${mode === 'explore' ? 'bg-navy-700 shadow-sm text-heading' : 'text-navy-400 hover:text-heading'}`}>
+            <Compass className="w-4 h-4" /> Explore
           </button>
           {session?.is_admin && (
             <button onClick={() => onSetMode('admin')}
               className={`flex items-center gap-1.5 px-3 py-1 rounded-md font-medium ${mode === 'admin' ? 'bg-navy-700 shadow-sm text-heading' : 'text-navy-400 hover:text-heading'}`}
-              title="Admin — manage the catalog, business units, and administrators">
+              title="Admin — manage the catalog, business units and administrators">
               <Shield className="w-4 h-4" /> Admin
             </button>
           )}
         </div>
 
-        {/* Account switcher — hidden in Admin mode (cross-account, not per-account). */}
+        {/* Business-unit switcher — hidden in Admin mode (cross-unit, not per-unit). */}
         {!inAdmin ? (
           <div className="relative">
             <button onClick={() => setOpen((o) => !o)}
               className="flex items-center gap-2 rounded-lg border border-navy-600 px-3 py-1.5 text-sm hover:bg-navy-800">
               <Building2 className="w-4 h-4 text-navy-400" />
-              <span className="font-medium text-navy-300">{active?.name || 'No account'}</span>
+              <span className="font-medium text-navy-300">{active?.name || 'No business unit'}</span>
               <ChevronDown className="w-4 h-4 text-navy-500" />
             </button>
             {open && (
@@ -101,7 +99,7 @@ export function AccountBar({ onPromote, mode, onSetMode, onSession }: {
                     <span className="text-navy-300">{a.name}{a.utility_type && <span className="text-navy-500"> · {a.utility_type}</span>}</span>
                     {a.id === active?.id && <Check className="w-4 h-4 text-emerald-500" />}
                   </button>
-                )) : <div className="px-3 py-2 text-sm text-navy-500">No accounts yet</div>}
+                )) : <div className="px-3 py-2 text-sm text-navy-500">No business units yet</div>}
                 {active && (
                   <button onClick={() => { setOpen(false); setShowShare(true); }}
                     className="w-full flex items-center gap-2 px-3 py-2 text-sm text-navy-300 hover:bg-navy-700 border-t border-navy-600 mt-1">
@@ -110,13 +108,13 @@ export function AccountBar({ onPromote, mode, onSetMode, onSession }: {
                 )}
                 <button onClick={() => { setOpen(false); setShowNew(true); }}
                   className="w-full flex items-center gap-2 px-3 py-2 text-sm text-info-500 hover:bg-navy-700 border-t border-navy-600 mt-1">
-                  <Plus className="w-4 h-4" /> New account
+                  <Plus className="w-4 h-4" /> New business unit
                 </button>
               </div>
             )}
           </div>
         ) : (
-          <span className="text-xs px-2 py-1 rounded-full border border-info-600/40 bg-info-600/10 text-info-500">All customers</span>
+          <span className="text-xs px-2 py-1 rounded-full border border-info-600/40 bg-info-600/10 text-info-500">All business units</span>
         )}
 
         <div className="flex-1" />
@@ -128,27 +126,12 @@ export function AccountBar({ onPromote, mode, onSetMode, onSession }: {
 
         <AskAssistant />
 
-        {/* Promote only from an assessment view (Assess), never from Operate/Admin. */}
-        {mode === 'assess' && (
-          <button onClick={doPromote} disabled={busy || !active}
-            className="flex items-center gap-1.5 rounded-lg bg-emerald-600 px-3 py-1.5 text-sm font-medium text-heading hover:bg-emerald-700 disabled:opacity-50">
-            {busy ? 'Promoting…' : <>Promote to Operate <ArrowRight className="w-4 h-4" /></>}
-          </button>
-        )}
         {session?.email && <span className="text-xs text-navy-500">{session.email}</span>}
       </div>
 
-      {(summary || err) && (
+      {err && (
         <div className="max-w-7xl mx-auto px-4 pb-2">
-          {err && <div className="text-xs text-rose-500">{err}</div>}
-          {summary && (
-            <div className="text-xs text-navy-400 flex items-center gap-3">
-              <span className="text-emerald-500 font-medium">Promoted to {active?.name}:</span>
-              {summary.sources_available} data sources available → {summary.modules_set} modules ready, {summary.use_cases_added} use cases added.
-              <button onClick={() => onSetMode('operate')} className="text-info-500 hover:underline flex items-center gap-1">
-                Open Operate <ArrowRight className="w-3 h-3" /></button>
-            </div>
-          )}
+          <div className="text-xs text-rose-500">{err}</div>
         </div>
       )}
 
@@ -259,7 +242,7 @@ function ShareAccountModal({ accountId, accountName, onClose }: {
   );
 }
 
-/** New account = capture the static company profile (never re-entered per assessment). */
+/** New business unit = capture its profile once. */
 function NewAccountModal({ onClose }: { onClose: () => void }) {
   const [name, setName] = useState('');
   const [utilityType, setUtilityType] = useState('electric_gas');
@@ -271,7 +254,7 @@ function NewAccountModal({ onClose }: { onClose: () => void }) {
 
   const toggle = (p: string) => setPriorities((cur) => cur.includes(p) ? cur.filter((x) => x !== p) : [...cur, p]);
   const submit = async () => {
-    if (!name.trim()) { setErr('Company name is required.'); return; }
+    if (!name.trim()) { setErr('A name is required.'); return; }
     setBusy(true); setErr(null);
     try {
       const a = await api.createAccountFull({
@@ -286,11 +269,11 @@ function NewAccountModal({ onClose }: { onClose: () => void }) {
     <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4" onClick={onClose}>
       <div className="bg-navy-900 border border-navy-600 rounded-xl w-full max-w-lg max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
         <div className="flex items-center justify-between px-5 py-3 border-b border-navy-600">
-          <h2 className="text-lg font-bold text-heading">New customer account</h2>
+          <h2 className="text-lg font-bold text-heading">New business unit</h2>
           <button onClick={onClose} className="text-navy-400 hover:text-heading"><X className="w-5 h-5" /></button>
         </div>
         <div className="px-5 py-4 space-y-4">
-          <p className="text-xs text-navy-400">This captures the company profile once — it's reused by every assessment, so you never re-enter it.</p>
+          <p className="text-xs text-navy-400">Each business unit has its own portfolio, roadmap and data readiness. Import its roadmap from <b>Operate</b> once it exists.</p>
           <Field label="Business unit / company name">
             <input value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g., Example Power & Light"
               className="w-full rounded-lg border border-navy-600 bg-navy-800 px-3 py-2 text-sm text-heading" />
@@ -332,7 +315,7 @@ function NewAccountModal({ onClose }: { onClose: () => void }) {
         <div className="flex items-center justify-end gap-2 px-5 py-3 border-t border-navy-600">
           <button onClick={onClose} className="text-sm text-navy-400 hover:text-heading px-3 py-1.5">Cancel</button>
           <button onClick={submit} disabled={busy} className="rounded-lg bg-emerald-600 px-4 py-1.5 text-sm font-medium text-heading hover:bg-emerald-700 disabled:opacity-50">
-            {busy ? 'Creating…' : 'Create account'}
+            {busy ? 'Creating…' : 'Create business unit'}
           </button>
         </div>
       </div>

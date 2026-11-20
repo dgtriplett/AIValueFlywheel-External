@@ -1,4 +1,4 @@
-"""Resolve maturity-roadmap free-text data needs to canonical Value Flywheel assets."""
+"""Resolve free-text data needs (e.g. a roadmap's dataset labels) to canonical catalog assets."""
 from __future__ import annotations
 
 import re
@@ -119,7 +119,7 @@ _ROADMAP_ASSET_RULES: tuple[tuple[tuple[str, ...], str, str], ...] = (
 
 
 def canonical_asset_target(label: str) -> tuple[str, str] | None:
-    """Map maturity roadmap free text to the shipped Value Flywheel asset catalog."""
+    """Map a free-text data-need label to the shipped data-asset catalog."""
     clean = clean_label(label)
     if not clean:
         return None

@@ -53,7 +53,7 @@ qa_screens/
 *.screenshot.png
 
 # Backups downloaded from the app contain your data; never commit them
-ai-value-flywheel-backup-*.json
+aivr-backup-*.json
 
 # local
 __pycache__/

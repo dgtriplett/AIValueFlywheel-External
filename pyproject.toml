@@ -31,9 +31,9 @@ ignore = [
 "scripts/*" = ["E702", "E741", "F841", "E402"]
 
 [project]
-name = "grid-atlas"
+name = "ai-value-realization"
 version = "0.1.0"
-description = "AI Value Flywheel - Power & Utilities Use Case, Value & Roadmap portfolio management on Databricks"
+description = "AI Value Realization - Power & Utilities Use Case, Value & Roadmap portfolio management on Databricks"
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [

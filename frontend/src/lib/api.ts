@@ -41,20 +41,7 @@ export interface UseCaseAPI {
   industryId?: string;
 }
 
-export interface AdminRow {
-  email: string;
-  added_at: string;
-  added_by: string;
-}
 
-export interface AssessmentListRow {
-  id: string;
-  customer_name: string;
-  created_at: string;
-  created_by: string;
-  overall_score: number;
-  current_phase: number;
-}
 
 export type ArtifactType =
   | 'accelerator' | 'brickbuilder' | 'partner' | 'marketplace'
@@ -77,20 +64,10 @@ export interface ArtifactAPI {
   updatedBy?: string;
 }
 
-export interface AssessmentDetail {
-  id: string;
-  customerName: string;
-  createdAt: string;
-  createdBy: string;
-  overallScore: number;
-  currentPhase: number;
-  answers: Record<string, unknown>;
-  results: Record<string, unknown>;
-}
 
 // ---------------------------------------------------------------------------
 // Multi-user account context. The active account id is persisted per-browser and
-// sent on every request as X-Grid-Atlas-Account so the account-scoped backend
+// sent on every request as X-AIVR-Account so the account-scoped backend
 // resolves the right tenant. The server also gates it by membership.
 // ---------------------------------------------------------------------------
 const ACTIVE_ACCOUNT_KEY = 'gc.activeAccountId';
@@ -105,15 +82,12 @@ export function setActiveAccountId(id: number | string | null): void {
 }
 function accountHeaders(): Record<string, string> {
   const id = getActiveAccountId();
-  return id ? { 'X-Grid-Atlas-Account': id } : {};
+  return id ? { 'X-AIVR-Account': id } : {};
 }
 
 // ---------------------------------------------------------------------------
-// Local-first stubs. In the converged app only a small set of endpoints exist
-// server-side (identity, accounts, data-sources, pre-assessment, promote). The
-// assessment SPA's other persistence (drafts, prefs, assessments list) runs from
-// localStorage so a missing endpoint never crashes the app. Returns undefined to
-// mean "not a stubbed route — do a real fetch".
+// Local-first stubs: a few per-browser settings live in localStorage rather than on
+// the server. Returns undefined to mean "not a stubbed route — do a real fetch".
 // ---------------------------------------------------------------------------
 function lsGet<T>(key: string, fallback: T): T {
   try { const v = localStorage.getItem(key); return v ? JSON.parse(v) as T : fallback; }
@@ -125,31 +99,17 @@ function lsSet(key: string, val: unknown): void {
 function localStub(url: string, init?: RequestInit): unknown | undefined {
   const method = (init?.method || 'GET').toUpperCase();
   const body = init?.body ? JSON.parse(String(init.body)) : {};
-  const PREFS = 'gc.prefs', ASSESS = 'gc.assessments';
-  // NOTE: /api/feature-flags is a REAL backend route now (server/routes/feature_flags.py) —
-  // it is intentionally NOT stubbed here, so admins can actually toggle beta features on.
-  // no industry packs from server (SPA falls back to P&U default)
+  const PREFS = 'gc.prefs';
+  // No industry packs from the server: the SPA uses its built-in P&U catalog.
   if (url === '/api/industries' || url === '/api/admin/industries') return [];
   if (url === '/api/blend-presets' || url === '/api/admin/blend-presets') return [];
+  // Single built-in industry and built-in FX rates: no server round trip (and no 404).
+  if (url === '/api/industry') return { id: '', meta: null };
+  if (url === '/api/locale/fx-rates') return { json: '' };
   if (url === '/api/my-prefs') {
     if (method === 'PUT') { lsSet(PREFS, body.prefs || {}); return { ok: true }; }
     return lsGet<Record<string, unknown>>(PREFS, {});
   }
-  // NOTE: /api/drafts is NO LONGER stubbed — in-flight (draft) assessments are now
-  // persisted SERVER-SIDE, per account, via /api/assessments (status='draft'), exactly
-  // like submitted assessments. That is what scopes them to the account selected in the
-  // top dropdown (the account middleware reads the X-Grid-Atlas-Account header). See the
-  // draft methods below, which map onto the lifecycle endpoints.
-  if (url === '/api/my-assessments') return lsGet<any[]>(ASSESS, []);
-  if (url.startsWith('/api/my-assessments/')) {
-    const id = decodeURIComponent(url.split('/api/my-assessments/')[1]);
-    const all = lsGet<any[]>(ASSESS, []);
-    if (method === 'DELETE') { lsSet(ASSESS, all.filter((a) => a.id !== id)); return { ok: true }; }
-    return all.find((a) => a.id === id) || null;
-  }
-  // NOTE: /api/assessments POST is NOT stubbed — saveAssessment writes to the real
-  // account-scoped lifecycle route so both drafts and submitted assessments live on the
-  // server (a stale localStorage stub here used to divert saves off-server).
   return undefined;
 }
 
@@ -172,44 +132,9 @@ async function fetchJson<T>(url: string, init?: RequestInit): Promise<T> {
   return res.json() as Promise<T>;
 }
 
-export interface ConfigEntry {
-  key: string;
-  value: string;     // masked "••••••••" when isSecret + isSet
-  isSet: boolean;
-  isSecret: boolean;
-  description: string;
-  category: string;
-  updatedAt?: string;
-  updatedBy?: string;
-}
 
-export interface SfdcAccount {
-  Id: string;
-  Name: string;
-  Industry?: string | null;
-  BillingState?: string | null;
-  BillingCountry?: string | null;
-  AnnualRevenue?: number | null;
-  NumberOfEmployees?: number | null;
-  Type?: string | null;
-}
 
-export interface DraftRow {
-  id: string;
-  customer_name: string;
-  current_step: number;
-  created_at: string;
-  updated_at: string;
-}
 
-export interface DraftDetail {
-  id: string;
-  customerName: string;
-  currentStep: number;
-  createdAt: string;
-  updatedAt: string;
-  answers: Record<string, unknown>;
-}
 
 export interface TrendRow { [k: string]: any }
 export interface Trends {
@@ -222,21 +147,6 @@ export interface Trends {
   top_use_cases: TrendRow[];
 }
 
-export interface PrepopulateSuggestion {
-  profile?: {
-    companyName?: string | null;
-    utilityType?: 'electric' | 'gas' | 'electric_gas' | null;
-    territorySize?: string | null;
-    geography?: string | null;
-    strategicPriorities?: string[];
-  };
-  infrastructure?: Record<string, 'yes' | 'partial' | 'no' | null>;
-  useCasesInProduction?: { id: string; confidence: number; evidence: string }[];
-  dataSourcesAvailable?: { id: string; confidence: number; evidence: string }[];
-  notes?: string;
-  error?: string;
-  raw?: string;
-}
 
 export interface ValueField {
   key: string;
@@ -272,25 +182,65 @@ export interface AccountMember {
   added_by?: string | null;
   added_at?: string;
 }
+export interface PortfolioRow {
+  id: number; title: string; phase: number | null; status: string;
+  readiness: string | null; hypothesized_mm: number; realized_mm: number;
+  /** From the imported roadmap, when this use case is on it. */
+  roadmap?: { pillar_ids: string[]; stage: string | null; workstream: string | null;
+    priority_rank: number | null; priority_tier: 'now' | 'next' | 'later' | null;
+    value_base_mm: number | null; dropped: boolean } | null;
+}
+export interface RoadmapMatch {
+  external_id: string; name: string; summary: string | null; pillar_ids: string[];
+  priority_tier: string | null; value_base: number | null; previously_imported?: boolean;
+  candidates: Array<{ use_case_id: number; title: string; score: number; reason: string }>;
+  suggestion: { action: 'map' | 'create'; use_case_id: number | null };
+}
+export interface RoadmapPreview {
+  ok: boolean; source: 'deck' | 'package'; warnings: string[];
+  roadmap: { id: string; version: string | null; title: string | null; organization: string | null;
+    industry: string | null; currency: string; business_unit: string | null; target_executive: string | null };
+  generator: { name: string; version: string | null };
+  pillars: Array<{ id: string; name: string; description: string | null }>;
+  counts: { use_cases: number; pillars: number; suggest_map: number; suggest_create: number; total_value: number };
+  matches: RoadmapMatch[];
+  diff: { first_import: boolean; added: string[]; removed: string[]; changed: Array<{ id: string; name: string; fields: string[] }> };
+  replaces: { roadmap_id: string; title: string | null; imported_at: string } | null;
+  industry_note: string | null;
+}
+/** What is being imported: a roadmap package, or the AITR deck (.html) it comes from. */
+export type RoadmapSource = { package: unknown } | { deck_html: string; file_name: string };
+export interface RoadmapDecision { external_id: string; action: 'map' | 'create' | 'skip'; use_case_id?: number | null }
+export interface RoadmapSummary {
+  roadmap: { import_id: string; roadmap_id: string; version: string | null; title: string | null;
+    organization: string | null; currency: string; imported_at: string; imported_by: string } | null;
+  pillars: Array<{ pillar_id: string; name: string; description: string | null; use_cases: number;
+    in_flight: number; live: number; value_base: number; value_live: number }>;
+  use_cases: Array<Record<string, any>>;
+}
+export interface RoadmapUseCase {
+  use_case_id: number; external_id: string; name: string | null; summary: string | null;
+  business_problem: string | null; kpi: string | null; pillars: Array<{ id: string; name: string }>;
+  stage: string | null; workstream: string | null; priority_rank: number | null;
+  priority_tier: string | null; effort: string | null; effort_quadrant: string | null;
+  value_currency: string | null; value_low: number | null; value_base: number | null; value_high: number | null;
+  value_json: { basis?: string | null; formula?: string | null;
+    assumptions?: Array<{ label: string; low?: number | null; base?: number | null; high?: number | null;
+      unit?: string | null; note?: string | null; source?: string | null }> } | null;
+  plan_json: { headline: string | null; pilot: string | null; phases: Array<{ name: string | null; when: string | null;
+    title: string | null; summary: string | null; scope: string | null; steps: string[] }> } | null;
+  data_needs_json: { datasets?: string[]; assets?: string[]; sources?: string[]; rationale?: string | null } | null;
+  dropped_at: string | null;
+}
 export interface Session {
   email: string | null;
   accounts: AccountRow[];
   active_account_id: number | null;
   is_admin: boolean;
 }
-export interface AssessmentRow {
-  id: string; status: 'draft' | 'submitted'; label?: string | null;
-  overall_score?: number | null; current_phase?: number | null;
-  created_by?: string; created_at?: string; updated_at?: string; submitted_at?: string | null;
-  answers_json?: any; results_json?: any;
-}
 export interface ProfileIn {
   name: string; utility_type?: string; slug?: string;
   geography?: string; territory_size?: string; strategic_priorities?: string[];
-}
-export interface DataSourceRow {
-  id: string; name: string; category: string; description?: string;
-  module_count?: number; available?: boolean;
 }
 
 export interface AuthorLink { id: number; rationale: string; label?: string }
@@ -317,17 +267,9 @@ export const api = {
   },
   // Full session for the account switcher.
   session: () => fetchJson<Session>('/api/me'),
-  // Accounts (multi-user, membership-gated server-side).
-  listAccounts: () => fetchJson<{ accounts: AccountRow[]; current_account_id: number | null }>('/api/accounts'),
-  createAccount: (name: string, utilityType?: string) =>
-    fetchJson<AccountRow>('/api/accounts', {
-      method: 'POST', body: JSON.stringify({ name, utility_type: utilityType }),
-    }),
   // Full account creation = company-profile capture (static per customer).
   createAccountFull: (p: ProfileIn) =>
     fetchJson<AccountRow>('/api/accounts', { method: 'POST', body: JSON.stringify(p) }),
-  patchAccount: (id: number, p: Partial<ProfileIn> & Record<string, unknown>) =>
-    fetchJson<AccountRow>(`/api/accounts/${id}`, { method: 'PATCH', body: JSON.stringify(p) }),
   deleteAccount: (id: number, hard = false) =>
     fetchJson<{ ok?: boolean }>(`/api/accounts/${id}${hard ? '?hard=true' : ''}`, { method: 'DELETE' }),
   switchAccount: (id: number) =>
@@ -342,28 +284,31 @@ export const api = {
   removeAccountMember: (id: number, email: string) =>
     fetchJson<{ ok: boolean; removed: string }>(`/api/accounts/${id}/members/${encodeURIComponent(email)}`,
       { method: 'DELETE' }),
-
-  // --- Server-side assessments (per account): history, resume, prefill, delete ---
-  listAssessments: (status?: 'draft' | 'submitted') =>
-    fetchJson<{ assessments: AssessmentRow[] }>(`/api/assessments${status ? `?status=${status}` : ''}`),
-  latestAssessment: () => fetchJson<{ assessment: AssessmentRow | null }>('/api/assessments/latest'),
-  getAssessment: (id: string) => fetchJson<{ assessment: AssessmentRow }>(`/api/assessments/${encodeURIComponent(id)}`),
-  saveAssessment: (a: { id: string; status: 'draft' | 'submitted'; label?: string;
-                        answers_json: any; results_json?: any; overall_score?: number; current_phase?: number }) =>
-    fetchJson<{ id: string; status: string }>('/api/assessments', { method: 'POST', body: JSON.stringify(a) }),
-  deleteAssessmentSrv: (id: string) =>
-    fetchJson<{ deleted: string }>(`/api/assessments/${encodeURIComponent(id)}`, { method: 'DELETE' }),
-  promotions: () => fetchJson<{ promotions: any[] }>('/api/promotions'),
-
-  // --- Operate (per active account) ---
-  operateDashboard: () => fetchJson<any>('/api/analytics/dashboard'),
   operateRoadmap: () => fetchJson<{ account_id: number | null;
-    use_cases: Array<{ id: number; title: string; phase: number | null; status: string;
-      readiness: string | null; hypothesized_mm: number; realized_mm: number }>;
+    use_cases: PortfolioRow[];
     summary: Record<string, number> }>('/api/operate/roadmap'),
-  useCasesReadiness: () => fetchJson<Record<string, any>>('/api/use-cases/readiness'),
-  useCasesList: () => fetchJson<any>('/api/use-cases'),
-  roadmapItems: () => fetchJson<any>('/api/roadmap'),
+
+  // --- Roadmap import (a planning tool's roadmap package -> this business unit) ---
+  roadmapImportPreview: (src: RoadmapSource) =>
+    fetchJson<RoadmapPreview>('/api/roadmap-import/preview', { method: 'POST', body: JSON.stringify(src) }),
+  roadmapImportPackage: (src: RoadmapSource) =>
+    fetchJson<{ package: unknown; warnings: string[] }>('/api/roadmap-import/package', { method: 'POST', body: JSON.stringify(src) }),
+  roadmapImportSuggest: (src: RoadmapSource, externalIds: string[]) =>
+    fetchJson<{ suggestions: Array<{ external_id: string; use_case_id: number | null; title: string | null; why: string }>;
+      model_used: boolean; message?: string }>('/api/roadmap-import/suggest',
+      { method: 'POST', body: JSON.stringify({ ...src, external_ids: externalIds }) }),
+  roadmapImportApply: (src: RoadmapSource, decisions: RoadmapDecision[]) =>
+    fetchJson<{ ok: boolean; import_id: string; summary: Record<string, any>; use_case_ids: Record<string, number> }>(
+      '/api/roadmap-import/apply', { method: 'POST', body: JSON.stringify({ ...src, decisions }) }),
+  roadmapSummary: () => fetchJson<RoadmapSummary>('/api/roadmap/summary'),
+  roadmapUseCase: (useCaseId: number) => fetchJson<{ roadmap: RoadmapUseCase | null }>(`/api/roadmap/use-cases/${useCaseId}`),
+
+  // --- Explore (shipped catalog map <-> this business unit's portfolio) ---
+  explorePortfolio: () => fetchJson<{ account_id: number | null;
+    use_cases: Record<string, { use_case_id: number; in_portfolio: boolean; status: string }> }>('/api/explore/portfolio'),
+  exploreAdd: (catalogIds: string[]) =>
+    fetchJson<{ added: number; use_case_ids: Record<string, number>; unresolved: string[] }>(
+      '/api/explore/portfolio', { method: 'POST', body: JSON.stringify({ catalog_ids: catalogIds }) }),
   reconciliation: () => fetchJson<{ counts: Record<string, number>;
     sources: Array<{ id: string; name: string; category: string; self_reported: boolean;
       discovered: boolean; modules: number; status: string }> }>('/api/operate/reconciliation'),
@@ -395,52 +340,18 @@ export const api = {
   domainGaps: () => fetchJson<any>('/api/domains/gaps'),
   // Data assets (per-account ingestion status overlaid)
   dataAssets: () => fetchJson<any[]>('/api/data-assets'),
-  // Coarse (Assess) source -> fine (Operate) module lineage, per account
-  dataLineage: () => fetchJson<{ account_id: number | null; sources: Array<{
-    source_id: string; source_name: string; category: string; self_reported: boolean;
-    module_count: number; modules_ready: number; modules: Array<{
-      data_asset_id: number; module: string; source_category: string; vendor: string | null;
-      ingestion_status: string; status_source: string | null; is_user_edited: boolean; ready: boolean;
-    }> }> }>('/api/operate/data-lineage'),
   // Correct a module's per-account ingestion status (stamps source='manual')
   setAssetStatus: (assetId: number, ingestion_status: string) =>
     fetchJson<any>(`/api/data-assets/${assetId}/status`, {
       method: 'PATCH', body: JSON.stringify({ ingestion_status }) }),
   // Value / analyze
   valueComputed: () => fetchJson<any>('/api/value-assumptions/computed/portfolio'),
-  valueAssumptions: () => fetchJson<any[]>('/api/value-assumptions'),
   jointOpportunities: () => fetchJson<{ opportunities: any[] }>('/api/joint-funding/opportunities'),
-  // What-if
-  whatifCandidates: () => fetchJson<any>('/api/whatif/candidates'),
   whatifSimulate: (assetIds: number[]) =>
     fetchJson<any>('/api/whatif/simulate', { method: 'POST', body: JSON.stringify({ data_asset_ids: assetIds }) }),
 
   // --- Admin (cross-account; admins only) ---
   adminOverview: () => fetchJson<{ accounts: any[]; users: any[]; admins: string[]; totals: any }>('/api/admin/overview'),
-  adminAssessments: () => fetchJson<{ assessments: any[] }>('/api/admin/assessments'),
-  promoteFull: (selectedDataSourceIds: string[], inProductionUseCaseIds: string[], assessmentId?: string) =>
-    fetchJson<{ sources_available: number; modules_set: number; use_cases_added: number; unresolved_use_cases: string[] }>(
-      '/api/assess/promote', { method: 'POST', body: JSON.stringify({
-        selected_data_source_ids: selectedDataSourceIds,
-        in_production_use_case_ids: inProductionUseCaseIds, assessment_id: assessmentId }) }),
-  // Canonical 31-source taxonomy for the current account.
-  dataSourcesApi: () => fetchJson<{ data_sources: DataSourceRow[]; account_id: number | null }>('/api/data-sources'),
-  // Promote an assessment result into the current account's Operate state.
-  // roadmapUseCaseIds = the prescriptive roadmap's recommended next use cases, added to
-  // the portfolio (source='roadmap') so Operate shows the full roadmap, not just what's live.
-  promote: (selectedDataSourceIds: string[], inProductionUseCaseIds: string[],
-            roadmapUseCaseIds: string[] = [], assessmentId?: string) =>
-    fetchJson<{ sources_available: number; modules_set: number; use_cases_added: number;
-                in_production_added?: number; roadmap_added?: number; unresolved_use_cases: string[] }>(
-      '/api/assess/promote', {
-        method: 'POST',
-        body: JSON.stringify({
-          selected_data_source_ids: selectedDataSourceIds,
-          in_production_use_case_ids: inProductionUseCaseIds,
-          roadmap_use_case_ids: roadmapUseCaseIds,
-          assessment_id: assessmentId,
-        }),
-      }),
   myFeatureFlags: () => fetchJson<Record<string, boolean>>('/api/feature-flags'),
   /** LEGACY single-industry endpoint. Newer code uses `industries()` below. */
   activeIndustry: () => fetchJson<{ id: string; meta: any }>('/api/industry'),
@@ -448,19 +359,6 @@ export const api = {
   /** All enabled industries available in this workspace. Drives the wizard's
    *  industry picker and populates the active-industry cache. */
   industries: () => fetchJson<Array<any>>('/api/industries'),
-  adminListIndustries: () => fetchJson<Array<any>>('/api/admin/industries'),
-  adminCreateIndustry: (payload: any) => fetchJson<{ ok: boolean }>(
-    '/api/admin/industries',
-    { method: 'POST', body: JSON.stringify(payload) },
-  ),
-  adminUpdateIndustry: (id: string, payload: any) => fetchJson<{ ok: boolean }>(
-    `/api/admin/industries/${encodeURIComponent(id)}`,
-    { method: 'PUT', body: JSON.stringify(payload) },
-  ),
-  adminDeleteIndustry: (id: string) => fetchJson<{ ok: boolean }>(
-    `/api/admin/industries/${encodeURIComponent(id)}`,
-    { method: 'DELETE' },
-  ),
 
   /** Named blend presets — saved compositions of industry packs. Available
    *  to all users in the wizard + roadmap picker; admin-managed. */
@@ -468,22 +366,6 @@ export const api = {
     id: string; label: string; description: string;
     industryIds: string[]; sortOrder: number;
   }>>('/api/blend-presets'),
-  adminListBlendPresets: () => fetchJson<Array<{
-    id: string; label: string; description: string;
-    industryIds: string[]; sortOrder: number;
-  }>>('/api/admin/blend-presets'),
-  adminCreateBlendPreset: (payload: any) => fetchJson<{ ok: boolean }>(
-    '/api/admin/blend-presets',
-    { method: 'POST', body: JSON.stringify(payload) },
-  ),
-  adminUpdateBlendPreset: (id: string, payload: any) => fetchJson<{ ok: boolean }>(
-    `/api/admin/blend-presets/${encodeURIComponent(id)}`,
-    { method: 'PUT', body: JSON.stringify(payload) },
-  ),
-  adminDeleteBlendPreset: (id: string) => fetchJson<{ ok: boolean }>(
-    `/api/admin/blend-presets/${encodeURIComponent(id)}`,
-    { method: 'DELETE' },
-  ),
 
   fxRates: () => fetchJson<{ json: string }>('/api/locale/fx-rates'),
 
@@ -495,26 +377,6 @@ export const api = {
     category: string; relevantFor: string[]; enabled: boolean;
     updatedAt?: string; updatedBy?: string;
   }>>('/api/assumption-fields'),
-  adminListAssumptionFields: () => fetchJson<Array<{
-    key: string; label: string; unit: string;
-    defaultValue: number; step: number; min: number; max: number;
-    category: string; relevantFor: string[]; enabled: boolean;
-    updatedAt?: string; updatedBy?: string;
-  }>>('/api/admin/assumption-fields'),
-  adminCreateAssumptionField: (payload: {
-    key: string; label: string; unit?: string;
-    defaultValue?: number; step?: number; min?: number; max?: number;
-    category?: string; relevantFor?: string[]; enabled?: boolean;
-  }) => fetchJson<{ ok: boolean }>('/api/admin/assumption-fields', {
-    method: 'POST', body: JSON.stringify(payload),
-  }),
-  adminUpdateAssumptionField: (key: string, payload: {
-    key: string; label: string; unit?: string;
-    defaultValue?: number; step?: number; min?: number; max?: number;
-    category?: string; relevantFor?: string[]; enabled?: boolean;
-  }) => fetchJson<{ ok: boolean }>(`/api/admin/assumption-fields/${encodeURIComponent(key)}`, {
-    method: 'PUT', body: JSON.stringify(payload),
-  }),
   // Value-model fields shaped to the converged backend (server/routes/admin_assess.py):
   // {key,label,value,unit,category,description}. Used by the Admin > Assumptions tab.
   listValueFields: () => fetchJson<Array<ValueField>>('/api/admin/assumption-fields'),
@@ -526,132 +388,12 @@ export const api = {
     `/api/admin/assumption-fields/${encodeURIComponent(key)}`,
     { method: 'DELETE' },
   ),
-  capacityModel: () => fetchJson<{ baselineCapacityPerHalf: number; capacityCostPerPointM: number }>(
-    '/api/strategic-roadmap/capacity-model',
-  ),
 
   // Admin — feature flags
   adminListFeatureFlags: () => fetchJson<FeatureFlagAdminRow[]>('/api/admin/feature-flags'),
   adminUpdateFeatureFlag: (key: string, state: FeatureFlagState) =>
     fetchJson<{ ok: boolean }>(`/api/admin/feature-flags/${encodeURIComponent(key)}`, {
       method: 'PUT', body: JSON.stringify({ state }),
-    }),
-
-  // Experimental — AI exec summary
-  generateExecSummary: (assessmentId: string) =>
-    fetchJson<{ assessmentId: string; summary: string; model: string }>(
-      `/api/assessments/${encodeURIComponent(assessmentId)}/exec-summary`,
-      { method: 'POST' },
-    ),
-
-  // AI use-case proposer — returns 3-5 new UCs tailored to the customer.
-  generateProposedUseCases: (assessmentId: string) =>
-    fetchJson<{
-      rationale: string;
-      proposals: Array<{
-        id: string; name: string; phase: number; domain: string;
-        description: string; businessValue: string[]; dataRequirements: string[];
-        complexity: number; whyItFits: string; expectedValueMM: number;
-      }>;
-    }>(
-      `/api/assessments/${encodeURIComponent(assessmentId)}/proposed-use-cases`,
-      { method: 'POST' },
-    ),
-
-  // Data-source strategy — aggregated + AI-narrated overview of the data the
-  // customer needs to ingest to deliver the recommended roadmap.
-  generateDataStrategy: (assessmentId: string) =>
-    fetchJson<{
-      narrative: string;
-      categories: Array<{
-        name: string;
-        sources: Array<{
-          label: string; earliestPhase: number;
-          ucIds: string[]; ucNames: string[]; alreadyInScope: boolean;
-        }>;
-      }>;
-      totalSources: number;
-      alreadyInScope: number;
-      needToIngest: number;
-    }>(
-      `/api/assessments/${encodeURIComponent(assessmentId)}/data-strategy`,
-      { method: 'POST' },
-    ),
-
-  // Experimental — strategic 3/5 yr roadmap narrative (LLM prose around a
-  // deterministic schedule built client-side).
-  strategicRoadmapNarrative: (payload: unknown) =>
-    fetchJson<{ narrative: string; model: string; horizonYears: number }>(
-      '/api/strategic-roadmap/narrative',
-      { method: 'POST', body: JSON.stringify(payload) },
-    ),
-
-  // Pre-assessment Excel workflow — downloadable worksheet + upload parser.
-  // Full worksheet: every wizard step (Profile / Infrastructure / Capabilities
-  // questions from preassessmentSpec.ts + the server-side use-case / data-source tabs).
-  preassessmentWorksheet: async (params: { utilityType?: string | null; customerName?: string | null; questions: unknown[] }): Promise<Blob> => {
-    const r = await fetch('/api/preassessment/template', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', ...accountHeaders() },
-      body: JSON.stringify({ utilityType: params.utilityType || null, customerName: params.customerName || '', questions: params.questions }),
-    });
-    if (!r.ok) throw new Error(`Template download failed (${r.status})`);
-    return await r.blob();
-  },
-  preassessmentParse: async (file: File): Promise<{ useCaseIds: string[]; dataSourceIds: string[]; answers?: Record<string, string | string[]>; warnings: string[] }> => {
-    const form = new FormData();
-    form.append('file', file, file.name);
-    const r = await fetch('/api/preassessment/parse', {
-      method: 'POST',
-      headers: { ...accountHeaders() },   // multipart boundary set by the browser
-      body: form,
-    });
-    if (!r.ok) {
-      const txt = await r.text();
-      throw new Error(`Parse failed (${r.status}): ${txt.slice(0, 200)}`);
-    }
-    return await r.json();
-  },
-
-  // Experimental — outcome tracking (commitments + check-ins).
-  createCommitment: (payload: unknown) =>
-    fetchJson<{ id: string }>('/api/roadmap/commitments', {
-      method: 'POST', body: JSON.stringify(payload),
-    }),
-  listCommitments: (customerName?: string | null) => {
-    const qs = customerName ? `?customerName=${encodeURIComponent(customerName)}` : '';
-    return fetchJson<Array<{
-      id: string; customer_name: string; assessment_id: string | null;
-      created_at: string; created_by: string;
-      horizon_years: number; start_date: string; notes: string;
-    }>>(`/api/roadmap/commitments${qs}`);
-  },
-  getCommitment: (id: string) =>
-    fetchJson<{
-      id: string; customerName: string; assessmentId: string | null;
-      createdAt: string; createdBy: string;
-      horizonYears: number; startDate: string; notes: string;
-      schedule: any;
-      checkins: Array<{ id: string; created_at: string; created_by: string; as_of_date: string; notes: string; status: Record<string, string> }>;
-    }>(`/api/roadmap/commitments/${encodeURIComponent(id)}`),
-  deleteCommitment: (id: string) =>
-    fetchJson<{ ok: boolean }>(`/api/roadmap/commitments/${encodeURIComponent(id)}`, { method: 'DELETE' }),
-  createCheckin: (payload: { commitmentId: string; asOfDate?: string; status: Record<string, string>; notes?: string }) =>
-    fetchJson<{ id: string }>('/api/roadmap/checkins', {
-      method: 'POST', body: JSON.stringify(payload),
-    }),
-
-  // Experimental — pre-submit AI consistency check on the assessment answers.
-  consistencyCheck: (answers: unknown) =>
-    fetchJson<{ issues: Array<{
-      id: string;
-      severity: 'warn' | 'info' | 'error';
-      title: string;
-      description: string;
-      suggestedFix: string;
-      stepIndex: number;
-    }> }>('/api/assessments/consistency-check', {
-      method: 'POST', body: JSON.stringify({ answers }),
     }),
 
   // Experimental — POC Statement of Work (.docx download).
@@ -668,126 +410,12 @@ export const api = {
     return await r.blob();
   },
 
-  // Experimental — strategic roadmap deck (PowerPoint download).
-  strategicRoadmapDeck: async (payload: unknown): Promise<Blob> => {
-    const r = await fetch('/api/strategic-roadmap/deck', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload),
-    });
-    if (!r.ok) {
-      const txt = await r.text();
-      throw new Error(`Deck generation failed (${r.status}): ${txt.slice(0, 200)}`);
-    }
-    return await r.blob();
-  },
-
-  // Drafts (in-flight assessments) — persisted SERVER-SIDE per account via the
-  // lifecycle route (status='draft'), so they align to the account selected in the top
-  // dropdown, exactly like submitted assessments. The wizard step rides in
-  // `current_phase` (a draft has no maturity phase yet).
-  myDrafts: async (): Promise<DraftRow[]> => {
-    const r = await fetchJson<{ assessments: AssessmentRow[] }>('/api/assessments?status=draft');
-    return (r.assessments || []).map((a) => ({
-      id: a.id, customer_name: a.label || '', current_step: a.current_phase || 0,
-      created_at: a.created_at || '', updated_at: a.updated_at || a.created_at || '',
-    }));
-  },
-  getDraft: async (id: string): Promise<DraftDetail> => {
-    const r = await fetchJson<{ assessment: AssessmentRow }>(`/api/assessments/${encodeURIComponent(id)}`);
-    const a = r.assessment;
-    return {
-      id: a.id, customerName: a.label || '', currentStep: a.current_phase || 0,
-      createdAt: a.created_at || '', updatedAt: a.updated_at || a.created_at || '',
-      answers: (a.answers_json || {}) as Record<string, unknown>,
-    };
-  },
-  upsertDraft: (id: string, customerName: string, answers: unknown, currentStep: number) =>
-    fetchJson<{ id: string; status: string }>('/api/assessments', {
-      method: 'POST',
-      body: JSON.stringify({ id, status: 'draft', label: customerName,
-                             answers_json: answers, current_phase: currentStep }),
-    }),
-  deleteDraft: (id: string) =>
-    fetchJson<{ deleted: string }>(`/api/assessments/${encodeURIComponent(id)}`, { method: 'DELETE' }),
-
-  // My assessments (RBAC scoped)
-  // Recent-work + view read SERVER-SIDE submitted assessments (per account), mapped to
-  // the landing's row/detail shapes. (Was a localStorage/legacy stub.)
-  myAssessments: async (): Promise<AssessmentListRow[]> => {
-    const r = await fetchJson<{ assessments: AssessmentRow[] }>('/api/assessments?status=submitted');
-    return (r.assessments || []).map((a) => ({
-      id: a.id, customer_name: a.label || '', created_at: a.submitted_at || a.created_at || '',
-      created_by: a.created_by || '', overall_score: a.overall_score || 0, current_phase: a.current_phase || 0,
-    }));
-  },
-  getMyAssessment: async (id: string): Promise<AssessmentDetail> => {
-    const r = await fetchJson<{ assessment: AssessmentRow }>(`/api/assessments/${encodeURIComponent(id)}`);
-    const a = r.assessment;
-    return {
-      id: a.id, customerName: a.label || '', createdAt: a.submitted_at || a.created_at || '',
-      createdBy: a.created_by || '', overallScore: a.overall_score || 0, currentPhase: a.current_phase || 0,
-      answers: (a.answers_json || {}) as Record<string, unknown>,
-      results: (a.results_json || {}) as Record<string, unknown>,
-    };
-  },
-  myAssessmentsByCustomer: (customerName: string) =>
-    fetchJson<AssessmentListRow[]>(
-      `/api/my-assessments/by-customer?customerName=${encodeURIComponent(customerName)}`,
-    ),
-  compareAssessments: (fromId: string, toId: string) =>
-    fetchJson<{ from: AssessmentDetail; to: AssessmentDetail }>(
-      `/api/my-assessments/compare?fromId=${encodeURIComponent(fromId)}&toId=${encodeURIComponent(toId)}`,
-    ),
-  deleteMyAssessment: (id: string) =>
-    fetchJson<{ deleted: string }>(`/api/assessments/${encodeURIComponent(id)}`, { method: 'DELETE' }),
-
-  // PPTX export
-  pptxUrl: (id: string) => `/api/assessments/${encodeURIComponent(id)}/pptx`,
-  valueFlywheelRoadmapPackage: async (assessmentId: string): Promise<Blob> => {
-    const r = await fetch(`/api/exports/value-flywheel-roadmap?assessmentId=${encodeURIComponent(assessmentId)}`, {
-      cache: 'no-store',
-      headers: { Accept: 'application/json' },
-    });
-    if (!r.ok) {
-      const txt = await r.text();
-      throw new Error(`Value Flywheel export failed (${r.status}): ${txt.slice(0, 200)}`);
-    }
-    return await r.blob();
-  },
-
   // User preferences (assumptions defaults, etc.)
   getMyPrefs: () => fetchJson<Record<string, unknown>>('/api/my-prefs'),
   putMyPrefs: (prefs: Record<string, unknown>) =>
     fetchJson<{ ok: boolean }>('/api/my-prefs', {
       method: 'PUT', body: JSON.stringify({ prefs }),
     }),
-  updateMyAssessmentAssumptions: (id: string, assumptions: Record<string, unknown>) =>
-    fetchJson<{ ok: boolean }>(`/api/my-assessments/${encodeURIComponent(id)}/assumptions`, {
-      method: 'PUT', body: JSON.stringify({ assumptions }),
-    }),
-
-  // Admin trends
-  adminTrends: () => fetchJson<Trends>('/api/admin/trends'),
-
-  // Admin config
-  adminListConfig: () => fetchJson<ConfigEntry[]>('/api/admin/config'),
-  adminUpsertConfig: (entry: { key: string; value: string | null; isSecret: boolean; description: string; category: string }) =>
-    fetchJson<{ ok: boolean }>('/api/admin/config', {
-      method: 'PUT',
-      body: JSON.stringify(entry),
-    }),
-  adminDeleteConfig: (key: string) =>
-    fetchJson<{ ok: boolean }>(`/api/admin/config/${encodeURIComponent(key)}`, {
-      method: 'DELETE',
-    }),
-
-  // DBX usage scan stub
-  scanCustomerUsage: () =>
-    fetchJson<{ configured: boolean; message: string }>('/api/admin/scan-customer-usage', {
-      method: 'POST', body: '{}',
-    }),
-  health: () => fetchJson<{ status: string; warehouse_configured: boolean; db_init_error?: string }>('/api/health'),
   // The WHOLE catalog (all use cases), for the admin editor + the editor's prerequisite
   // picker. /api/use-cases is PAGINATED ({items,total,…}) and defaults to a page/scope —
   // unwrap items + request scope=all with a high limit so nothing is silently dropped
@@ -823,17 +451,6 @@ export const api = {
   estimateValue: (id: number) => fetchJson<any>('/api/agents/estimate-value', {
     method: 'POST', body: JSON.stringify({ use_case_id: id }),
   }),
-
-  setAccountArchetype: (archetype_key: string) =>
-    fetchJson<any>('/api/playbook/account-archetype', { method: 'PATCH', body: JSON.stringify({ archetype_key }) }),
-  submitAssessment: (payload: unknown) =>
-    fetchJson<{ id: string }>('/api/assessments', {
-      method: 'POST',
-      body: JSON.stringify(payload),
-    }),
-
-  // Admin
-  adminListAdmins: () => fetchJson<AdminRow[]>('/api/admin/admins'),
   adminAddAdmin: (email: string) =>
     fetchJson<{ ok: boolean }>('/api/admin/admins', {
       method: 'POST',
@@ -841,22 +458,6 @@ export const api = {
     }),
   adminRemoveAdmin: (email: string) =>
     fetchJson<{ ok: boolean }>(`/api/admin/admins/${encodeURIComponent(email)}`, {
-      method: 'DELETE',
-    }),
-
-  adminListUseCases: () => fetchJson<UseCaseAPI[]>('/api/admin/use-cases'),
-  adminUpsertUseCase: (uc: UseCaseAPI) =>
-    fetchJson<{ ok: boolean }>(`/api/admin/use-cases/${encodeURIComponent(uc.id)}`, {
-      method: 'PUT',
-      body: JSON.stringify(uc),
-    }),
-  adminCreateUseCase: (uc: UseCaseAPI) =>
-    fetchJson<{ ok: boolean }>('/api/admin/use-cases', {
-      method: 'POST',
-      body: JSON.stringify(uc),
-    }),
-  adminDeleteUseCase: (id: string) =>
-    fetchJson<{ ok: boolean }>(`/api/admin/use-cases/${encodeURIComponent(id)}`, {
       method: 'DELETE',
     }),
 
@@ -871,33 +472,6 @@ export const api = {
     fetchJson<ArtifactAPI[]>(
       useCaseId ? `/api/admin/artifacts?use_case_id=${encodeURIComponent(useCaseId)}` : '/api/admin/artifacts'
     ),
-  adminCreateArtifact: (a: ArtifactAPI) =>
-    fetchJson<{ ok: boolean }>('/api/admin/artifacts', {
-      method: 'POST',
-      body: JSON.stringify(a),
-    }),
-  adminUpdateArtifact: (a: ArtifactAPI) =>
-    fetchJson<{ ok: boolean }>(`/api/admin/artifacts/${encodeURIComponent(a.id)}`, {
-      method: 'PUT',
-      body: JSON.stringify(a),
-    }),
-  adminToggleArtifact: (id: string, enabled: boolean) =>
-    fetchJson<{ ok: boolean }>(`/api/admin/artifacts/${encodeURIComponent(id)}/enabled`, {
-      method: 'PATCH',
-      body: JSON.stringify({ enabled }),
-    }),
-  adminDeleteArtifact: (id: string) =>
-    fetchJson<{ ok: boolean }>(`/api/admin/artifacts/${encodeURIComponent(id)}`, {
-      method: 'DELETE',
-    }),
-
-  adminListAssessments: () => fetchJson<AssessmentListRow[]>('/api/admin/assessments'),
-  adminGetAssessment: (id: string) =>
-    fetchJson<AssessmentDetail>(`/api/admin/assessments/${encodeURIComponent(id)}`),
-  adminDeleteAssessment: (id: string) =>
-    fetchJson<{ ok: boolean }>(`/api/admin/assessments/${encodeURIComponent(id)}`, {
-      method: 'DELETE',
-    }),
 
   // --- Discovery / ingestion pipeline (customer-side) ----------------------
   setupStatus: () => fetchJson<{ ready: boolean; checks: Array<{
@@ -908,10 +482,6 @@ export const api = {
   extractorInfo: () => fetchJson<{ available: boolean; files: string[]; total_bytes: number;
     requires: string[]; reads: string; produces: string[] }>('/api/ingestion/extractor/info'),
   ingestionSummary: () => fetchJson<any>('/api/ingestion/summary'),
-  ingestionAliases: (needsReview = false) =>
-    fetchJson<any>(`/api/ingestion/aliases?needs_review=${needsReview}`),
-  ingestionRuns: () => fetchJson<any[]>('/api/ingestion/runs'),
-  sourceRecommendations: () => fetchJson<any>('/api/source-recommendations/recommendations'),
   ingestUpload: async (kind: 'schemas' | 'tables' | 'columns', file: File): Promise<any> => {
     const form = new FormData();
     form.append('file', file, file.name);
@@ -941,13 +511,9 @@ export const api = {
   detectDependencies: (useCaseId: number, maxAssets = 6, maxEnables = 6) =>
     fetchJson<any>('/api/agents/detect-dependencies',
       { method: 'POST', body: JSON.stringify({ use_case_id: useCaseId, max_assets: maxAssets, max_enables: maxEnables }) }),
-  decomposeSource: (sourceCategory: string, vendor?: string) =>
-    fetchJson<any>('/api/agents/decompose-source',
-      { method: 'POST', body: JSON.stringify({ source_category: sourceCategory, vendor: vendor || null }) }),
   chatSend: (message: string, conversationId?: string) =>
     fetchJson<{ conversation_id: string; answer: string; tools_used: any[]; confirm: any; note?: string }>(
       '/api/chat', { method: 'POST', body: JSON.stringify({ message, conversation_id: conversationId || null }) }),
-  chatTools: () => fetchJson<{ tools: Array<{ name: string; description?: string }> }>('/api/chat/tools/list'),
 
   // --- Value-assumptions calibration (per-customer) ------------------------
   listValueAssumptions: () => fetchJson<any[]>('/api/value-assumptions'),
@@ -957,7 +523,6 @@ export const api = {
   researchCompany: (companyName: string) =>
     fetchJson<any>('/api/research/company',
       { method: 'POST', body: JSON.stringify({ company_name: companyName, calibrate_assumptions: true, propose_lobs: false }) }),
-  researchAssumptions: () => fetchJson<any>('/api/research/assumptions'),
   researchApply: (runId: number | null, keys: string[] = []) =>
     fetchJson<any>('/api/research/apply',
       { method: 'POST', body: JSON.stringify({ run_id: runId, keys, apply_profile: false, apply_lobs: false }) }),
@@ -979,10 +544,6 @@ export const api = {
     };
   }>('/api/whatif/graph'),
 
-  // Roadmap waves (topologically sorted) for the Execute-Roadmap timelapse.
-  agentsRoadmap: () => fetchJson<{ horizons: { now: any[]; next: any[]; later: any[] }; waves: number }>(
-    '/api/agents/roadmap', { method: 'POST', body: JSON.stringify({ persist: false }) }),
-
   // Live projection for the What-If: given assets being landed/curated, returns each
   // use case's PROJECTED readiness (recolour live) + the use cases that NEWLY become
   // shovel-ready (the incremental unlock), each flagged in_portfolio or not, by value.
@@ -995,7 +556,6 @@ export const api = {
   // Use-case dependency editing (searchable multi-selects in the editor).
   ucNetwork: (id: number) => fetchJson<{ focal: number; prerequisites: number[]; builds_upon: number[]; shared_data: number[]; titles: Record<string, string> }>(
     `/api/use-cases/${id}/network`),
-  ucUnlocks: (id: number) => fetchJson<any>(`/api/use-cases/${id}/unlocks`),
   ucRequires: (useCaseId: number) => fetchJson<Array<{ use_case_id: number; data_asset_id: number; criticality: string; manual: boolean }>>(
     `/api/dependencies/requires?use_case_id=${useCaseId}`),
   addRequires: (useCaseId: number, dataAssetId: number, criticality: 'required' | 'helpful' = 'required') =>

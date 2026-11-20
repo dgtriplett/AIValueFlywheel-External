@@ -1,6 +1,6 @@
 # Operations
 
-Running AI Value Flywheel day to day: backups, upgrades, the reference catalog,
+Running AI Value Realization day to day: backups, upgrades, the reference catalog,
 schema changes, and troubleshooting. Settings are in [CONFIGURATION.md](CONFIGURATION.md).
 
 ## Where things live
@@ -19,9 +19,9 @@ one JSON file with every row of every app table. Take one before every upgrade.
 To restore it into this install, a new one, or the other storage backend:
 
 ```bash
-python scripts/restore.py --file ai-value-flywheel-backup-<stamp>.json \
+python scripts/restore.py --file ai-value-realization-backup-<stamp>.json \
     --profile <cli-profile> --storage-backend lakebase --lakebase-project <project>
-python scripts/restore.py --file ai-value-flywheel-backup-<stamp>.json \
+python scripts/restore.py --file ai-value-realization-backup-<stamp>.json \
     --profile <cli-profile> --storage-backend delta \
     --delta-catalog <catalog> --delta-schema <schema> --warehouse-id <id>
 ```
@@ -103,7 +103,7 @@ fix (or GRANT statement) for the first failure.
 
 | Symptom | Likely cause | Fix |
 |---|---|---|
-| App URL says "App has not been deployed yet" | The app was re-created after a failed first deploy | `databricks bundle run ai_value_flywheel -t <target>` deploys and starts the code. |
+| App URL says "App has not been deployed yet" | The app was re-created after a failed first deploy | `databricks bundle run ai_value_realization -t <target>` deploys and starts the code. |
 | App shows no use cases | Setup job didn't run or failed | `databricks bundle run setup -t <target>` and read its output. |
 | "Not configured" / no storage (lakebase) | App's `lakebase` resource missing | Redeploy with `-t lakebase`. Check **Compute → Apps → \<app\> → Resources**. |
 | Permission errors reading app tables (delta) | Grants not applied | The setup job prints any GRANT it couldn't run. A catalog owner runs them. |

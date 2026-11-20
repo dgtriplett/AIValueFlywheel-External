@@ -39,7 +39,7 @@ def _methods(path: str) -> set[str]:
 
 class TestAppImports(unittest.TestCase):
     def test_app_object_exists(self):
-        self.assertEqual(app.title, "AI Value Flywheel")
+        self.assertEqual(app.title, "AI Value Realization")
 
     def test_health_endpoint_registered(self):
         self.assertIn("/api/health", _paths())

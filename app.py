@@ -1,4 +1,4 @@
-"""AI Value Flywheel - FastAPI entry point.
+"""AI Value Realization - FastAPI entry point.
 
 Serves the REST API under /api/* and the built React SPA from frontend/dist.
 """
@@ -46,7 +46,7 @@ from server.routes import (
     knowledge,
     proposals,
     exports,
-    assess,
+    explore,
     lifecycle,
     accounts as accounts_routes,
     whatif,
@@ -54,15 +54,15 @@ from server.routes import (
     quality,
     sync_packages,
     feature_flags,
-    assess_ai,
-    admin_assess,
+    admin_settings,
     authoring,
+    roadmap_import,
 )
 
 # Install handlers before anything logs. JSON in Databricks Apps, text locally;
 # LOG_LEVEL turns detail up on a deployed app without a code change.
 logging_setup.configure()
-logger = logging.getLogger("ai_value_flywheel.app")
+logger = logging.getLogger("aivr.app")
 
 APP_VERSION = (Path(__file__).parent / "VERSION").read_text().strip()
 
@@ -135,7 +135,7 @@ async def lifespan(app: FastAPI):
     await db.close()
 
 
-app = FastAPI(title="AI Value Flywheel", version=APP_VERSION, lifespan=lifespan)
+app = FastAPI(title="AI Value Realization", version=APP_VERSION, lifespan=lifespan)
 
 # Correlates every log line emitted while handling a request, and emits one line per
 # request with status + duration. Added before the routers so it wraps all of them.
@@ -153,8 +153,8 @@ for module in (lobs, data_assets, use_cases, dependencies, values, roadmap,
                analytics, live, onboarding, joint_funding, source_recommendations,
                domains, ingestion, generate, setup, taxonomy, research,
                flow, inventory, chat, branding, knowledge, proposals,
-               exports, assess, lifecycle, accounts_routes, whatif, snapshot_routes, quality,
-               feature_flags, assess_ai, admin_assess, authoring):
+               exports, explore, lifecycle, accounts_routes, whatif, snapshot_routes, quality,
+               feature_flags, admin_settings, authoring, roadmap_import):
     app.include_router(module.router, prefix="/api")
 
 app.include_router(sync_packages.router, prefix="/api")
@@ -179,7 +179,7 @@ async def health():
             counts = {"error": str(exc)}
     return {
         "status": "healthy",
-        "app": "ai-value-flywheel",
+        "app": "ai-value-realization",
         "version": APP_VERSION,
         "reference_catalog": reference.version(),
         "app_env": app_env(),
@@ -198,7 +198,7 @@ async def health():
 @app.get("/api/runtime")
 async def runtime():
     return {
-        "app": "ai-value-flywheel",
+        "app": "ai-value-realization",
         "version": APP_VERSION,
         "app_env": app_env(),
         "databricks_app": bool(IS_DATABRICKS_APP),
@@ -238,5 +238,5 @@ if FRONTEND_DIST.exists():
 else:
     @app.get("/")
     async def root():
-        return {"message": "AI Value Flywheel API. Frontend build not found.",
+        return {"message": "AI Value Realization API. Frontend build not found.",
                 "console": "/console", "docs": "/docs"}

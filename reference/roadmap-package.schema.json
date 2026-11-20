@@ -1,0 +1,143 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/databricks-industry-solutions/ai-value-realization/reference/roadmap-package.schema.json",
+  "title": "AIVR roadmap package, format version 1",
+  "description": "A business unit's Data & AI roadmap, handed from a planning tool to AI Value Realization. See ROADMAP_PACKAGE.md.",
+  "type": "object",
+  "required": ["format", "format_version", "roadmap", "use_cases"],
+  "properties": {
+    "format": { "const": "aivr.roadmap" },
+    "format_version": { "const": 1 },
+    "generated_at": { "type": "string", "format": "date-time" },
+    "generator": {
+      "type": "object",
+      "properties": { "name": { "type": "string" }, "version": { "type": "string" } }
+    },
+    "roadmap": {
+      "type": "object",
+      "required": ["id"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1, "description": "Stable across versions of the same roadmap; re-importing a new version is matched on it." },
+        "version": { "type": "string" },
+        "title": { "type": "string" },
+        "organization": { "type": "string" },
+        "business_unit": { "type": "string" },
+        "industry": { "type": "string", "description": "e.g. power_utilities. Other industries import, but mostly as new use cases." },
+        "target_executive": { "type": "string" },
+        "currency": { "type": "string", "minLength": 3, "maxLength": 3, "default": "USD" }
+      }
+    },
+    "pillars": { "type": "array", "maxItems": 20, "items": { "$ref": "#/$defs/ref" } },
+    "stages": { "type": "array", "items": { "$ref": "#/$defs/ref" } },
+    "workstreams": {
+      "type": "array",
+      "items": {
+        "allOf": [{ "$ref": "#/$defs/ref" }],
+        "properties": { "use_case_ids": { "type": "array", "items": { "type": "string" } } }
+      }
+    },
+    "data_categories": { "type": "array", "items": { "$ref": "#/$defs/ref" } },
+    "datasets": {
+      "type": "array",
+      "items": {
+        "allOf": [{ "$ref": "#/$defs/ref" }],
+        "properties": { "category_id": { "type": "string" } }
+      }
+    },
+    "use_cases": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 500,
+      "items": { "$ref": "#/$defs/use_case" }
+    }
+  },
+  "$defs": {
+    "ref": {
+      "type": "object",
+      "required": ["id", "name"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "name": { "type": "string", "minLength": 1 },
+        "description": { "type": "string" }
+      }
+    },
+    "use_case": {
+      "type": "object",
+      "required": ["id", "name"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "name": { "type": "string", "minLength": 1 },
+        "summary": { "type": "string" },
+        "description": { "type": "string" },
+        "business_problem": { "type": "string" },
+        "kpi": { "type": "string" },
+        "pillar_ids": { "type": "array", "items": { "type": "string" }, "description": "Lead pillar first." },
+        "stage_id": { "type": "string" },
+        "workstream_id": { "type": "string" },
+        "priority_rank": { "type": "integer", "minimum": 1 },
+        "priority_tier": { "enum": ["now", "next", "later"] },
+        "effort": { "type": "string", "description": "S, M, L or XL (Low/Medium/High are accepted)." },
+        "effort_quadrant": { "type": "string" },
+        "effort_rationale": { "type": "string" },
+        "dataset_ids": { "type": "array", "items": { "type": "string" } },
+        "data_requirements": {
+          "type": "object",
+          "properties": {
+            "assets": { "type": "array", "items": { "type": "string" } },
+            "sources": { "type": "array", "items": { "type": "string" } },
+            "rationale": { "type": "string" }
+          }
+        },
+        "value": {
+          "type": "object",
+          "required": ["annual_base"],
+          "description": "The organization's full annual value from the use case, in roadmap.currency (whole units, not millions).",
+          "properties": {
+            "annual_low": { "type": "number", "minimum": 0 },
+            "annual_base": { "type": "number", "minimum": 0 },
+            "annual_high": { "type": "number", "minimum": 0 },
+            "basis": { "type": "string" },
+            "formula": { "type": "string" },
+            "assumptions": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["label"],
+                "properties": {
+                  "label": { "type": "string" },
+                  "low": { "type": "number" }, "base": { "type": "number" }, "high": { "type": "number" },
+                  "unit": { "type": "string" }, "note": { "type": "string" }, "source": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "plan": {
+          "type": "object",
+          "properties": {
+            "headline": { "type": "string" },
+            "pilot": { "type": "string" },
+            "phases": {
+              "type": "array",
+              "maxItems": 8,
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": { "type": "string" }, "when": { "type": "string" },
+                  "title": { "type": "string" }, "summary": { "type": "string" },
+                  "scope": { "type": "string" },
+                  "steps": { "type": "array", "items": { "type": "string" } }
+                }
+              }
+            }
+          }
+        },
+        "catalog_match": {
+          "type": "object",
+          "description": "Optional: the catalog use case this one is, when the planning tool knows (from GET /api/sync/catalog).",
+          "properties": { "id": { "type": "string" }, "title": { "type": "string" } }
+        }
+      }
+    }
+  }
+}

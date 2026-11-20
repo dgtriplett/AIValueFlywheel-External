@@ -179,7 +179,7 @@ class TestAccountResolution(AccountTestCase):
 
     def test_header_wins(self):
         db = self.use(ScopedDB(account_id=7))
-        request = self.FakeRequest(headers={"X-Grid-Atlas-Account": "7"})
+        request = self.FakeRequest(headers={"X-AIVR-Account": "7"})
         self.assertEqual(run(accounts.resolve(request)), 7)
         self.assertTrue(any("FROM accounts" in q for q in
                             [q for q in db.queries] + ["FROM accounts"]))

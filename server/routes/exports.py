@@ -159,7 +159,7 @@ async def executive_pack_markdown():
     pack = await executive_pack()
     md = _render_markdown(pack)
     headers = {
-        "Content-Disposition": 'attachment; filename="grid-atlas-executive-pack.md"',
+        "Content-Disposition": 'attachment; filename="aivr-executive-pack.md"',
     }
     return PlainTextResponse(md, media_type="text/markdown; charset=utf-8",
                              headers=headers)
@@ -172,7 +172,7 @@ def _render_markdown(pack: dict) -> str:
     assumptions = pack.get("assumptions") or {}
     whatif = pack.get("whatif") or {}
     lines = [
-        f"# Grid Atlas Executive Pack: {name}",
+        f"# AI Value Realization: Executive Pack — {name}",
         "",
         f"Generated: {pack.get('generated_at')}",
         "",

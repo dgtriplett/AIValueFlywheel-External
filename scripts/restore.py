@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Restore an AI Value Flywheel backup into an install (either storage backend).
+"""Restore an AI Value Realization backup into an install (either storage backend).
 
 Download a backup from the app (Admin → Business units → Download backup), then:
 
@@ -33,9 +33,9 @@ def main() -> int:
     ap.add_argument("--replace", action="store_true", help="overwrite rows that already exist")
     ap.add_argument("--profile", default="")
     ap.add_argument("--storage-backend", choices=["lakebase", "delta"], required=True)
-    ap.add_argument("--app-name", default="ai-value-flywheel")
+    ap.add_argument("--app-name", default="ai-value-realization")
     ap.add_argument("--warehouse-id", default="")
-    ap.add_argument("--lakebase-project", default="ai-value-flywheel")
+    ap.add_argument("--lakebase-project", default="ai-value-realization")
     ap.add_argument("--lakebase-branch", default="production")
     ap.add_argument("--pg-database", default="databricks_postgres")
     ap.add_argument("--delta-catalog", default="")

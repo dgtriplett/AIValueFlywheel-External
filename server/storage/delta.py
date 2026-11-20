@@ -95,7 +95,7 @@ class DeltaBackend:
             credentials_provider=lambda: cfg.authenticate,
             catalog=self.catalog, schema=self.schema,
             session_configuration={"TIMEZONE": "UTC", "ANSI_MODE": "true"},
-            user_agent_entry="ai-value-flywheel",
+            user_agent_entry="ai-value-realization",
         )
 
     def _checkout(self):

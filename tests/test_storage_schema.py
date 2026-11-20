@@ -18,8 +18,10 @@ import unittest
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-PG = (ROOT / "server" / "migrations" / "001_baseline.sql").read_text()
-DELTA = (ROOT / "server" / "migrations_delta" / "001_baseline.sql").read_text()
+PG_FILES = sorted((ROOT / "server" / "migrations").glob("[0-9][0-9][0-9]_*.sql"))
+DELTA_FILES = sorted((ROOT / "server" / "migrations_delta").glob("[0-9][0-9][0-9]_*.sql"))
+PG = "\n".join(f.read_text() for f in PG_FILES)
+DELTA = "\n".join(f.read_text() for f in DELTA_FILES)
 META = json.loads((ROOT / "server" / "storage" / "schema_meta.json").read_text())["tables"]
 
 
@@ -39,6 +41,11 @@ def pg_tables() -> dict[str, list[str]]:
 
 
 class TestBackendsDescribeTheSameSchema(unittest.TestCase):
+    def test_every_postgres_migration_has_a_delta_counterpart(self):
+        """The migrator applies each backend's files by name; a Postgres migration
+        with no Delta twin leaves the Delta backend a version behind."""
+        self.assertEqual([f.name for f in PG_FILES], [f.name for f in DELTA_FILES])
+
     def test_metadata_covers_every_postgres_table_and_column(self):
         for table, cols in pg_tables().items():
             with self.subTest(table=table):

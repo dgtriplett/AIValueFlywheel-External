@@ -4,22 +4,19 @@ import { useFeatureFlags } from '../lib/featureFlags';
 import { UseCaseEditor } from './UseCaseEditor';
 
 /**
- * Admin — cross-account portal (admins only). A SEPARATE experience from the per-account
- * Assess/Operate: it shows every customer/user/assessment, not the active account's data.
- * Wired to the real /api/admin/* endpoints (the old grafted AdminPage called the
- * assessment app's endpoints that don't exist here and 404'd — this replaces it).
+ * Admin — cross-business-unit portal (admins only). A SEPARATE experience from Operate
+ * and Explore: it shows every business unit and user, not the active unit's data.
  */
 export function AdminView() {
-  const [tab, setTab] = useState<'setup' | 'accounts' | 'assessments' | 'features' | 'use cases' | 'datasets' | 'assumptions' | 'trends' | 'admins'>('accounts');
+  const [tab, setTab] = useState<'setup' | 'accounts' | 'features' | 'use cases' | 'datasets' | 'assumptions' | 'admins'>('accounts');
   const [ov, setOv] = useState<any>(null);
-  const [assess, setAssess] = useState<any[]>([]);
   const [flags, setFlags] = useState<FeatureFlagAdminRow[]>([]);
   const [err, setErr] = useState<string | null>(null);
   const [newAdmin, setNewAdmin] = useState('');
   const ff = useFeatureFlags();
 
   const deleteAccount = async (a: any) => {
-    const hard = window.confirm(`Delete business unit "${a.name}"?\n\nOK = permanently DELETE all its data (assessments, portfolio, status).\nCancel = keep it.`);
+    const hard = window.confirm(`Delete business unit "${a.name}"?\n\nOK = permanently DELETE all its data (roadmap, portfolio, status, value records).\nCancel = keep it.`);
     if (!hard) return;
     if (!window.confirm(`This permanently deletes "${a.name}" and everything captured for it. This cannot be undone. Proceed?`)) return;
     try { await api.deleteAccount(a.id, true); await load(); } catch (e: any) { setErr(e?.message || String(e)); }
@@ -27,12 +24,11 @@ export function AdminView() {
   const load = async () => {
     setErr(null);
     try {
-      const [o, a, f] = await Promise.all([
+      const [o, f] = await Promise.all([
         api.adminOverview(),
-        api.adminAssessments().catch(() => ({ assessments: [] })),
         api.adminListFeatureFlags().catch(() => [] as FeatureFlagAdminRow[]),
       ]);
-      setOv(o); setAssess(a.assessments || []); setFlags(f || []);
+      setOv(o); setFlags(f || []);
     } catch (e: any) { setErr(e?.message || String(e)); }
   };
   useEffect(() => { void load(); }, []);
@@ -58,12 +54,12 @@ export function AdminView() {
     <div className="max-w-7xl mx-auto px-4 py-6 w-full">
       <div className="flex items-center justify-between flex-wrap gap-3 mb-1">
         <h1 className="text-2xl font-bold text-heading">Admin portal</h1>
-        <span className="text-xs px-2 py-1 rounded-full border border-info-600/40 bg-info-600/10 text-info-500">Cross-customer · admin only</span>
+        <span className="text-xs px-2 py-1 rounded-full border border-info-600/40 bg-info-600/10 text-info-500">All business units · admin only</span>
       </div>
-      <p className="text-sm text-navy-400 mb-5">Across all customers and users — separate from your own accounts in Assess/Operate.</p>
+      <p className="text-sm text-navy-400 mb-5">Across every business unit and user — separate from your own business units in Operate and Explore.</p>
 
       <div className="flex items-center rounded-lg bg-navy-800 p-0.5 text-sm mb-4 w-fit">
-        {(['setup', 'accounts', 'assessments', 'features', 'use cases', 'datasets', 'assumptions', 'trends', 'admins'] as const).map((t) => (
+        {(['setup', 'accounts', 'features', 'use cases', 'datasets', 'assumptions', 'admins'] as const).map((t) => (
           <button key={t} onClick={() => setTab(t)}
             className={`px-3 py-1 rounded-md capitalize font-medium ${tab === t ? 'bg-navy-700 text-heading shadow-sm' : 'text-navy-400 hover:text-heading'}`}>{t === 'accounts' ? 'business units' : t}</button>
         ))}
@@ -74,7 +70,7 @@ export function AdminView() {
         <>
           <div className="flex items-center justify-between gap-3 mb-3 flex-wrap">
             <p className="text-xs text-navy-400">
-              Business units, their members, and assessments. Download a full backup of every
+              Business units, their members and roadmaps. Download a full backup of every
               table before an upgrade; restore it with <code>scripts/restore.py</code>.
             </p>
             <a href="/api/admin/backup" download
@@ -85,12 +81,12 @@ export function AdminView() {
             <Tile label="Business units" value={String(ov.totals?.accounts ?? ov.accounts?.length ?? 0)} />
             <Tile label="Users" value={String(ov.totals?.users ?? ov.users?.length ?? 0)} />
             <Tile label="Admins" value={String(ov.admins?.length ?? 0)} />
-            <Tile label="Assessments" value={String(ov.accounts?.reduce((s: number, a: any) => s + (a.assessments || 0), 0) ?? 0)} />
+            <Tile label="Roadmap imports" value={String(ov.accounts?.reduce((s: number, a: any) => s + (a.roadmap_imports || 0), 0) ?? 0)} />
           </div>
           <div className="overflow-x-auto border border-navy-600 rounded-lg">
             <table className="w-full text-sm">
               <thead><tr className="text-navy-400 text-xs">
-                {['Customer', 'Utility', 'Members', 'Assessments', 'Portfolio', 'Last promoted', ''].map((h) => <th key={h} className="text-left p-2">{h}</th>)}
+                {['Business unit', 'Type', 'Members', 'Portfolio', 'Roadmap imports', 'Last import', ''].map((h) => <th key={h} className="text-left p-2">{h}</th>)}
               </tr></thead>
               <tbody>
                 {(ov.accounts || []).map((a: any) => (
@@ -98,9 +94,9 @@ export function AdminView() {
                     <td className="p-2 text-heading">{a.name}</td>
                     <td className="p-2 text-navy-300">{a.utility_type || '—'}</td>
                     <td className="p-2 text-navy-300">{a.members}</td>
-                    <td className="p-2 text-navy-300">{a.assessments} ({a.submitted} submitted)</td>
                     <td className="p-2 text-navy-300">{a.portfolio}</td>
-                    <td className="p-2 text-navy-300">{a.last_promoted ? new Date(a.last_promoted).toLocaleDateString() : '—'}</td>
+                    <td className="p-2 text-navy-300">{a.roadmap_imports ?? 0}</td>
+                    <td className="p-2 text-navy-300">{a.last_imported ? new Date(a.last_imported).toLocaleDateString() : '—'}</td>
                     <td className="p-2 text-right whitespace-nowrap">
                       <button onClick={() => deleteAccount(a)} className="text-rose-500 text-xs hover:underline">Delete</button>
                     </td>
@@ -108,15 +104,11 @@ export function AdminView() {
                 ))}
               </tbody>
             </table>
-            {(ov.accounts || []).length === 0 && <div className="p-4 text-navy-400 text-sm text-center">No customers.</div>}
+            {(ov.accounts || []).length === 0 && <div className="p-4 text-navy-400 text-sm text-center">No business units.</div>}
           </div>
         </>
       )}
 
-      {tab === 'assessments' && (
-        <Table head={['Account', 'Status', 'Label', 'Score', 'Phase', 'By', 'When']}
-          rows={assess.map((x) => [x.account_name, x.status, x.label || '—', x.overall_score ?? '—', x.current_phase ?? '—', x.created_by || '—', x.submitted_at ? new Date(x.submitted_at).toLocaleDateString() : (x.created_at ? new Date(x.created_at).toLocaleDateString() : '—')])} />
-      )}
 
       {tab === 'features' && (
         <div className="max-w-3xl">
@@ -163,7 +155,6 @@ export function AdminView() {
       {tab === 'use cases' && <UseCasesTab />}
       {tab === 'datasets' && <DatasetsTab />}
       {tab === 'assumptions' && <AssumptionsTab />}
-      {tab === 'trends' && <TrendsTab />}
 
       {tab === 'admins' && ov && (
         <div className="max-w-lg">
@@ -511,7 +502,7 @@ function AssumptionsTab() {
 
   return (
     <div className="max-w-4xl">
-      <p className="text-sm text-navy-400 mb-3">Value-model inputs used across the assessment's $ math. Add customer-specific ones, tune values, or remove.</p>
+      <p className="text-sm text-navy-400 mb-3">Value-model inputs used by every catalog use case's $ estimate. Add organization-specific ones, tune values, or remove them.</p>
       {err && <div className="text-rose-500 text-sm mb-3">{err}</div>}
       <div className="border border-navy-600 rounded-lg p-3 bg-navy-800/40 mb-4 grid md:grid-cols-4 gap-2 items-end">
         <input className={INPUT} placeholder="Label" value={form.label} onChange={(e) => setForm({ ...form, label: e.target.value })} />
@@ -543,65 +534,3 @@ function AssumptionsTab() {
   );
 }
 
-// --- Trends: cross-account program rollup ----------------------------------
-function TrendsTab() {
-  const [d, setD] = useState<any>(null);
-  const [err, setErr] = useState<string | null>(null);
-  useEffect(() => { api.adminTrends().then(setD).catch((e) => setErr(e?.message || String(e))); }, []);
-  if (err) return <div className="text-rose-500 text-sm">{err}</div>;
-  if (!d) return <div className="text-navy-400 text-sm">Loading…</div>;
-
-  const Bars = ({ title, data }: { title: string; data: Record<string, number> }) => {
-    const entries = Object.entries(data || {});
-    const max = Math.max(1, ...entries.map(([, v]) => v));
-    return (
-      <div className="border border-navy-600 rounded-lg p-3 bg-navy-800/40">
-        <div className="text-xs uppercase tracking-wide text-navy-500 mb-2">{title}</div>
-        {entries.length === 0 ? <div className="text-navy-400 text-sm">No data.</div> : entries.map(([k, v]) => (
-          <div key={k} className="flex items-center gap-2 mb-1">
-            <span className="text-xs text-navy-300 w-24 shrink-0 truncate">{k}</span>
-            <div className="flex-1 bg-navy-700 rounded h-4"><div className="bg-info-600 h-4 rounded" style={{ width: `${(v / max) * 100}%` }} /></div>
-            <span className="text-xs text-heading w-8 text-right">{v}</span>
-          </div>
-        ))}
-      </div>
-    );
-  };
-
-  return (
-    <div className="max-w-4xl space-y-4">
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        <Tile label="Assessments" value={String(d.total_assessments ?? 0)} />
-        <Tile label="Submitted" value={String(d.submitted ?? 0)} />
-        <Tile label="Avg score" value={d.avg_score != null ? String(d.avg_score) : '—'} />
-        <Tile label="Months active" value={String(Object.keys(d.submissions_by_month || {}).length)} />
-      </div>
-      <div className="grid md:grid-cols-2 gap-3">
-        <Bars title="Score distribution" data={d.score_buckets} />
-        <Bars title="Phase distribution" data={d.phase_distribution} />
-      </div>
-      <Bars title="Submissions by month" data={d.submissions_by_month} />
-      <div className="border border-navy-600 rounded-lg p-3 bg-navy-800/40">
-        <div className="text-xs uppercase tracking-wide text-navy-500 mb-2">Most-recommended use cases</div>
-        {(d.top_recommended_use_cases || []).length === 0 ? <div className="text-navy-400 text-sm">No data.</div> :
-          (d.top_recommended_use_cases || []).map((u: any, i: number) => (
-            <div key={i} className="flex items-center justify-between py-1 text-sm">
-              <span className="text-heading">{u.title}</span>
-              <span className="text-navy-400 text-xs">{u.count}×</span>
-            </div>
-          ))}
-      </div>
-    </div>
-  );
-}
-function Table({ head, rows }: { head: string[]; rows: any[][] }) {
-  return (
-    <div className="overflow-x-auto border border-navy-600 rounded-lg">
-      <table className="w-full text-sm">
-        <thead><tr className="text-navy-400 text-xs">{head.map((h) => <th key={h} className="text-left p-2">{h}</th>)}</tr></thead>
-        <tbody>{rows.map((r, i) => <tr key={i} className="border-t border-navy-600/50">{r.map((c, j) => <td key={j} className="p-2 text-heading">{String(c)}</td>)}</tr>)}</tbody>
-      </table>
-      {rows.length === 0 && <div className="p-4 text-navy-400 text-sm text-center">Nothing yet.</div>}
-    </div>
-  );
-}

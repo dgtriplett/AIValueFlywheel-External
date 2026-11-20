@@ -120,7 +120,7 @@ INSTRUCTIONS = [
     "in each table is its own primary key and the two are unrelated. Which sources a use "
     "case requires is not present in these tables. If asked to connect a specific use case "
     "to specific data sources, say that the mapping is not available here and point the "
-    "user at the use-case detail page in AI Value Flywheel, which shows it. Never join on "
+    "user at the use-case detail page in AI Value Realization, which shows it. Never join on "
     "id, and never guess the relationship from a name.",
 ]
 
@@ -198,7 +198,7 @@ def build_serialized_space(table_columns: dict[str, list[str]]) -> str:
     # what the API returns for a hand-built space (exactly one entry, whose `content` is
     # the document split into lines). So INSTRUCTIONS is a list for authoring and
     # testing convenience, and is joined into that one document here.
-    content = ["AI Value Flywheel portfolio. Read these rules before answering.\n", "\n"]
+    content = ["AI Value Realization portfolio. Read these rules before answering.\n", "\n"]
     for text in INSTRUCTIONS:
         content.append(f"- {text}\n")
     content.append("\n")
