@@ -315,6 +315,14 @@ async def apply(body: ApplyIn, request: Request):
     same_roadmap = latest and latest.get("roadmap_id") == norm.roadmap["id"]
     changes = rp.diff(latest["package_json"] if same_roadmap else None, norm.as_dict())
 
+    # Settle everything that can fail BEFORE the first write (Delta has no
+    # multi-statement transactions): new use cases need titles unique app-wide, and
+    # another business unit may already have created one with the same name.
+    to_create = [e for e, d in decisions.items()
+                 if d.action == "create" and prior.get(e) not in catalog_ids]
+    titles = await _unique_titles([ucs[e]["name"] for e in to_create], account_id)
+    new_title = dict(zip(to_create, titles))
+
     import_id = str(uuid.uuid4())
     summary = {"mapped": 0, "created": 0, "reused": 0, "skipped": 0, "value_updated": 0,
                "data_needs_linked": 0, "data_needs_unresolved": 0, "dropped": 0}
@@ -342,7 +350,7 @@ async def apply(body: ApplyIn, request: Request):
                    origin, in_portfolio, created_by)
                 VALUES ($1, $2, $3, 'not_started', $4, $5::jsonb, 'custom', true, $6)
                 RETURNING id
-            """, uc["name"], uc.get("description") or uc.get("summary"),
+            """, new_title[ext_id], uc.get("description") or uc.get("summary"),
                 stages.get(uc.get("stage_id")) or "Roadmap", uc.get("effort"),
                 json.dumps(formula) if formula else None, actor)
             local_ids[ext_id] = int(row["id"])
@@ -433,6 +441,28 @@ async def apply(body: ApplyIn, request: Request):
         pass
     return {"ok": True, "import_id": import_id, "summary": summary,
             "use_case_ids": local_ids}
+
+
+async def _unique_titles(names: list[str], account_id: int) -> list[str]:
+    """Titles for new use cases that collide with nothing (use_cases.title is unique,
+    case-insensitively, across the app). A clash gets the business unit's name, then
+    a number: 'Storm crew staging (North)', 'Storm crew staging (North) 2'."""
+    if not names:
+        return []
+    taken = {str(r["t"]) for r in await db.fetch("SELECT lower(title) AS t FROM use_cases")}
+    row = await db.fetchrow("SELECT name FROM accounts WHERE id = $1", account_id)
+    unit = (row["name"] if row else None) or "roadmap"
+    out = []
+    for name in names:
+        title, n = name, 1
+        if title.lower() in taken:
+            title = f"{name} ({unit})"
+        while title.lower() in taken:
+            n += 1
+            title = f"{name} ({unit}) {n}"
+        taken.add(title.lower())
+        out.append(title[:300])
+    return out
 
 
 async def _refresh_roadmap_value(use_case_id: int, formula: dict) -> bool:

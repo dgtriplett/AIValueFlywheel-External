@@ -255,3 +255,32 @@ class TestValueFormula(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TestUniqueTitles(unittest.TestCase):
+    """use_cases.title is unique app-wide; a second business unit creating a use case
+    of the same name must get a distinct title, not crash the import half-way."""
+
+    def run_titles(self, existing, names, unit="North"):
+        import asyncio
+        from unittest import mock
+        from server.routes import roadmap_import as ri
+
+        class DB:
+            async def fetch(self, sql, *a):
+                return [{"t": t.lower()} for t in existing]
+
+            async def fetchrow(self, sql, *a):
+                return {"name": unit}
+        with mock.patch.object(ri, "db", DB()):
+            return asyncio.run(ri._unique_titles(names, 1))
+
+    def test_no_clash_keeps_the_name(self):
+        self.assertEqual(self.run_titles([], ["Storm staging"]), ["Storm staging"])
+
+    def test_clash_gets_the_business_unit_then_a_number(self):
+        self.assertEqual(self.run_titles(["storm staging", "Storm staging (North)"], ["Storm staging"]),
+                         ["Storm staging (North) 2"])
+
+    def test_clash_inside_one_import(self):
+        self.assertEqual(self.run_titles([], ["A", "a"]), ["A", "a (North)"])

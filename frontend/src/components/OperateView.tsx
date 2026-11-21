@@ -185,8 +185,9 @@ function RoadmapTab({ accountName }: { accountName?: string }) {
     <div className="space-y-6">
       <RoadmapBanner summary={roadmap} onImport={() => setShowImport(true)} />
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        <Tile label="Portfolio value (hyp.)" value={money(summary.hypothesized_mm)}
-          sub={summary.on_roadmap ? `Roadmap estimate ${money(summary.roadmap_value_mm)}` : undefined} />
+        <Tile label={summary.on_roadmap ? 'Planned value' : 'Portfolio value (hyp.)'}
+          value={money(summary.on_roadmap ? summary.planned_mm : summary.hypothesized_mm)}
+          sub={summary.on_roadmap ? `roadmap estimates, catalog models for the rest · model total ${money(summary.hypothesized_mm)}` : undefined} />
         <Tile label="Realized" value={money(summary.realized_mm)} />
         <Tile label="Shovel-ready" value={String(summary.shovel_ready ?? 0)} sub="all data needs met" />
         <Tile label="Use cases" value={String(summary.total ?? portfolio.length)}
@@ -248,7 +249,10 @@ function RoadmapTab({ accountName }: { accountName?: string }) {
                   <td className="p-2">
                     {u.readiness && <span className={`text-[11px] px-1.5 py-0.5 rounded border ${READINESS_COLOR[u.readiness] || 'text-navy-400 border-navy-600'}`}>{READINESS_LABEL[u.readiness] || u.readiness}</span>}
                   </td>
-                  <td className="p-2 text-right text-heading">{money(u.hypothesized_mm)}</td>
+                  <td className="p-2 text-right text-heading"
+                    title={u.value_source === 'roadmap' ? `Roadmap estimate. Catalog value model: ${money(u.model_mm)}` : 'Catalog value model'}>
+                    {money(u.hypothesized_mm)}{u.value_source === 'roadmap' && <span className="text-[10px] text-navy-500 ml-1">plan</span>}
+                  </td>
                   <td className="p-2 text-right text-navy-400">{money(u.realized_mm)}</td>
                   <td className="p-2 text-right">
                     <button onClick={(e) => { e.stopPropagation(); remove(u); }} disabled={removing === u.id}

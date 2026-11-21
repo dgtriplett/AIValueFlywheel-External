@@ -185,6 +185,8 @@ export interface AccountMember {
 export interface PortfolioRow {
   id: number; title: string; phase: number | null; status: string;
   readiness: string | null; hypothesized_mm: number; realized_mm: number;
+  /** The catalog value model's estimate; `hypothesized_mm` is the roadmap's when it has one. */
+  model_mm?: number; value_source?: 'roadmap' | 'model';
   /** From the imported roadmap, when this use case is on it. */
   roadmap?: { pillar_ids: string[]; stage: string | null; workstream: string | null;
     priority_rank: number | null; priority_tier: 'now' | 'next' | 'later' | null;

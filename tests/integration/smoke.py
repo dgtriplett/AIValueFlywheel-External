@@ -3,19 +3,23 @@
 Not part of the unit suite — it needs a live app with a seeded database:
 
     python tests/integration/smoke.py --base http://localhost:8000 --email admin@example.com
-    python tests/integration/smoke.py --base https://<app-url> --token "$(databricks auth token … | jq -r .access_token)"
+    AIVR_TOKEN="$(databricks auth token -p <profile> | jq -r .access_token)" \
+        python tests/integration/smoke.py --base https://<app-url>
 
 1. Sweeps every parameter-free GET route the app registers and fails on any 5xx.
-2. Runs the core journey: business unit -> pre-assessment worksheet round-trip ->
-   assessment -> promote -> add from catalog -> author a use case with the agent ->
-   confirm -> readiness / detail -> what-if -> delete (FK cascade) -> cleanup.
+2. Runs the core journey: business unit -> import the example roadmap package
+   (preview -> apply -> re-import) -> roadmap summary and drawer data -> Explore ->
+   add from catalog -> what-if -> author a use case with the agent -> confirm ->
+   readiness / detail -> delete (FK cascade) -> cleanup.
 """
 from __future__ import annotations
 
 import argparse
-import io
+import json
+import os
 import sys
 import time
+from pathlib import Path
 
 import httpx
 
@@ -77,24 +81,29 @@ class Smoke:
         self.c.headers["X-AIVR-Account"] = str(acct_id)
         print("   business unit", acct_id, "user", me.get("email"))
 
-        # Worksheet round trip (template -> parse).
-        blob = self.call("POST", "/api/preassessment/template",
-                         json={"utilityType": "electric", "customerName": "Smoke", "questions": []})
-        if isinstance(blob, (bytes, bytearray)):
-            self.call("POST", "/api/preassessment/parse",
-                      files={"file": ("w.xlsx", io.BytesIO(blob), "application/octet-stream")})
-
-        sources = self.call("GET", "/api/data-sources").get("data_sources", [])
+        # Roadmap import: preview, apply the suggested decisions, re-import (no changes).
+        pkg = json.loads((Path(__file__).resolve().parents[2] / "reference"
+                          / "example-roadmap-package.json").read_text())
+        pkg["roadmap"]["id"] = f"smoke-{int(time.time())}"
+        prev = self.call("POST", "/api/roadmap-import/preview", json={"package": pkg})
+        decisions = [{"external_id": m["external_id"], "action": m["suggestion"]["action"],
+                      "use_case_id": m["suggestion"]["use_case_id"]} for m in prev.get("matches", [])]
+        applied = self.call("POST", "/api/roadmap-import/apply", json={"package": pkg, "decisions": decisions})
+        created = [applied.get("use_case_ids", {}).get(d["external_id"]) for d in decisions
+                   if d["action"] == "create"] if isinstance(applied, dict) else []
+        again = self.call("POST", "/api/roadmap-import/preview", json={"package": pkg})
+        if again.get("diff", {}).get("changed") or again.get("diff", {}).get("added"):
+            self.failures.append(f"re-import of an unchanged roadmap reported changes: {again.get('diff')}")
+        summary = self.call("GET", "/api/roadmap/summary")
+        if len(summary.get("pillars", [])) != len(pkg["pillars"]):
+            self.failures.append("roadmap summary is missing pillars")
+        self.call("GET", "/api/roadmap-import/history")
+        first = (summary.get("use_cases") or [{}])[0].get("use_case_id")
+        if first:
+            self.call("GET", f"/api/roadmap/use-cases/{first}")
+        self.call("GET", "/api/explore/portfolio")
         catalog = self.call("GET", "/api/use-cases?scope=all&limit=1000")
         catalog = catalog if isinstance(catalog, list) else catalog.get("items", [])
-        draft = self.call("POST", "/api/assessments", json={
-            "id": f"smoke-{int(time.time())}", "status": "draft",
-            "answers_json": {"profile": {"companyName": "Smoke"}}, "current_phase": 1},
-            expect=(200, 201))
-        self.call("POST", "/api/assess/promote", json={
-            "selected_data_source_ids": [s["id"] for s in sources[:5]],
-            "in_production_use_case_ids": [], "roadmap_use_case_ids": [],
-            "assessment_id": (draft or {}).get("id")})
         ids = [u["id"] for u in catalog[:3]]
         self.call("POST", "/api/use-cases/portfolio/bulk", json={"ids": ids, "in_portfolio": True})
         roadmap = self.call("GET", "/api/operate/roadmap")
@@ -122,6 +131,9 @@ class Smoke:
                 self.call("GET", f"/api/use-cases/{uc_id}/network")
                 self.call("DELETE", f"/api/use-cases/{uc_id}", expect=(200, 204))
                 self.call("GET", f"/api/use-cases/{uc_id}/detail", expect=(404,))
+        # Use cases the import created are shared rows: remove them before the unit.
+        for uc_id in filter(None, created):
+            self.call("DELETE", f"/api/use-cases/{uc_id}", expect=(200, 204))
         self.call("DELETE", f"/api/accounts/{acct_id}?hard=true", expect=(200, 204))
 
     def report(self) -> int:
@@ -140,10 +152,10 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--base", required=True)
     ap.add_argument("--email")
-    ap.add_argument("--token")
+    ap.add_argument("--token", help="bearer token; defaults to $AIVR_TOKEN")
     ap.add_argument("--skip-sweep", action="store_true")
     a = ap.parse_args()
-    s = Smoke(a.base, a.email, a.token)
+    s = Smoke(a.base, a.email, a.token or os.environ.get("AIVR_TOKEN"))
     if not a.skip_sweep:
         s.sweep()
     s.journey()
