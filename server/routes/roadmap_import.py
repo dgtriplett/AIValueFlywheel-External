@@ -387,6 +387,17 @@ async def apply(body: ApplyIn, request: Request):
     # (kept, not deleted: the use case may be half-built, and the portfolio is the
     # team's to prune, not the importer's).
     ext_ids, uc_ids = list(local_ids), list(local_ids.values())
+    # A value model the team set for a use case here outlives a re-import.
+    overrides: dict[int, dict] = {}
+    if uc_ids:
+        for r in await db.fetch("""
+            SELECT use_case_id, value_json FROM account_roadmap_use_cases
+            WHERE account_id = $1 AND use_case_id = ANY($2::int[])
+        """, account_id, uc_ids):
+            vj = r["value_json"]
+            vj = json.loads(vj) if isinstance(vj, str) and vj else (vj or {})
+            if isinstance(vj, dict) and isinstance(vj.get("override"), dict):
+                overrides[int(r["use_case_id"])] = vj["override"]
     if ext_ids:
         await db.execute("""
             DELETE FROM account_roadmap_use_cases
@@ -403,7 +414,7 @@ async def apply(body: ApplyIn, request: Request):
                 uc.get("priority_rank"), uc.get("priority_tier"), uc.get("effort"),
                 uc.get("effort_quadrant"), norm.roadmap["currency"],
                 v.get("annual_low"), v.get("annual_base"), v.get("annual_high"),
-                json.dumps(v) if v else None,
+                json.dumps({**v, "override": overrides[lid]} if lid in overrides else v) if (v or lid in overrides) else None,
                 json.dumps(uc["plan"]) if uc.get("plan") else None,
                 json.dumps({"datasets": [datasets[i] for i in uc["dataset_ids"] if i in datasets],
                             **uc["data_requirements"]}),

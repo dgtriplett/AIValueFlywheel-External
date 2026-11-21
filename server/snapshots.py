@@ -30,7 +30,7 @@ import logging
 from .db import db
 from . import portfolio
 from .readiness import READY_STATUSES, readiness_map
-from .value_engine import compute_realized, compute_value_range, load_assumptions
+from .value_engine import effective_formula, compute_realized, compute_value_range, load_assumptions
 
 logger = logging.getLogger(__name__)
 
@@ -71,8 +71,7 @@ async def compute_metrics() -> dict:
         if not use_case.get("account_in_portfolio"):
             continue
         portfolio_count += 1
-        value_range = compute_value_range(
-            use_case.get("hypothesized_value_json"), assumptions)
+        value_range = compute_value_range(effective_formula(use_case, assumptions), assumptions)
         mid = (value_range or {}).get("mid") or 0.0
         total += mid
         # "Buildable" is the number that matters in a funding conversation: value you

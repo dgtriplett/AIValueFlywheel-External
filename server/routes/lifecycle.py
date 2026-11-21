@@ -65,7 +65,7 @@ async def operate_roadmap():
     analytics dashboard uses, so the numbers match."""
     from .. import portfolio
     from ..readiness import readiness_map
-    from ..value_engine import compute_realized, compute_value_range, load_assumptions
+    from ..value_engine import effective_formula, compute_realized, compute_value_range, load_assumptions
 
     account_id = await acct.current()
     if account_id is None:
@@ -87,7 +87,7 @@ async def operate_roadmap():
                "nearly_ready": 0, "blocked": 0, "hypothesized_mm": 0.0, "realized_mm": 0.0,
                "on_roadmap": 0, "roadmap_value_mm": 0.0, "planned_mm": 0.0}
     for u in ucs:
-        rng = compute_value_range(u.get("hypothesized_value_json"), assumptions)
+        rng = compute_value_range(effective_formula(u, assumptions), assumptions)
         hyp = rng["mid"] if rng else 0
         real = (compute_realized(u, assumptions) or {}).get("value") or 0
         readiness = (rmap.get(u["id"]) or {}).get("readiness")

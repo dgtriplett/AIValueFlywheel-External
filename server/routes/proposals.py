@@ -39,7 +39,7 @@ from ..common import current_user, write_audit
 from ..db import db
 from ..limits import limiter
 from ..readiness import ready_assets, BUILT_SQL_LIST, readiness_map
-from ..value_engine import compute_value_range, load_assumptions
+from ..value_engine import effective_formula, compute_value_range, load_assumptions
 
 logger = logging.getLogger(__name__)
 
@@ -61,7 +61,7 @@ async def _gather_context(use_case_id: int) -> tuple[dict, dict]:
     use_case = dict(row)
 
     assumptions = await load_assumptions()
-    value_range = compute_value_range(use_case.get("hypothesized_value_json"),
+    value_range = compute_value_range(effective_formula(use_case, assumptions),
                                      assumptions)
 
     # Which assumptions this use case's own formula actually depends on, with their

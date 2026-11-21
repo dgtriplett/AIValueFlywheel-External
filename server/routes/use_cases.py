@@ -10,6 +10,7 @@ from ..db import db
 from .. import portfolio
 from ..readiness import readiness_map, readiness_for
 from ..value_engine import (
+    effective_formula,
     compute_realized,
     compute_value_range,
     load_assumptions,
@@ -130,7 +131,7 @@ async def list_use_cases(
         r = rmap.get(uc["id"])
         if r:
             uc.update(r)
-        rng = compute_value_range(uc.get("hypothesized_value_json"), assumptions)
+        rng = compute_value_range(effective_formula(uc, assumptions), assumptions)
         uc["value_range"] = rng
         uc["computed_value"] = rng["mid"] if rng else None
         uc["realized"] = compute_realized(uc, assumptions)
@@ -319,7 +320,7 @@ async def get_unlocks(uc_id: int):
         rows = await db.fetch("SELECT * FROM use_cases WHERE id = ANY($1::int[])", list(unlocked_ids))
         for r in rows:
             d = dict(r)
-            rng = compute_value_range(d.get("hypothesized_value_json"), assumptions)
+            rng = compute_value_range(effective_formula(d, assumptions), assumptions)
             v = rng["mid"] if rng else 0
             total_value += v or 0
             if d.get("lob_id"):
@@ -357,13 +358,14 @@ async def get_use_case_detail(uc_id: int):
     uc = row_to_dict(row)
     uc.update(await readiness_for(uc_id))
     assumptions = await load_assumptions()
-    rng = compute_value_range(uc.get("hypothesized_value_json"), assumptions)
+    rng = compute_value_range(effective_formula(uc, assumptions), assumptions)
     uc["value_range"] = rng
     uc["computed_value"] = rng["mid"] if rng else None
     uc["realized"] = compute_realized(uc, assumptions)
     # Transparent value math: each component's calculation + the assumption values
     # used, so the card can show HOW the $ figure was derived (not just the number).
-    uc["value_breakdown"] = value_breakdown(uc.get("hypothesized_value_json"), assumptions)
+    uc["value_breakdown"] = value_breakdown(effective_formula(uc, assumptions), assumptions)
+    uc.update(_value_provenance(uc, assumptions))
 
     # Overlay the CURRENT ACCOUNT's ingestion status (account_asset_status), not the
     # global data_assets.ingestion_status — otherwise the card shows a module as
@@ -570,17 +572,60 @@ class UseCasePatch(BaseModel):
     title: str | None = None
     description: str | None = None
     hypothesized_value_json: dict | None = None
+    # For a use case on the business unit's roadmap: drop the unit's own value model
+    # and go back to the roadmap's estimate.
+    reset_roadmap_value: bool = False
+
+
+def _value_provenance(uc: dict, assumptions) -> dict:
+    """Where the use case's value comes from in this business unit, and the catalog
+    model alongside when the roadmap's estimate is the one in use."""
+    on_roadmap = uc.get("id") in (getattr(assumptions, "roadmap", None) or {})
+    if not on_roadmap:
+        return {"value_source": "model", "model_value_range": None}
+    formula = assumptions.roadmap[uc["id"]]
+    source = "roadmap_override" if formula.get("source") != "roadmap" else "roadmap"
+    return {"value_source": source,
+            "model_value_range": compute_value_range(uc.get("hypothesized_value_json"), assumptions)}
+
+
+async def _set_roadmap_value(account_id: int, uc_id: int, formula: dict | None) -> None:
+    """Store (or, with None, clear) this business unit's own value model for a use
+    case on its roadmap, leaving the shared catalog row untouched."""
+    row = await db.fetchrow("""SELECT value_json FROM account_roadmap_use_cases
+                               WHERE account_id = $1 AND use_case_id = $2""", account_id, uc_id)
+    vj = row["value_json"] if row else None
+    if isinstance(vj, str):
+        vj = json.loads(vj) if vj else {}
+    vj = dict(vj or {})
+    if formula is None:
+        vj.pop("override", None)
+    else:
+        vj["override"] = formula
+    await db.execute("""UPDATE account_roadmap_use_cases SET value_json = $3::jsonb, updated_at = now()
+                        WHERE account_id = $1 AND use_case_id = $2""", account_id, uc_id, json.dumps(vj))
 
 
 @router.patch("/{uc_id}")
 async def patch_use_case(uc_id: int, body: UseCasePatch, request: Request):
-    """Partial update: title / description / value model, whichever are provided."""
+    """Partial update: title / description / value model, whichever are provided.
+
+    A value model for a use case on the business unit's imported roadmap is saved
+    for that business unit (it replaces the roadmap's estimate there, and other
+    units are unaffected); `reset_roadmap_value` goes back to the roadmap's estimate."""
     actor = current_user(request)
     prev = await db.fetchrow("SELECT id, title FROM use_cases WHERE id=$1", uc_id)
     if prev is None:
         raise HTTPException(404, "Use case not found")
     if body.title is not None and not body.title.strip():
         raise HTTPException(422, "title cannot be blank")
+    from .. import accounts as _acct
+    account_id = await _acct.current()
+    before = await load_assumptions()
+    if uc_id in before.roadmap and (body.hypothesized_value_json is not None or body.reset_roadmap_value):
+        await _set_roadmap_value(account_id, uc_id,
+                                 None if body.reset_roadmap_value else body.hypothesized_value_json)
+        body = body.model_copy(update={"hypothesized_value_json": None})
     hv = json.dumps(body.hypothesized_value_json) if body.hypothesized_value_json is not None else None
     row = await db.fetchrow(
         """UPDATE use_cases SET
@@ -596,10 +641,11 @@ async def patch_use_case(uc_id: int, body: UseCasePatch, request: Request):
     await write_audit("use_case", uc_id, "patch", actor, {"changed": changed})
     out = row_to_dict(row)
     assumptions = await load_assumptions()
-    rng = compute_value_range(out.get("hypothesized_value_json"), assumptions)
+    rng = compute_value_range(effective_formula(out, assumptions), assumptions)
     out["value_range"] = rng
     out["computed_value"] = rng["mid"] if rng else None
-    out["value_breakdown"] = value_breakdown(out.get("hypothesized_value_json"), assumptions)
+    out["value_breakdown"] = value_breakdown(effective_formula(out, assumptions), assumptions)
+    out.update(_value_provenance(out, assumptions))
     return out
 
 

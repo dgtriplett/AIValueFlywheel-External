@@ -67,7 +67,7 @@ async def sankey(
       use case by readiness
     """
     from ..readiness import readiness_map
-    from ..value_engine import compute_value_range, load_assumptions
+    from ..value_engine import effective_formula, compute_value_range, load_assumptions
 
     assumptions = await load_assumptions()
     readiness = await readiness_map()
@@ -117,7 +117,7 @@ async def sankey(
     for row in rows:
         uc_id = row["uc_id"]
         if uc_id not in uc_value:
-            rng = compute_value_range(row_to_dict(row).get("hypothesized_value_json"),
+            rng = compute_value_range(effective_formula({**row_to_dict(row), "id": row["uc_id"]}, assumptions),
                                       assumptions)
             uc_value[uc_id] = rng["mid"] if rng else 0.0
             uc_meta[uc_id] = {

@@ -9,7 +9,7 @@ from .. import accounts
 from .. import portfolio
 from ..db import db
 from ..readiness import readiness_map
-from ..value_engine import compute_realized, compute_value_range, load_assumptions
+from ..value_engine import effective_formula, compute_realized, compute_value_range, load_assumptions
 
 router = APIRouter(prefix="/analytics", tags=["analytics"])
 
@@ -27,7 +27,7 @@ async def dashboard():
 
     # per-UC value
     for u in ucs:
-        rng = compute_value_range(u.get("hypothesized_value_json"), assumptions)
+        rng = compute_value_range(effective_formula(u, assumptions), assumptions)
         u["_hyp"] = rng["mid"] if rng else 0
         u["_real"] = (compute_realized(u, assumptions) or {}).get("value") or 0
         u["_readiness"] = (rmap.get(u["id"]) or {}).get("readiness")

@@ -155,7 +155,7 @@ async def mirror_to_uc() -> dict:
 
     # The same assumptions and the same engine the UI uses, so the mirror cannot drift
     # into answering a different question.
-    from .value_engine import compute_realized, compute_value_range, load_assumptions
+    from .value_engine import effective_formula, compute_realized, compute_value_range, load_assumptions
     assumptions = await load_assumptions()
 
     def esc(v):
@@ -187,7 +187,7 @@ async def mirror_to_uc() -> dict:
     for u in ucs:
         rd = (rmap.get(u["id"]) or {}).get("readiness")
         # Recomputed against this account's assumptions — see the note on the query.
-        value_range = compute_value_range(u["hypothesized_value_json"], assumptions)
+        value_range = compute_value_range(effective_formula(u, assumptions), assumptions)
         hyp = (value_range or {}).get("mid")
         realized = compute_realized(dict(u), assumptions).get("value")
         rows.append("(" + ",".join([esc(u["id"]), esc(u["title"]), esc((u["description"] or "")[:900]),

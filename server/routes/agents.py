@@ -19,7 +19,7 @@ from ..common import row_to_dict, rows_to_list, write_audit
 from ..config import SERVING_ENDPOINT
 from ..db import db
 from ..readiness import readiness_map
-from ..value_engine import compute_value_range, load_assumptions
+from ..value_engine import effective_formula, compute_value_range, load_assumptions
 
 logger = logging.getLogger(__name__)
 
@@ -405,7 +405,7 @@ async def customer_enhancement_agent():
         value_assumptions = await load_assumptions()
         for row in use_cases:
             row["readiness"] = (rmap.get(row["id"]) or {}).get("readiness")
-            rng = compute_value_range(row.get("hypothesized_value_json"),
+            rng = compute_value_range(effective_formula(row, assumptions),
                                       value_assumptions)
             row["computed_value"] = rng["mid"] if rng else 0
     except Exception:  # noqa: BLE001 - value context is helpful, not required
@@ -642,7 +642,7 @@ async def _llm_raw(prompt: str, max_tokens: int) -> str:
 
 async def _portfolio_context():
     from ..readiness import readiness_map
-    from ..value_engine import compute_value_range, load_assumptions
+    from ..value_engine import effective_formula, compute_value_range, load_assumptions
     # Portfolio-scoped: roadmap + next-best recommender operate on the confirmed set.
     condition, params = await portfolio.portfolio_condition("uc")
     ucs = [dict(u) for u in await db.fetch(
@@ -654,7 +654,7 @@ async def _portfolio_context():
         rd = rmap.get(u["id"]) or {}
         u["readiness"] = rd.get("readiness")
         u["pending_prereqs"] = rd.get("pending_prereqs") or []
-        rng = compute_value_range(u.get("hypothesized_value_json"), assumptions)
+        rng = compute_value_range(effective_formula(u, assumptions), assumptions)
         u["value_mm"] = rng["mid"] if rng else 0
         u["lob_name"] = lobs.get(u["lob_id"], "")
     return ucs, lobs
@@ -747,7 +747,7 @@ async def recommend_catalog(top_n: int = 8):
     'ideas to consider you may not be thinking about'. Distinct from the next-best
     recommender (which closes the loop on the customer's own confirmed set)."""
     from ..readiness import readiness_map
-    from ..value_engine import compute_value_range, load_assumptions
+    from ..value_engine import effective_formula, compute_value_range, load_assumptions
     lobs = {lob["id"]: lob["name"] for lob in await db.fetch("SELECT id, name FROM lobs")}
     rmap = await readiness_map()
     assumptions = await load_assumptions()
@@ -767,7 +767,7 @@ async def recommend_catalog(top_n: int = 8):
         rd = rmap.get(u["id"]) or {}
         readiness = rd.get("readiness")
         pending = [p["title"] for p in (rd.get("pending_prereqs") or [])]
-        rng = compute_value_range(u.get("hypothesized_value_json"), assumptions)
+        rng = compute_value_range(effective_formula(u, assumptions), assumptions)
         value_mm = rng["mid"] if rng else 0
         rw = ready_w.get(readiness, 0.3)
         ew = effort_w.get(u.get("effort_tshirt"), 2)

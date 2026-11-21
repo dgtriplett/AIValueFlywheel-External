@@ -445,7 +445,7 @@ export const api = {
   // Partial edit (non-admin): change only the fields provided — title/description
   // and/or the value model — without the full-replace semantics of PUT.
   patchUseCase: (id: string | number, payload: {
-    title?: string; description?: string | null; hypothesized_value_json?: any;
+    title?: string; description?: string | null; hypothesized_value_json?: any; reset_roadmap_value?: boolean;
   }) => fetchJson<any>(`/api/use-cases/${encodeURIComponent(String(id))}`, {
     method: 'PATCH', body: JSON.stringify(payload),
   }),

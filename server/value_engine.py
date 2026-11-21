@@ -80,7 +80,8 @@ def value_breakdown(formula, assumptions: dict[str, float]):
         if "low_mm" in f and "high_mm" in f:
             return {"driver": f.get("driver"), "roiMonths": f.get("roiMonths"),
                     "components": [], "low": f.get("low_mm"), "mid": f.get("mid_mm"),
-                    "high": f.get("high_mm"), "note": "Fixed estimate (no component formula)."}
+                    "high": f.get("high_mm"),
+                    "note": f.get("basis") or f.get("note") or "Fixed estimate (no component formula)."}
         return None
     out_comps = []
     low = high = 0.0
@@ -129,6 +130,65 @@ def compute_realized(uc_row: dict, assumptions: dict[str, float]):
     return {"mode": "none", "value": None, "note": None}
 
 
+class Assumptions(dict):
+    """The account's assumption values (key -> number), plus `roadmap`: the value
+    models this business unit's imported roadmap gives its use cases (use case id ->
+    formula). Carried here because every value computation already receives the
+    assumptions, so one lookup (`effective_formula`) makes every figure in the app
+    agree for this business unit without touching the shared catalog row."""
+
+    def __init__(self, *args, roadmap: dict[int, dict] | None = None, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.roadmap: dict[int, dict] = roadmap or {}
+
+
+def roadmap_formula(row: dict) -> dict | None:
+    """This business unit's value model for a use case on its roadmap: a model the
+    team set for it here (value_json.override), else the roadmap's own estimate."""
+    vj = _as_dict(row.get("value_json")) or {}
+    override = vj.get("override")
+    if isinstance(override, dict):
+        return override
+    base = row.get("value_base")
+    if base is None or float(base) <= 0:
+        return None
+    from .roadmap_package import value_formula
+    low = float(row["value_low"]) if row.get("value_low") is not None else float(base)
+    high = float(row["value_high"]) if row.get("value_high") is not None else float(base)
+    return value_formula({"annual_low": low, "annual_base": float(base), "annual_high": high,
+                          "formula": vj.get("formula"), "basis": vj.get("basis")},
+                         row.get("value_currency") or "USD")
+
+
+def effective_formula(use_case: dict, assumptions: dict):
+    """The value model to evaluate for `use_case` in the current business unit: its
+    roadmap's (when the use case is on the unit's current roadmap), else the catalog's."""
+    rm = getattr(assumptions, "roadmap", None) or {}
+    uc_id = use_case.get("id") if isinstance(use_case, dict) else None
+    if uc_id is not None and uc_id in rm:
+        return rm[uc_id]
+    return use_case.get("hypothesized_value_json") if isinstance(use_case, dict) else None
+
+
+async def _roadmap_formulas(account_id: int | None) -> dict[int, dict]:
+    if account_id is None:
+        return {}
+    try:
+        rows = await db.fetch("""
+            SELECT use_case_id, value_low, value_base, value_high, value_currency, value_json
+            FROM account_roadmap_use_cases
+            WHERE account_id = $1 AND dropped_at IS NULL
+        """, account_id)
+    except Exception:  # noqa: BLE001 - table absent before migration 002
+        return {}
+    out = {}
+    for r in rows:
+        f = roadmap_formula(dict(r))
+        if f:
+            out[int(r["use_case_id"])] = f
+    return out
+
+
 async def load_assumptions() -> dict[str, float]:
     """The current account's calibrated assumptions.
 
@@ -154,20 +214,21 @@ async def load_assumptions() -> dict[str, float]:
                WHERE account_id = $1 OR account_id IS NULL
                -- account-specific first, so DISTINCT ON keeps it over the default
                ORDER BY key, (account_id IS NULL)""", account_id)
-    return {r["key"]: float(r["value"]) for r in rows}
+    return Assumptions({r["key"]: float(r["value"]) for r in rows},
+                       roadmap=await _roadmap_formulas(account_id))
 
 
 async def computed_value_map() -> dict[int, float | None]:
     """Map use_case_id -> computed mid hypothesized value ($M) from current assumptions."""
     assumptions = await load_assumptions()
     rows = await db.fetch("SELECT id, hypothesized_value_json FROM use_cases")
-    return {r["id"]: compute_value(r["hypothesized_value_json"], assumptions) for r in rows}
+    return {r["id"]: compute_value(effective_formula(dict(r), assumptions), assumptions) for r in rows}
 
 
 async def computed_range_map() -> dict[int, dict | None]:
     assumptions = await load_assumptions()
     rows = await db.fetch("SELECT id, hypothesized_value_json FROM use_cases")
-    return {r["id"]: compute_value_range(r["hypothesized_value_json"], assumptions) for r in rows}
+    return {r["id"]: compute_value_range(effective_formula(dict(r), assumptions), assumptions) for r in rows}
 
 
 # ---------------------------------------------------------------------------
@@ -191,7 +252,7 @@ EFFORT_COST: dict[str, tuple[int, int]] = {
 
 def use_case_value(use_case: dict, assumptions: dict) -> float:
     """Mid-point annual $M for a use case, or 0.0 when it has no value model."""
-    rng = compute_value_range(use_case.get("hypothesized_value_json"), assumptions)
+    rng = compute_value_range(effective_formula(use_case, assumptions), assumptions)
     return rng["mid"] if rng else 0.0
 
 

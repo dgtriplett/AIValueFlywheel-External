@@ -24,7 +24,7 @@ from ..db import db
 from .. import portfolio
 from ..roadmap_asset_resolution import canonical_asset_target
 from ..readiness import readiness_map
-from ..value_engine import compute_value_range, load_assumptions
+from ..value_engine import effective_formula, compute_value_range, load_assumptions
 
 router = APIRouter(prefix="/sync", tags=["sync"])
 
@@ -114,7 +114,7 @@ async def export_catalog(scope: str = "all"):
 
     for uc in use_cases:
         uc_id = uc["id"]
-        rng = compute_value_range(uc.get("hypothesized_value_json"), assumptions)
+        rng = compute_value_range(effective_formula(uc, assumptions), assumptions)
         uc["computedValueMM"] = rng["mid"] if rng else None
         uc["valueRangeMM"] = rng
         uc["readiness"] = rmap.get(uc_id)

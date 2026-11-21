@@ -95,7 +95,7 @@ async def _search_use_cases(args: dict, actor: str) -> dict:
     """, *params)
 
     from .readiness import readiness_map
-    from .value_engine import compute_value_range, load_assumptions
+    from .value_engine import effective_formula, compute_value_range, load_assumptions
     readiness = await readiness_map()
     assumptions = await load_assumptions()
 
@@ -104,8 +104,7 @@ async def _search_use_cases(args: dict, actor: str) -> dict:
         detail = await db.fetchrow(
             "SELECT hypothesized_value_json FROM use_cases WHERE id=$1", row["id"])
         from .common import row_to_dict
-        rng = compute_value_range(
-            row_to_dict(detail).get("hypothesized_value_json") if detail else None,
+        rng = compute_value_range(effective_formula({**row_to_dict(detail), "id": row["id"]}, assumptions) if detail else None,
             assumptions)
         state = readiness.get(row["id"]) or {}
         items.append({
@@ -132,11 +131,11 @@ async def _get_use_case(args: dict, actor: str) -> dict:
         return {"error": f"No use case with id {uc_id}."}
     from .common import row_to_dict
     from .readiness import readiness_for
-    from .value_engine import compute_value_range, load_assumptions
+    from .value_engine import effective_formula, compute_value_range, load_assumptions
 
     use_case = row_to_dict(row)
     assumptions = await load_assumptions()
-    rng = compute_value_range(use_case.get("hypothesized_value_json"), assumptions)
+    rng = compute_value_range(effective_formula(use_case, assumptions), assumptions)
     domains = await db.fetch("""
         SELECT dd.label, dd.name, urd.necessity,
                COUNT(asd.data_asset_id) FILTER (
@@ -166,7 +165,7 @@ async def _get_use_case(args: dict, actor: str) -> dict:
 async def _value_summary(args: dict, actor: str) -> dict:
     """Portfolio value, split the way the value engine actually splits it."""
     from .readiness import readiness_map
-    from .value_engine import compute_value_range, load_assumptions
+    from .value_engine import effective_formula, compute_value_range, load_assumptions
     from .common import rows_to_list
 
     assumptions = await load_assumptions()
@@ -182,7 +181,7 @@ async def _value_summary(args: dict, actor: str) -> dict:
     by_lob: dict[str, float] = {}
     by_readiness: dict[str, float] = {}
     for row in rows:
-        rng = compute_value_range(row.get("hypothesized_value_json"), assumptions)
+        rng = compute_value_range(effective_formula(row, assumptions), assumptions)
         value = rng["mid"] if rng else 0.0
         total += value
         state = (readiness.get(row["id"]) or {}).get("readiness") or "unknown"

@@ -107,7 +107,7 @@ async def domain_gaps(limit: int = 20):
     serving assets is the strongest signal — nothing in the catalog can satisfy
     it, so it is a true acquisition gap rather than an ingestion backlog item.
     """
-    from ..value_engine import compute_value_range, load_assumptions
+    from ..value_engine import effective_formula, compute_value_range, load_assumptions
 
     assumptions = await load_assumptions()
     rows = await db.fetch("""
@@ -141,7 +141,7 @@ async def domain_gaps(limit: int = 20):
 
     by_domain: dict[int, list] = {}
     for r in dependents:
-        rng = compute_value_range(row_to_dict(r).get("hypothesized_value_json"), assumptions)
+        rng = compute_value_range(effective_formula(row_to_dict(r), assumptions), assumptions)
         by_domain.setdefault(r["domain_id"], []).append({
             "id": r["id"], "title": r["title"], "lob_name": r["lob_name"],
             "value_mm": round(rng["mid"], 2) if rng else 0.0,
@@ -209,7 +209,7 @@ async def coverage_matrix():
     in the estate provides it, so it is an acquisition decision rather than an
     ingestion backlog item.
     """
-    from ..value_engine import compute_value_range, load_assumptions
+    from ..value_engine import effective_formula, compute_value_range, load_assumptions
 
     assumptions = await load_assumptions()
     lobs = [dict(r) for r in await db.fetch("SELECT id, name FROM lobs ORDER BY name")]
@@ -241,7 +241,7 @@ async def coverage_matrix():
         if row["lob_id"] is None:
             continue  # unassigned use cases have no column to sit in
         key = (row["domain_id"], row["lob_id"])
-        rng = compute_value_range(row_to_dict(row).get("hypothesized_value_json"),
+        rng = compute_value_range(effective_formula({**row_to_dict(row), "id": row["use_case_id"]}, assumptions),
                                   assumptions)
         entry = demand.setdefault(key, {"use_cases": 0, "required": 0, "value_mm": 0.0})
         entry["use_cases"] += 1

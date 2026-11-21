@@ -450,7 +450,7 @@ function UseCaseDrawer({ id, onClose, onRemoved }: { id: number; onClose: () => 
           </div>
           <div className="flex items-center gap-2 mt-2 flex-wrap">
             {uc.readiness && <span className={`text-[11px] px-2 py-0.5 rounded border ${READINESS_COLOR[uc.readiness] || 'text-navy-400 border-navy-600'}`}>{READINESS_LABEL[uc.readiness] || uc.readiness}</span>}
-            <span className="text-xs text-navy-400">Hypothesized <b className="text-heading">{money(hyp)}</b>{vr.low != null && vr.high != null ? ` (${money(vr.low)}–${money(vr.high)})` : ''}</span>
+            <span className="text-xs text-navy-400" title={uc.value_source && uc.value_source !== 'model' ? 'From the imported roadmap' : 'Catalog value model'}>{uc.value_source && uc.value_source !== 'model' ? 'Planned' : 'Hypothesized'} <b className="text-heading">{money(hyp)}</b>{vr.low != null && vr.high != null ? ` (${money(vr.low)}–${money(vr.high)})` : ''}</span>
             {uc.origin === 'custom' && (
               <button onClick={() => setRemap(true)}
                 title="Ask the agent to re-propose this use case's data, dependency, and value mappings"
@@ -748,6 +748,14 @@ function ValueSection({ uc, onChange }: { uc: any; onChange: () => Promise<any> 
     } catch (e: any) { setVErr(e?.message || String(e)); }
     finally { setEstimating(false); }
   };
+  const fromRoadmap = uc.value_source === 'roadmap' || uc.value_source === 'roadmap_override';
+  const mv: any = uc.model_value_range;
+  const resetToRoadmap = async () => {
+    setEstimating(true); setVErr(null);
+    try { await api.patchUseCase(uc.id, { reset_roadmap_value: true }); await onChange(); }
+    catch (e: any) { setVErr(e?.message || String(e)); }
+    finally { setEstimating(false); }
+  };
   const addRealized = async () => {
     if (!amount) return;
     setBusy(true);
@@ -762,15 +770,24 @@ function ValueSection({ uc, onChange }: { uc: any; onChange: () => Promise<any> 
     <div className="space-y-4">
       <div className="grid grid-cols-3 gap-2">
         <Tile label="Low" value={money(vr.low)} />
-        <Tile label="Hypothesized" value={money(vr.mid ?? uc.computed_value)} />
+        <Tile label={fromRoadmap ? 'Planned' : 'Hypothesized'} value={money(vr.mid ?? uc.computed_value)} />
         <Tile label="High" value={money(vr.high)} />
       </div>
+      {fromRoadmap && (
+        <div className="text-[11px] text-navy-400 border border-info-600/30 bg-info-600/5 rounded-lg p-2.5">
+          {uc.value_source === 'roadmap_override'
+            ? <>Value set for this business unit (replaces the imported roadmap's estimate here only).{' '}
+                <button onClick={resetToRoadmap} disabled={estimating} className="text-info-500 hover:underline">Reset to the roadmap's estimate</button></>
+            : <>From the imported roadmap, sized for this organization. Adjusting it here changes it for this business unit only.</>}
+          {mv && <div className="text-navy-500 mt-1">The catalog's generic value model would give {money(mv.mid)} ({money(mv.low)}–{money(mv.high)}).</div>}
+        </div>
+      )}
 
       {/* Value editor — available to anyone (a generated use case starts blank). */}
       <div className="border border-navy-600 rounded-lg p-3 bg-navy-800/40">
         <div className="flex items-center justify-between gap-2 flex-wrap">
           <div className="text-xs font-semibold text-heading">
-            {hasValue ? 'Adjust hypothesized value' : 'This use case has no value yet'}
+            {hasValue ? (fromRoadmap ? 'Adjust the planned value' : 'Adjust hypothesized value') : 'This use case has no value yet'}
           </div>
           <div className="flex items-center gap-2">
             <button onClick={estimateAI} disabled={estimating}

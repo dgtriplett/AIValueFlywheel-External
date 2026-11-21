@@ -313,3 +313,40 @@ class TestAssetIndex(unittest.TestCase):
 
     def test_unknown_label(self):
         self.assertIsNone(self.module_of("Something nobody catalogued"))
+
+
+class TestRoadmapValueOverlay(unittest.TestCase):
+    """A business unit's roadmap value applies to that unit everywhere value is
+    computed, without touching the shared catalog model (the drawer once said $900K
+    for a use case the table showed at $26M)."""
+
+    def setUp(self):
+        from server import value_engine as ve
+        self.ve = ve
+        self.catalog = {"id": 9, "hypothesized_value_json": {"components": [
+            {"multiplier": 0.0015, "assumptionKeys": ["distributionCapexMM"], "lowCoeff": 0.7, "highCoeff": 1.3}]}}
+        row = {"value_low": 17_300_000, "value_base": 26_000_000, "value_high": 43_300_000,
+               "value_currency": "USD", "value_json": {"formula": "O&M x share x reduction"}}
+        self.assumptions = ve.Assumptions({"distributionCapexMM": 600},
+                                          roadmap={9: ve.roadmap_formula(row)})
+
+    def test_roadmap_estimate_wins_for_this_unit(self):
+        rng = self.ve.compute_value_range(self.ve.effective_formula(self.catalog, self.assumptions), self.assumptions)
+        self.assertEqual(rng, {"low": 17.3, "mid": 26.0, "high": 43.3})
+        self.assertEqual(self.ve.use_case_value(self.catalog, self.assumptions), 26.0)
+
+    def test_other_units_keep_the_catalog_model(self):
+        plain = self.ve.Assumptions({"distributionCapexMM": 600})
+        self.assertAlmostEqual(self.ve.use_case_value(self.catalog, plain), 0.9)
+
+    def test_a_value_set_here_replaces_the_roadmaps(self):
+        override = {"low_mm": 10, "mid_mm": 12, "high_mm": 15, "note": "Set manually"}
+        f = self.ve.roadmap_formula({"value_base": 26_000_000, "value_json": {"override": override}})
+        self.assertEqual(f, override)
+
+    def test_breakdown_explains_the_roadmap_basis(self):
+        b = self.ve.value_breakdown(self.ve.effective_formula(self.catalog, self.assumptions), self.assumptions)
+        self.assertEqual(b["note"], "O&M x share x reduction")
+
+    def test_plain_dict_assumptions_still_work(self):
+        self.assertAlmostEqual(self.ve.use_case_value(self.catalog, {"distributionCapexMM": 600}), 0.9)

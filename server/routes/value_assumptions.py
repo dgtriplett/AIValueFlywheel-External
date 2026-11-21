@@ -7,7 +7,7 @@ from .. import portfolio
 from ..common import current_user, rows_to_list, write_audit
 from ..db import db
 from ..readiness import readiness_map
-from ..value_engine import compute_realized, compute_value_range, load_assumptions
+from ..value_engine import effective_formula, compute_realized, compute_value_range, load_assumptions
 
 router = APIRouter(prefix="/value-assumptions", tags=["value_assumptions"])
 
@@ -80,7 +80,7 @@ async def portfolio_value():
     tot_hyp = tot_hyp_buildable = tot_real = 0.0
     for r in rows:
         d = dict(r)
-        rng = compute_value_range(d.get("hypothesized_value_json"), assumptions)
+        rng = compute_value_range(effective_formula(d, assumptions), assumptions)
         realized = compute_realized(d, assumptions)
         hyp_mid = rng["mid"] if rng else None
         readiness = (rmap.get(r["id"]) or {}).get("readiness")

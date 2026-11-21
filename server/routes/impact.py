@@ -9,7 +9,7 @@ from fastapi import APIRouter
 
 from ..db import db
 from ..readiness import READY_STATUSES
-from ..value_engine import compute_value, load_assumptions
+from ..value_engine import effective_formula, compute_value, load_assumptions
 
 router = APIRouter(prefix="/impact", tags=["impact"])
 
@@ -145,7 +145,7 @@ async def blast_radius(node_id: str, max_rings: int = 4):
     assumptions = await load_assumptions()
     total_hyp_value = 0.0
     for n in downstream_ucs:
-        v = compute_value(uc_by_id[n["id"]]["hypothesized_value_json"], assumptions)
+        v = compute_value(effective_formula(uc_by_id[n["id"]], assumptions), assumptions)
         if v:
             total_hyp_value += v
     total_hyp_value = round(total_hyp_value, 2)
