@@ -284,3 +284,32 @@ class TestUniqueTitles(unittest.TestCase):
 
     def test_clash_inside_one_import(self):
         self.assertEqual(self.run_titles([], ["A", "a"]), ["A", "a (North)"])
+
+
+class TestAssetIndex(unittest.TestCase):
+    """The import resolves data-need labels in memory; it must agree with the SQL
+    lookup it replaces (sync_packages._lookup_asset) on the shipped catalog."""
+
+    @classmethod
+    def setUpClass(cls):
+        from server.routes.roadmap_import import _AssetIndex
+        rows = [dict(r, id=i) for i, r in enumerate(json.loads((ROOT / "reference" / "catalog.json")
+                .read_text())["tables"]["data_assets"], 1)]
+        cls.rows = {r["id"]: r for r in rows}
+        cls.index = _AssetIndex(rows)
+
+    def module_of(self, label):
+        hit = self.index.resolve(label)
+        return self.rows[hit]["module"] if hit else None
+
+    def test_exact_module_name(self):
+        self.assertEqual(self.module_of("Work Order Management"), "Work Order Management")
+
+    def test_canonical_rule(self):
+        self.assertEqual(self.module_of("General ledger"), "Finance & Controlling")
+
+    def test_category_plus_module(self):
+        self.assertEqual(self.module_of("EAM/APM Work Order Management"), "Work Order Management")
+
+    def test_unknown_label(self):
+        self.assertIsNone(self.module_of("Something nobody catalogued"))

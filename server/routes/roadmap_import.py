@@ -35,7 +35,7 @@ from .. import roadmap_package as rp
 from ..common import rows_to_list, write_audit
 from ..db import db
 from ..limits import limiter
-from .sync_packages import _lookup_asset
+from ..roadmap_asset_resolution import canonical_asset_target, clean_label
 
 logger = logging.getLogger(__name__)
 router = APIRouter(tags=["roadmap-import"])
@@ -282,6 +282,7 @@ async def apply(body: ApplyIn, request: Request):
     source_app = _source_app(norm)
     ucs = {u["id"]: u for u in norm.use_cases}
     catalog_ids = {c["id"] for c in await _catalog()}
+    shipped = set(catalog_ids)  # origin='catalog': their value models are never touched
     prior = await _prior_mappings(account_id, source_app)
     # A use case this roadmap brought in before (incl. ones it created) stays mappable.
     if prior:
@@ -323,6 +324,9 @@ async def apply(body: ApplyIn, request: Request):
     titles = await _unique_titles([ucs[e]["name"] for e in to_create], account_id)
     new_title = dict(zip(to_create, titles))
 
+    assets = await _asset_index() if to_create else None
+    new_edges: list[tuple[int, int]] = []
+
     import_id = str(uuid.uuid4())
     summary = {"mapped": 0, "created": 0, "reused": 0, "skipped": 0, "value_updated": 0,
                "data_needs_linked": 0, "data_needs_unresolved": 0, "dropped": 0}
@@ -341,7 +345,7 @@ async def apply(body: ApplyIn, request: Request):
             lid = int(d.use_case_id) if d.action == "map" else reuse
             local_ids[ext_id] = lid
             summary["reused" if lid == reuse else "mapped"] += 1
-            if formula and await _refresh_roadmap_value(lid, formula):
+            if formula and lid not in shipped and await _refresh_roadmap_value(lid, formula):
                 summary["value_updated"] += 1
         else:
             row = await db.fetchrow("""
@@ -355,10 +359,17 @@ async def apply(body: ApplyIn, request: Request):
                 json.dumps(formula) if formula else None, actor)
             local_ids[ext_id] = int(row["id"])
             summary["created"] += 1
-            linked, unresolved = await _link_data_needs(local_ids[ext_id], uc, datasets)
-            summary["data_needs_linked"] += linked
+            edges, unresolved = _data_need_edges(local_ids[ext_id], uc, datasets, assets)
+            new_edges += edges
+            summary["data_needs_linked"] += len(edges)
             summary["data_needs_unresolved"] += unresolved
 
+    if new_edges:
+        await db.executemany("""
+            INSERT INTO uc_requires_asset (use_case_id, data_asset_id, criticality, manual)
+            VALUES ($1, $2, 'required', false)
+            ON CONFLICT (use_case_id, data_asset_id) DO NOTHING
+        """, new_edges)
     if local_ids:
         await portfolio.add_many(list(local_ids.values()), actor=actor, source="roadmap")
         await db.executemany("""
@@ -490,32 +501,61 @@ async def _refresh_roadmap_value(use_case_id: int, formula: dict) -> bool:
     return True
 
 
-async def _link_data_needs(use_case_id: int, uc: dict, datasets: dict[str, str]) -> tuple[int, int]:
-    """Connect a newly created use case to the catalog's data assets its roadmap names.
+class _AssetIndex:
+    """The data-asset catalog in memory, resolving a free-text label exactly as
+    sync_packages._lookup_asset does in SQL (canonical target first, then module /
+    system+module / category+module), without a warehouse round trip per label."""
 
-    Only for use cases this import created: a catalog use case's requirements are
-    curated, and a roadmap's free-text labels must not rewrite them."""
+    def __init__(self, rows: list[dict]):
+        self.by_target: dict[tuple[str, str], int] = {}
+        self.by_name: dict[str, int] = {}
+        for r in sorted(rows, key=lambda r: r["id"]):
+            cat, mod, sys_ = (r.get("source_category") or ""), (r.get("module") or ""), r.get("source_system")
+            self.by_target.setdefault((cat.lower(), mod.lower()), r["id"])
+            for key in (mod, f"{sys_} {mod}" if sys_ is not None else None, f"{cat} {mod}"):
+                if key:
+                    self.by_name.setdefault(key.lower(), r["id"])
+
+    def resolve(self, label: str) -> int | None:
+        clean = clean_label(label)
+        target = canonical_asset_target(clean)
+        if target:
+            hit = self.by_target.get((target[0].lower(), target[1].lower()))
+            if hit is not None:
+                return int(hit)
+        hit = self.by_name.get(clean.lower())
+        return int(hit) if hit is not None else None
+
+
+async def _asset_index() -> _AssetIndex:
+    return _AssetIndex(rows_to_list(await db.fetch(
+        "SELECT id, source_category, source_system, module FROM data_assets")))
+
+
+def _data_need_edges(use_case_id: int, uc: dict, datasets: dict[str, str],
+                     index: _AssetIndex) -> tuple[list[tuple[int, int]], int]:
+    """(use case, data asset) edges for a newly created use case, from the data its
+    roadmap names, plus how many labels matched nothing. Only for use cases this
+    import created: a catalog use case's requirements are curated, and a roadmap's
+    free-text labels must not rewrite them."""
     labels: list[str] = []
     labels += [datasets[i] for i in uc.get("dataset_ids", []) if i in datasets]
     labels += uc.get("data_requirements", {}).get("assets", [])
     labels += uc.get("data_requirements", {}).get("sources", [])
-    seen, linked, unresolved = set(), 0, 0
+    seen: set[str] = set()
+    edges: set[tuple[int, int]] = set()
+    unresolved = 0
     for label in labels:
         key = label.lower().strip()
         if not key or key in seen:
             continue
         seen.add(key)
-        asset_id = await _lookup_asset(label)
+        asset_id = index.resolve(label)
         if asset_id is None:
             unresolved += 1
-            continue
-        await db.execute("""
-            INSERT INTO uc_requires_asset (use_case_id, data_asset_id, criticality, manual)
-            VALUES ($1, $2, 'required', false)
-            ON CONFLICT (use_case_id, data_asset_id) DO NOTHING
-        """, use_case_id, asset_id)
-        linked += 1
-    return linked, unresolved
+        else:
+            edges.add((use_case_id, asset_id))
+    return sorted(edges), unresolved
 
 
 # ---------------------------------------------------------------------------
