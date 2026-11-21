@@ -186,8 +186,8 @@ function RoadmapTab({ accountName }: { accountName?: string }) {
       <RoadmapBanner summary={roadmap} onImport={() => setShowImport(true)} />
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         <Tile label={summary.on_roadmap ? 'Planned value' : 'Portfolio value (hyp.)'}
-          value={money(summary.on_roadmap ? summary.planned_mm : summary.hypothesized_mm)}
-          sub={summary.on_roadmap ? `roadmap estimates, catalog models for the rest · model total ${money(summary.hypothesized_mm)}` : undefined} />
+          value={money(summary.hypothesized_mm)}
+          sub={summary.on_roadmap ? `roadmap estimates, catalog models for the rest (catalog models alone: ${money(summary.model_mm)})` : undefined} />
         <Tile label="Realized" value={money(summary.realized_mm)} />
         <Tile label="Shovel-ready" value={String(summary.shovel_ready ?? 0)} sub="all data needs met" />
         <Tile label="Use cases" value={String(summary.total ?? portfolio.length)}

@@ -85,7 +85,7 @@ async def operate_roadmap():
     out = []
     summary = {"total": len(ucs), "shovel_ready": 0, "awaiting_prerequisites": 0,
                "nearly_ready": 0, "blocked": 0, "hypothesized_mm": 0.0, "realized_mm": 0.0,
-               "on_roadmap": 0, "roadmap_value_mm": 0.0, "planned_mm": 0.0}
+               "on_roadmap": 0, "roadmap_value_mm": 0.0, "model_mm": 0.0}
     for u in ucs:
         rng = compute_value_range(effective_formula(u, assumptions), assumptions)
         hyp = rng["mid"] if rng else 0
@@ -100,8 +100,14 @@ async def operate_roadmap():
         summary["realized_mm"] += (real or 0)
         r = road.get(u["id"])
         roadmap = None
-        model_mm = round(hyp or 0, 2)
-        planned, source = model_mm, "model"
+        # `hyp` is this business unit's value (its roadmap's estimate, or a value set
+        # here, over the catalog model: value_engine.effective_formula), the same
+        # number the drawer, Value tab and analytics show. The catalog model rides
+        # along for reference.
+        in_overlay = u["id"] in (getattr(assumptions, "roadmap", None) or {})
+        model_rng = compute_value_range(u.get("hypothesized_value_json"), assumptions) if in_overlay else rng
+        model_mm = round((model_rng or {}).get("mid") or 0, 2)
+        summary["model_mm"] += model_mm
         if r is not None:
             dropped = r.get("dropped_at") is not None
             value_mm = round(float(r["value_base"]) / 1e6, 2) if r.get("value_base") is not None else None
@@ -112,18 +118,13 @@ async def operate_roadmap():
             if not dropped:
                 summary["on_roadmap"] += 1
                 summary["roadmap_value_mm"] += value_mm or 0
-                # The roadmap's estimate was sized for THIS organization; the catalog
-                # model is generic. Lead with the roadmap's, keep the model alongside.
-                if value_mm is not None:
-                    planned, source = value_mm, "roadmap"
-        summary["planned_mm"] += planned
         out.append({"id": u["id"], "title": u["title"], "phase": u.get("phase"),
                     "status": u.get("status"), "readiness": readiness,
-                    "hypothesized_mm": planned, "model_mm": model_mm,
-                    "value_source": source,
+                    "hypothesized_mm": round(hyp or 0, 2), "model_mm": model_mm,
+                    "value_source": "roadmap" if in_overlay else "model",
                     "realized_mm": round(real or 0, 3), "roadmap": roadmap})
     summary["roadmap_value_mm"] = round(summary["roadmap_value_mm"], 2)
-    summary["planned_mm"] = round(summary["planned_mm"], 2)
+    summary["model_mm"] = round(summary["model_mm"], 2)
     summary["hypothesized_mm"] = round(summary["hypothesized_mm"], 2)
     summary["realized_mm"] = round(summary["realized_mm"], 3)
     return {"account_id": account_id, "use_cases": out, "summary": summary}
