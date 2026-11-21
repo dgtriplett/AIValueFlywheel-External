@@ -24,8 +24,8 @@ behind the agents. Deployed and upgraded by a Databricks Asset Bundle.
 ## Product surfaces
 
 - **Operate** (`OperateView.tsx`): the business unit's roadmap and portfolio — pillar
-  progress, priority, readiness, coverage, data status, value, what-if, reconciliation
-  and discovery. Each use case's drawer adds the roadmap's own context (why it matters,
+  progress, priority, readiness, data status, value calibration, what-if, and discover &
+  reconcile. Each use case's drawer adds the roadmap's own context (why it matters,
   KPI, value estimate and assumptions, first-version plan).
 - **Roadmap import** (`RoadmapImportModal.tsx`, `server/routes/roadmap_import.py`):
   seeds and refreshes the portfolio from a roadmap. The upload is either the AI

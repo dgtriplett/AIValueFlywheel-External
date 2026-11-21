@@ -8,7 +8,7 @@ import type { PortfolioRow, RoadmapSummary, RoadmapUseCase } from '../lib/api';
 
 /**
  * Operate — build and track the roadmap for the active business unit:
- *   Roadmap · Coverage · Data · Value · What-if · Reconciliation · Discovery
+ *   Roadmap · Data · Value calibration · What-if · Discover & reconcile
  * The Roadmap tab is seeded by importing a roadmap package (RoadmapImportModal) and
  * grows with use cases added from the catalog or authored here. Everything is scoped
  * to the active business unit and defensively fetched.
@@ -34,15 +34,15 @@ function money(n?: number) {
   return n >= 1 ? `$${n.toFixed(1)}M` : `$${(n * 1000).toFixed(0)}K`;
 }
 
-type Tab = 'roadmap' | 'coverage' | 'data' | 'value' | 'whatif' | 'reconciliation' | 'discovery';
+type Tab = 'roadmap' | 'data' | 'value' | 'whatif' | 'discovery';
 const TAB_LABEL: Record<Tab, string> = {
-  roadmap: 'Roadmap', coverage: 'Coverage', data: 'Data', value: 'Value',
-  whatif: 'What-if', reconciliation: 'Reconciliation', discovery: 'Discovery',
+  roadmap: 'Roadmap', data: 'Data', value: 'Value calibration',
+  whatif: 'What-if', discovery: 'Discover & reconcile',
 };
 
 export function OperateView({ accountName }: { accountName?: string }) {
   const [tab, setTab] = useState<Tab>('roadmap');
-  const tabs: Tab[] = ['roadmap', 'coverage', 'data', 'value', 'whatif', 'reconciliation', 'discovery'];
+  const tabs: Tab[] = ['roadmap', 'data', 'value', 'whatif', 'discovery'];
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-6 w-full">
@@ -61,12 +61,10 @@ export function OperateView({ accountName }: { accountName?: string }) {
         </div>
       </div>
       {tab === 'roadmap' && <RoadmapTab accountName={accountName} />}
-      {tab === 'coverage' && <CoverageTab />}
       {tab === 'data' && <DataTab />}
       {tab === 'value' && <ValueTab />}
       {tab === 'whatif' && <WhatIfTab />}
-      {tab === 'reconciliation' && <ReconciliationTab />}
-      {tab === 'discovery' && <DiscoveryTab />}
+      {tab === 'discovery' && <DiscoverReconcileTab />}
     </div>
   );
 }
@@ -962,43 +960,6 @@ function NotesSection({ uc, onChange }: { uc: any; onChange: () => Promise<any> 
   );
 }
 
-// --- Coverage --------------------------------------------------------------
-function CoverageTab() {
-  const cov = useFetch(() => api.coverageMatrix());
-  const gaps = useFetch(() => api.domainGaps());
-  if (cov.loading || gaps.loading) return <Loading />;
-  const s: any = cov.data?.summary || {};
-  const gapList: any[] = gaps.data?.gaps || [];
-  return (
-    <div className="space-y-6">
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        <Tile label="Domains" value={String(s.domains ?? 0)} />
-        <Tile label="Covered" value={String(s.covered ?? 0)} />
-        <Tile label="Gaps" value={String(s.gaps ?? 0)} />
-        <Tile label="Value at risk" value={money(s.value_at_risk_mm)} sub="from unmet data needs" />
-      </div>
-      <div>
-        <h3 className="text-sm font-semibold text-heading mb-2">Top data gaps</h3>
-        {gapList.length === 0 ? <Empty>No data gaps — every required domain is served.</Empty> : (
-          <div className="space-y-2">
-            {gapList.map((g: any, i: number) => (
-              <div key={i} className="border border-navy-600 rounded-lg p-3 bg-navy-800/40">
-                <div className="flex items-center justify-between gap-2">
-                  <span className="text-sm text-heading font-medium">{g.label || g.name || g.domain?.label}</span>
-                  {(g.value_blocked_mm > 0 || g.blocked_use_case_count > 0)
-                    ? <span className="text-xs text-warning-500 whitespace-nowrap">{money(g.value_blocked_mm)} blocked · {g.blocked_use_case_count} UC{g.blocked_use_case_count === 1 ? '' : 's'}</span>
-                    : <span className="text-xs text-navy-500 whitespace-nowrap">No portfolio demand</span>}
-                </div>
-                <div className="text-xs text-navy-400 mt-1">{g.rationale}</div>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-    </div>
-  );
-}
-
 // --- Data ------------------------------------------------------------------
 const ING_STATUSES = ['not_started', 'landed', 'curated', 'governed'];
 const ING_LABEL: Record<string, string> = {
@@ -1136,35 +1097,15 @@ function DataTab() {
 
 // --- Value -----------------------------------------------------------------
 function ValueTab() {
-  const val = useFetch(() => api.valueComputed());
-  const joint = useFetch(() => api.jointOpportunities());
-  if (val.loading) return <Loading />;
-  const v: any = val.data || {};
-  const opps: any[] = joint.data?.opportunities || [];
+  const { data: rm } = useFetch(() => api.roadmapSummary().catch(() => null), []);
   return (
-    <div className="space-y-6">
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-        <Tile label="Hypothesized value" value={money(v.total_hypothesized_value)} />
-        <Tile label="Buildable now" value={money(v.total_hypothesized_buildable_value)} sub="not data-blocked" />
-        <Tile label="Realized" value={money(v.total_realized_value)} />
-      </div>
-      <div>
-        <h3 className="text-sm font-semibold text-heading mb-1">Shared-funding opportunities</h3>
-        <p className="text-xs text-navy-400 mb-2">Data assets that unlock value for two or more lines of business — candidates for a cost-shared investment.</p>
-        {opps.length === 0 ? <Empty>No cross-LOB funding opportunities for this business unit yet.</Empty> : (
-          <div className="space-y-2">
-            {opps.slice(0, 8).map((o: any, i: number) => (
-              <div key={i} className="border border-navy-600 rounded-lg p-3 bg-navy-800/40">
-                <div className="flex items-center justify-between gap-2">
-                  <span className="text-sm text-heading font-medium">{[o.asset?.source_category || o.asset?.source, o.asset?.module].filter(Boolean).join(' · ') || 'Data asset'}</span>
-                  <span className="text-xs text-emerald-500">{money(o.combined_value_mm)}</span>
-                </div>
-                <div className="text-xs text-navy-400 mt-1">{o.pitch}</div>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
+    <div className="space-y-3">
+      {rm?.roadmap && (
+        <p className="text-xs text-navy-400 border border-info-600/30 bg-info-600/5 rounded-lg p-2.5">
+          Use cases on the imported roadmap keep the roadmap's own estimate (or a value you set on the use case).
+          These assumptions drive the catalog value models for everything else in this business unit.
+        </p>
+      )}
       <ValueAssumptionsSection />
     </div>
   );
@@ -1307,7 +1248,7 @@ const RECON_BADGE: Record<string, string> = {
   gap: 'text-warning-500 border-warning-600/40 bg-warning-600/10',
   none: 'text-navy-500 border-navy-600',
 };
-function ReconciliationTab() {
+function DiscoverReconcileTab() {
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -1316,70 +1257,58 @@ function ReconciliationTab() {
   }, []);
   useEffect(() => { void load(); }, [load]);
   const refresh = async () => { setRefreshing(true); try { await load(); } finally { setRefreshing(false); } };
-  const [showCrawl, setShowCrawl] = useState(false);
-  if (loading) return <Loading />;
   const recon: any = data || {};
   const c = recon.counts || {};
   return (
-    <div>
-      <p className="text-sm text-navy-400 mb-3">
-        Reconcile the self-reported survey against what you <b>actually have</b>: crawl your workspaces
-        and Unity Catalog to discover data, then attribute it to the catalog. Additional = discovery found
-        data not self-reported; Gap = self-reported but not yet discovered.
+    <div className="space-y-5">
+      <p className="text-sm text-navy-400">
+        Find out what data you <b>actually have</b>: sweep your workspaces and Unity Catalog, attribute what
+        you find to the catalog, and compare it with what your team recorded in <b>Data</b>.
+        Attributed data makes use cases ready, and the result is reconciled source by source below.
       </p>
+      {!loading && (
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="text-xs px-2 py-1 rounded border text-emerald-500 border-emerald-600/40 bg-emerald-600/10" title="Recorded by your team and found by discovery">Confirmed: {c.confirmed ?? 0}</span>
+          <span className="text-xs px-2 py-1 rounded border text-info-500 border-info-600/40 bg-info-600/10" title="Found by discovery, not recorded by your team">Additional: {c.additional ?? 0}</span>
+          <span className="text-xs px-2 py-1 rounded border text-warning-500 border-warning-600/40 bg-warning-600/10" title="Recorded by your team, not yet found by discovery">Gap: {c.gap ?? 0}</span>
+          <button onClick={refresh} disabled={refreshing}
+            className="ml-auto text-xs rounded border border-navy-600 text-navy-300 px-3 py-1.5 hover:bg-navy-700 disabled:opacity-50">
+            {refreshing ? 'Refreshing…' : '↻ Refresh after attributing'}</button>
+        </div>
+      )}
 
-      {/* Estate-discovery crawl — available in every deployment mode. It runs on the
-          customer's own credentials (the app SP only reaches its own workspace), so it
-          is a download-and-run-locally + upload flow, then enrich → canonicalize → attribute. */}
-      <div className="border border-navy-600 rounded-lg bg-navy-800/40 mb-4">
-        <button onClick={() => setShowCrawl((v) => !v)}
-          className="w-full flex items-center justify-between gap-2 px-3 py-2.5 text-left hover:bg-navy-800/60">
-          <span className="text-sm font-semibold text-heading">{showCrawl ? '▾' : '▸'} Discover across your workspaces / Unity Catalog</span>
-          <span className="text-[11px] text-navy-500">crawl the estate → attribute to catalog → reconcile</span>
-        </button>
-        {showCrawl && (
-          <div className="border-t border-navy-600 p-3">
-            <DiscoveryTab />
-            <div className="mt-3">
-              <button onClick={refresh} disabled={refreshing}
-                className="text-xs rounded border border-navy-600 text-navy-300 px-3 py-1.5 hover:bg-navy-700 disabled:opacity-50">
-                {refreshing ? 'Refreshing…' : '↻ Refresh reconciliation after attributing'}
-              </button>
-            </div>
+      <DiscoverySteps />
+
+      <div>
+        <h3 className="text-sm font-semibold text-heading mb-1">Reconciliation by data source</h3>
+        {loading ? <Loading /> : (
+          <div className="overflow-x-auto border border-navy-600 rounded-lg">
+            <table className="w-full text-sm">
+              <thead><tr className="text-navy-400 text-xs">
+                <th className="text-left p-2">Data source</th><th className="text-left p-2">Category</th>
+                <th className="text-center p-2">Recorded</th>
+                <th className="text-center p-2">Discovered</th>
+                <th className="text-center p-2">Modules</th><th className="text-left p-2">Status</th>
+              </tr></thead>
+              <tbody>
+                {(recon.sources || []).map((src: any) => (
+                  <tr key={src.id} className="border-t border-navy-600/50">
+                    <td className="p-2 text-heading">{src.name}</td>
+                    <td className="p-2 text-navy-400">{src.category}</td>
+                    <td className="p-2 text-center">{src.self_reported ? '✓' : '—'}</td>
+                    <td className="p-2 text-center">{src.discovered ? '✓' : '—'}</td>
+                    <td className="p-2 text-center text-navy-400">{src.modules}</td>
+                    <td className="p-2"><span className={`text-[11px] px-1.5 py-0.5 rounded border ${RECON_BADGE[src.status]}`}>{src.status}</span></td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         )}
+        <p className="text-[11px] text-navy-500 mt-2">
+          Recorded wrong? Correct any module's status in the <b>Data</b> tab and readiness recomputes.
+        </p>
       </div>
-
-      <div className="flex flex-wrap gap-2 mb-4">
-        <span className="text-xs px-2 py-1 rounded border text-emerald-500 border-emerald-600/40 bg-emerald-600/10">Confirmed: {c.confirmed ?? 0}</span>
-        <span className="text-xs px-2 py-1 rounded border text-info-500 border-info-600/40 bg-info-600/10">Additional: {c.additional ?? 0}</span>
-        <span className="text-xs px-2 py-1 rounded border text-warning-500 border-warning-600/40 bg-warning-600/10">Gap: {c.gap ?? 0}</span>
-      </div>
-      <div className="overflow-x-auto border border-navy-600 rounded-lg">
-        <table className="w-full text-sm">
-          <thead><tr className="text-navy-400 text-xs">
-            <th className="text-left p-2">Data source</th><th className="text-left p-2">Category</th>
-            <th className="text-center p-2">Self-reported</th>
-            <th className="text-center p-2">Discovered</th>
-            <th className="text-center p-2">Modules</th><th className="text-left p-2">Status</th>
-          </tr></thead>
-          <tbody>
-            {(recon.sources || []).map((s: any) => (
-              <tr key={s.id} className="border-t border-navy-600/50">
-                <td className="p-2 text-heading">{s.name}</td>
-                <td className="p-2 text-navy-400">{s.category}</td>
-                <td className="p-2 text-center">{s.self_reported ? '✓' : '—'}</td>
-                <td className="p-2 text-center">{s.discovered ? '✓' : '—'}</td>
-                <td className="p-2 text-center text-navy-400">{s.modules}</td>
-                <td className="p-2"><span className={`text-[11px] px-1.5 py-0.5 rounded border ${RECON_BADGE[s.status]}`}>{s.status}</span></td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-      <p className="text-[11px] text-navy-500 mt-2">
-        Wrong self-reported assumption? Correct any module's status in the <b>Data</b> tab and readiness recomputes.
-      </p>
     </div>
   );
 }
@@ -1467,7 +1396,7 @@ function summarizeRun(r: any): string {
   return parts.length ? `Done — ${parts.join(', ')}.` : (r.status || 'Done.');
 }
 
-function DiscoveryTab() {
+function DiscoverySteps() {
   const status = useFetch(() => api.setupStatus(), []);
   const extractor = useFetch(() => api.extractorInfo(), []);
   const summary = useFetch(() => api.ingestionSummary(), []);
@@ -1476,11 +1405,6 @@ function DiscoveryTab() {
   const s = summary.data;
   return (
     <div className="space-y-4">
-      <p className="text-sm text-navy-400">
-        Customer-side estate discovery — reconciles what you <b>actually have</b> against the
-        self-reported survey (not a blank slate). Work top to bottom; results flow into the
-        <b> Reconciliation</b> tab (the <i>discovered</i> column lights up as modules are attributed).
-      </p>
 
       {s?.configured && s?.available && (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
@@ -1550,7 +1474,7 @@ function DiscoveryTab() {
       </Step>
 
       <Step n={6} title="Attribute to the catalog"
-        why="Attach discovered tables to catalog modules — this is what turns 'we have 40,000 tables' into 'these use cases are now shovel-ready'. Attributed modules appear as discovered in Reconciliation.">
+        why="Attach discovered tables to catalog modules — this is what turns 'we have 40,000 tables' into 'these use cases are now shovel-ready'. Attributed modules appear as discovered in the reconciliation below.">
         <ActionButton label="Attribute discovered tables" run={() => api.attribute()} />
       </Step>
     </div>

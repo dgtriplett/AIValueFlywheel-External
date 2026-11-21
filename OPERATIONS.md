@@ -114,7 +114,7 @@ fix (or GRANT statement) for the first failure.
 | Pages slow (delta) | Warehouse cold start, or a small warehouse | Expect a few seconds on the first request after auto-stop. Use Serverless and raise the auto-stop timeout during workshops. |
 | AI buttons return "AI unavailable" | Endpoint missing, or the app lacks `CAN_QUERY` | Check `serving_endpoint`. **Admin → Setup** probes it. |
 | 429 Too Many Requests | Per-user rate limits | Expected under bursts. Set `RATE_LIMITS=off` in `databricks.yml` for a demo. |
-| Discovery tab says "not configured" | `discovery_catalog` is `none` | Set it and redeploy. Then follow the Setup grants. |
+| *Discover & reconcile* says "not configured" | `discovery_catalog` is `none` | Set it and redeploy. Then follow the Setup grants. |
 
 Logs: **Compute → Apps → \<app\> → Logs**. Set `LOG_LEVEL=DEBUG` in `databricks.yml`
 for more detail; on Delta this also logs every translated SQL statement.

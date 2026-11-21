@@ -337,18 +337,12 @@ export const api = {
   generateProposal: (id: number, regenerate = false) =>
     fetchJson<any>(`/api/proposals/use-cases/${id}${regenerate ? '?regenerate=true' : ''}`,
       { method: 'POST', body: '{}' }),
-  // Coverage & gaps
-  coverageMatrix: () => fetchJson<any>('/api/domains/coverage-matrix'),
-  domainGaps: () => fetchJson<any>('/api/domains/gaps'),
   // Data assets (per-account ingestion status overlaid)
   dataAssets: () => fetchJson<any[]>('/api/data-assets'),
   // Correct a module's per-account ingestion status (stamps source='manual')
   setAssetStatus: (assetId: number, ingestion_status: string) =>
     fetchJson<any>(`/api/data-assets/${assetId}/status`, {
       method: 'PATCH', body: JSON.stringify({ ingestion_status }) }),
-  // Value / analyze
-  valueComputed: () => fetchJson<any>('/api/value-assumptions/computed/portfolio'),
-  jointOpportunities: () => fetchJson<{ opportunities: any[] }>('/api/joint-funding/opportunities'),
   whatifSimulate: (assetIds: number[]) =>
     fetchJson<any>('/api/whatif/simulate', { method: 'POST', body: JSON.stringify({ data_asset_ids: assetIds }) }),
 

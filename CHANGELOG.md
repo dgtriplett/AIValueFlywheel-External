@@ -14,7 +14,13 @@ organization has already agreed and is where you build it out and measure it.
   its first-version plan come with it. Importing the next version shows what was
   added, changed and dropped; dropped use cases stay in the portfolio, flagged.
 - **Operate** shows pillar progress (live vs on the roadmap, value live vs planned), a
-  priority column in roadmap order, and a *Roadmap* tab on every use case.
+  priority column in roadmap order, and a *Roadmap* tab on every use case. Tabs are now
+  Roadmap · Data · Value calibration · What-if · Discover & reconcile: *Coverage* and
+  the shared-funding list are gone, and Reconciliation and Discovery are one tab that
+  compares discovered data with what the team recorded in *Data*.
+- **One value per business unit.** A use case on the unit's roadmap is valued at the
+  roadmap's estimate everywhere (table, drawer, Value tab, analytics, what-if); a
+  value set on the use case applies to that unit only and survives a re-import.
 - **Explore** replaces Assess: the catalog as a dependency map with each use case's
   blast radius, your portfolio highlighted, and *Add to portfolio* on any use case.
 - **Removed:** the maturity assessment (wizard, scoring, results dashboard,

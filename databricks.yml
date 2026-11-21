@@ -60,7 +60,7 @@ variables:
   # --- optional features ----------------------------------------------------
   discovery_catalog:
     description: >-
-      Catalog for the workspace-discovery inventory (Operate > Discovery). Leave
+      Catalog for the workspace-discovery inventory (Operate > Discover & reconcile). Leave
       `none` to skip; the feature then shows setup instructions.
     default: "none"
   discovery_schema:

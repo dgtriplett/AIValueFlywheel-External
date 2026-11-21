@@ -19,7 +19,7 @@ an app config file by hand.
 | `lakebase_project` | | `ai-value-realization` | `lakebase` target: the Lakebase project the bundle creates for app state. |
 | `delta_catalog` | | `main` | `delta` target: catalog for the app-state schema. The deployer needs `USE CATALOG` and `CREATE SCHEMA`. |
 | `delta_schema` | | `ai_value_realization` | `delta` target: schema the setup job creates for app-state tables. |
-| `discovery_catalog` | | `none` | Optional. Catalog for the workspace-discovery inventory (Operate → Discovery / Reconciliation). `none` disables it. |
+| `discovery_catalog` | | `none` | Optional. Catalog for the workspace-discovery inventory (Operate → Discover & reconcile). `none` disables it. |
 | `discovery_schema` | | `ai_value_realization_discovery` | Schema for the discovery inventory. |
 | `genie_mirror_catalog` | | `none` | Optional. Catalog for the Genie mirror of the portfolio ("Ask" in natural language). |
 | `genie_mirror_schema` | | `ai_value_realization_genie` | Schema for the Genie mirror tables. |

@@ -184,13 +184,22 @@ async def data_lineage():
 # ---------------------------------------------------------------------------
 @router.get("/operate/reconciliation")
 async def reconciliation():
-    """Per coarse source: what the survey SAID vs what discovery FOUND. Discovery is
-    not blank-slate — this surfaces additional/unaccounted data and fringe gaps against
-    the self-reported picture."""
+    """Per coarse source: what the team RECORDED vs what discovery FOUND.
+
+    Recorded = any of the source's modules marked landed/curated/governed by hand
+    (Operate > Data) — or, for a unit upgraded from 1.x, the old survey's answer.
+    Surfaces data discovery found that nobody recorded (additional) and data the team
+    recorded that discovery has not found (gap)."""
     account_id = await _require_account()
     rows = await db.fetch("""
         SELECT s.id, s.name, s.category,
-               COALESCE(ss.available, false) AS self_reported,
+               (COALESCE(ss.available, false) OR EXISTS (
+                 SELECT 1 FROM data_source_rollup r
+                 JOIN account_asset_status a
+                   ON a.data_asset_id = r.data_asset_id AND a.account_id = $1
+                 WHERE r.data_source_id = s.id AND a.source <> 'discovered'
+                   AND a.ingestion_status IN ('landed','curated','governed')
+               )) AS self_reported,
                EXISTS (
                  SELECT 1 FROM data_source_rollup r
                  JOIN account_asset_status a

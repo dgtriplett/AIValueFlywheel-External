@@ -14,9 +14,9 @@ dependencies between them, and parameterized value models.
   Roadmap deck `.html`, or a [roadmap package](ROADMAP_PACKAGE.md) `.json` from any
   planning tool) and every use case lands with its strategic pillar, priority, value
   estimate and first-version plan. Then track delivery: readiness (which use cases are
-  data-blocked and by what), coverage, data-source status, value (planned vs
-  realized), what-if ("what does landing this source unlock?"), and reconciliation
-  against what is actually in your Unity Catalog. Import the next version and AIVR
+  data-blocked and by what), data status, value (planned vs realized) calibrated to
+  your organization, what-if ("what does landing this source unlock?"), and discovery
+  of what is actually in your Unity Catalog, reconciled against what your team recorded. Import the next version and AIVR
   shows what changed instead of overwriting your progress.
 - **Explore** — the catalog as a dependency map. Pick any use case to see its blast
   radius: what it needs first, what it unlocks, and what shares its data. Add use cases
